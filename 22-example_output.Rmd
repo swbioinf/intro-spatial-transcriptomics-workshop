@@ -1,0 +1,10 @@
+# Aims for today {#aims}
+
+Today we will use Gariddo et al dataset - load, QC, cluster and find DE.
+
+We will generate the following figures:
+
+
+
+
+

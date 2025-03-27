@@ -1,0 +1,7 @@
+# Reduce dimensionality
+
+
+* PCA
+* UMAP
+
+

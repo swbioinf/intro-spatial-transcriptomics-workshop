@@ -1,0 +1,11 @@
+# Example Experiment {#exampleexperiment}
+
+
+## Spatial transcriptomis - IBD 
+
+
+Data is from IBD XYZZZY
+
+Experimental design
+
+

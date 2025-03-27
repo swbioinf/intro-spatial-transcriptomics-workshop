@@ -1,0 +1,62 @@
+--- 
+title: "Intro to Spatial Transcriptomics"
+author: ""
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: bookdown::gitbook
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: rstudio/bookdown-demo
+description: "Intro to spatial transcriptomics analysis workshop material"
+---
+
+
+Work in progress.
+
+
+# Overview
+
+Overview of spatial transcriptomics workshop.
+
+
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), 'bookdown', 'knitr', 'rmarkdown'
+), 'packages.bib')
+```
+
+
+Sections
+
+* overview
+* shedule (?)
+* Background
+* The dataset
+* The figures we are building today.
+* Data
+* Proprocess - Load and label
+* Proprocessing - QC
+* Preprocessing 
+
+* Differnential expression 
+
+* Where to next?
+* Other information 
+   - segmentation
+   - annotation of regions
+
+
+
+* Resources
+
+
+
+
+
+
+
+
+
