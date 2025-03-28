@@ -13,7 +13,7 @@ description: "Intro to spatial transcriptomics analysis workshop material"
 ---
 
 
-Work in progress.
+Work in progress - nothing to see yet.
 
 
 # Overview
@@ -27,31 +27,6 @@ knitr::write_bib(c(
   .packages(), 'bookdown', 'knitr', 'rmarkdown'
 ), 'packages.bib')
 ```
-
-
-Sections
-
-* overview
-* shedule (?)
-* Background
-* The dataset
-* The figures we are building today.
-* Data
-* Proprocess - Load and label
-* Proprocessing - QC
-* Preprocessing 
-
-* Differnential expression 
-
-* Where to next?
-* Other information 
-   - segmentation
-   - annotation of regions
-
-
-
-* Resources
-
 
 
 

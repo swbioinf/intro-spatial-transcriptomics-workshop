@@ -1,6 +1,16 @@
 # Background {#background}
 
-Link to intro slides.
 
-Very breif background.
+Background (Conceptual) 25 mins (aim to reduce)
 
+* Very high-level overview of how spatial fits in to existing omics technologies
+* Similarities and differences to single cell, bulk, visium
+* Basic techs
+   + Comparison between techs, which ones to use, why? 
+* Questions I would like to know as a noob:
+   + What’s the most cost-effective tech?
+   + Which one should be used for my samples and conditions of interest?
+   + Considerations for study design, i.e. how many replicates 
+* Which tools and packages to use
+   + R vs. Python
+   + Sfe (biconductor vs seurat)

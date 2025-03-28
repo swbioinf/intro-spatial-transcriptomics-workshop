@@ -1,11 +1,10 @@
 # Example Experiment {#exampleexperiment}
 
 
-## Spatial transcriptomis - IBD 
+Background (Workshop) 15 mins (aim to reduce)
 
-
-Data is from IBD XYZZZY
-
-Experimental design
-
+* E.g. one of the cosmx studies from https://swbioinf.github.io/spatialsnippets/index_data.html
+   + Likely need to subsample the data?
+* This is what the data is
+* Replicate key analyses and plots, explaining the “why we do X instead of Y” throughout.
 

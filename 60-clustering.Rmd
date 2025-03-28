@@ -1,9 +1,15 @@
 # Clustering{#clustering}
 
 
-* clustering
+Dimensional reduction + clustering. (20min)
+
+PCA + UMAP can take some explanation time. Try to keep brief. Link to further info.
+
+Plot clusters on tissue (10min)
+
+
+discuss: 
 
 * cell type determination
 * call typing
 * Cell type annotation
-

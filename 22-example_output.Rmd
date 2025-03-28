@@ -1,10 +1,11 @@
 # Aims for today {#aims}
 
-Today we will use Gariddo et al dataset - load, QC, cluster and find DE.
 
-We will generate the following figures:
+Start backwards - These are the plots we will make
+
+Often difficult to understand the point of tutorial when they start with the data 
+
+Identify a minimal end-to-end analysis/analyses 
 
 
-
-
-
+Spatial is a new field - a lot of new tools in development

@@ -1,0 +1,5 @@
+# QC
+
+
+* Basic QC plots + filtering (20min)
+* (Negative probes if using cosmx)

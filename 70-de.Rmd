@@ -3,3 +3,8 @@
 * Differential expression example
 
 * Info on other tests
+
+Link out directly?
+https://swbioinf.github.io/spatialsnippets/e_DEPseudobulk_insitu.html
+
+NB: I'll probably update that material to include some spatial plots.

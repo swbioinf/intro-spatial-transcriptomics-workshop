@@ -1,6 +1,11 @@
 # Introduction {#intro}
 
 
-Intro to workshope / schedule /login info.
+Intro/Welcome 10-15 mins
+
+Check everyone can login to servers (10m)
 
 
+Link to intro slides.
+
+* Workshop style - interactive

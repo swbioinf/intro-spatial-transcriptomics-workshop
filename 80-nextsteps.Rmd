@@ -1,6 +1,22 @@
 # Next steps
 
 
-* Resources 
-* other topics info for FAQ
+
+
+Wrap up (10)
+We have preprocessed some data, now run tests/do analysis => spatial sampler resource.
+
+Q&A (whatever)
+
+
+Extra:
+AboutSegmentation? Use defaults.
+ 
+Questions to address
+ 
+* How do we combine multiple samples
+* How to annotate multiple samples on one  slide (I wish I knew)
+* How do I do X 
+
+
 

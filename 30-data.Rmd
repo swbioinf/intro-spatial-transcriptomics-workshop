@@ -1,3 +1,9 @@
 # Input Data{#data}
 
-What does the input data look like?
+
+What does the data look like when you get it? Examine raw data.
+
+* Explain e.g. cosmx in detail, refer to similarities in e.g. xenium
+* Load data into object
+* Brief explanation of different data structures 
+* Sample annotation: Applying sample names to individual slides. Mention difficulty of multiple samples per slide (can we recommend some approach?)
