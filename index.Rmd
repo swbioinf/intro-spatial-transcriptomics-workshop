@@ -8,7 +8,7 @@ documentclass: book
 bibliography: [book.bib, packages.bib]
 biblio-style: apalike
 link-citations: yes
-github-repo: rstudio/bookdown-demo
+github-repo: swbioinf/intro-spatial-transcriptomics-workshop
 description: "Intro to spatial transcriptomics analysis workshop material"
 ---
 

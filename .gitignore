@@ -40,7 +40,8 @@ vignettes/*.pdf
 .Renviron
 
 # pkgdown site
-docs/
+## why is this gitignored by default? I'm elecint to include it
+#docs/
 
 # translation temp files
 po/*~
