@@ -7,3 +7,29 @@ What does the data look like when you get it? Examine raw data.
 * Load data into object
 * Brief explanation of different data structures 
 * Sample annotation: Applying sample names to individual slides. Mention difficulty of multiple samples per slide (can we recommend some approach?)
+
+=====
+
+
+## The raw data
+
+
+For a cosmx SMI slide (like this experiment).
+
+* **Flat files** : Most of what we need to do processing. Typically a directory of flat files is read in as a whole, and we don't need to worry too much. But note there are no images in here.
+  * SLIDE-polygons.csv.gz  : Cell borders
+  * SLIDE_exprMat_file.csv.gz : Counts of genes per cell (Counts matrix)
+  * SLIDE_fov_positions_file.csv.gz : Location of FOVs on slide
+  * SLIDE_metadata_file.csv.gz : Cell level QC metadata
+  * SLIDE_tx_file.csv.gz : Location of individual transcripts.
+
+* **Raw files** : Giant ugly directory with lots of files including microscopy images.
+  * RawFiles/SLIDE/RUN_CODE/CellStatsDir/Morphology2D : Location of images
+  * https://github.com/Nanostring-Biostats/CosMxDACustomModules/blob/main/Export/CosMxDAExportSetup.docx  
+  
+
+<Image of all the information we need for analysis?>
+
+  
+For a Xenium slide there is just the one typical output directory; they discuss the formats in the section on [data archiving](https://www.10xgenomics.com/support/software/xenium-onboard-analysis/latest/analysis/xoa-output-archive-data), but again, software tools take the directory as a whole.
+

@@ -8,3 +8,36 @@ Background (Workshop) 15 mins (aim to reduce)
 * This is what the data is
 * Replicate key analyses and plots, explaining the “why we do X instead of Y” throughout.
 
+
+Notes 
+
+* If we reproduce something it'll be figure 1d UMAP with celltypes, and maybe the celltype proportions (if time permits.). Maybe Figure 1b simplified - a heatmap of marker genes.
+
+
+=======
+
+Today's workshop will use data from paper *Macrophage and neutrophil heterogeneity at single-cell spatial resolution in human inflammatory bowel disease* (Garrido-Trigo et al. 2023).
+
+Their study explored macrophage and neutorphil subtypes and localisation across immflammatory bowel disease using a combination of single cell RNAseq (10X), spatial RNAseq (cosmx). The authors have made their raw and annotated data available (and their [code](https://github.com/HelenaLC/CosMx-SMI-IBD)). There is also a browseable interface here: https://servidor2-ciberehd.upc.es/external/garrido/app/
+
+The study included 9 cosmx slides of colonic biopsies
+
+* 3x HC - Healthy controls
+* 3x UC - Ulcerative colitis
+* 3x CD - Chrones’s disease
+
+We will do some basic processing of those 9 samples - QC, clustering and visualisation.
+
+<Image of plot to be made in workshop>
+
+
+
+
+
+
+
+
+
+
+
+
