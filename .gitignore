@@ -55,4 +55,7 @@ rsconnect/
 #Renv
 
 renv/
-
+data/
+raw_data/
+raw_data/*
+raw_data
