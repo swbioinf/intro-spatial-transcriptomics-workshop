@@ -3,7 +3,12 @@ intro
 background
 exampleexperiment
 aims
-data
+input-data
+the-raw-data
+loading-the-data
+load-one-sample-from-raw-data
+load-all-samples-from-raw-data
+load-the-workshop-data
 qc
 basic-visualisation
 reduce-dimensionality
@@ -11,4 +16,3 @@ clustering
 analysis-example
 next-steps
 resources
-the-raw-data

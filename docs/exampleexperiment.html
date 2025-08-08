@@ -48,7 +48,7 @@
 <li><a class="" href="background.html"><span class="header-section-number">3</span> Background</a></li>
 <li><a class="active" href="exampleexperiment.html"><span class="header-section-number">4</span> Example Experiment</a></li>
 <li><a class="" href="aims.html"><span class="header-section-number">5</span> Aims for today</a></li>
-<li><a class="" href="data.html"><span class="header-section-number">6</span> Input Data</a></li>
+<li><a class="" href="input-data.html"><span class="header-section-number">6</span> Input Data</a></li>
 <li><a class="" href="qc.html"><span class="header-section-number">7</span> QC</a></li>
 <li><a class="" href="basic-visualisation.html"><span class="header-section-number">8</span> Basic visualisation</a></li>
 <li><a class="" href="reduce-dimensionality.html"><span class="header-section-number">9</span> Reduce dimensionality</a></li>
@@ -78,6 +78,22 @@
 <li>This is what the data is</li>
 <li>Replicate key analyses and plots, explaining the “why we do X instead of Y” throughout.</li>
 </ul>
+<p>Notes</p>
+<ul>
+<li>If we reproduce something it’ll be figure 1d UMAP with celltypes, and maybe the celltype proportions (if time permits.). Maybe Figure 1b simplified - a heatmap of marker genes.</li>
+</ul>
+<p>=======</p>
+<p>Today’s workshop will use data from paper <em>Macrophage and neutrophil heterogeneity at single-cell spatial resolution in human inflammatory bowel disease</em> (Garrido-Trigo et al. 2023).</p>
+<p>Their study explored macrophage and neutorphil subtypes and localisation across immflammatory bowel disease using a combination of single cell RNAseq (10X), spatial RNAseq (cosmx). The authors have made their raw and annotated data available (and their <a href="https://github.com/HelenaLC/CosMx-SMI-IBD">code</a>). There is also a browseable interface here: <a href="https://servidor2-ciberehd.upc.es/external/garrido/app/" class="uri">https://servidor2-ciberehd.upc.es/external/garrido/app/</a></p>
+<p>The study included 9 cosmx slides of colonic biopsies</p>
+<ul>
+<li>3x HC - Healthy controls</li>
+<li>3x UC - Ulcerative colitis</li>
+<li>3x CD - Chrones’s disease</li>
+</ul>
+<p>We will do some basic processing of those 9 samples - QC, clustering and visualisation.</p>
+<p><image of plot to be made in workshop></image></p>
+
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="background.html"><span class="header-section-number">3</span> Background</a></div>
@@ -100,7 +116,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-03-28.</p>
+    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-08-08.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -1,4 +1,4 @@
-# Input Data{#data}
+# Input Data
 
 
 What does the data look like when you get it? Examine raw data.
@@ -28,8 +28,89 @@ For a cosmx SMI slide (like this experiment).
   * https://github.com/Nanostring-Biostats/CosMxDACustomModules/blob/main/Export/CosMxDAExportSetup.docx  
   
 
-<Image of all the information we need for analysis?>
 
-  
 For a Xenium slide there is just the one typical output directory; they discuss the formats in the section on [data archiving](https://www.10xgenomics.com/support/software/xenium-onboard-analysis/latest/analysis/xoa-output-archive-data), but again, software tools take the directory as a whole.
+
+
+
+## Loading the data
+
+
+### Load one sample from raw data
+
+Load libraries, and paths
+```{r}
+library(Seurat)
+library(SeuratObject)
+library(tidyverse)
+
+
+## Paths
+data_dir              <- file.path("data/")
+raw_data_dir          <- file.path("raw_data/")
+
+```
+
+
+The code to load one sample should be as follows. 
+```{r eval=FALSE}
+## Load one sample?
+sample_path = file.path(raw_data_dir, "GSM7473682_HC_a")
+so <- LoadNanostring(sample_path,
+                     assay='RNA',
+                     fov="GSM7473682_HC_a")
+
+
+# HOWEVER 
+# This default method drops most of the metatdata in the seurat object.
+# e.g. what fov is each cell a member of? is missing.
+
+#so@meta.data
+#orig.ident nCount_RNA nFeature_RNA
+#1_1   SeuratProject        368          189
+#2_1   SeuratProject        810          286
+#3_1   SeuratProject        119           74
+
+# An alternative function is here;
+# In time, this should be fixed within seruat
+# See comments here
+#https://github.com/satijalab/seurat/discussions/9261
+source("scripts/LoadNanostring_edited_function.R")
+
+
+
+
+```
+
+
+
+
+Each sample should be annotated with its experimental details. This particular
+study has one sample per slide (easy!), but there are typically more.
+
+```{r eval=FALSE}
+so$tissue_sample   <- "HC_A"
+so$group           <- "HC"
+so$condition       <- "Healthy Controls"
+```
+
+
+
+### Load all samples from raw data
+
+Code example goes here (not run)
+
+
+
+### Load the workshop data
+
+
+This dataset is a subset of the experimenal data - only the first 5 fov views of each, and only the CD and HC sample groups. 
+
+```{r eval=FALSE}
+so.raw <- readRDS(file.path(data_dir, "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS"))
+```
+
+
+
 
