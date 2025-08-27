@@ -2,25 +2,23 @@
 library(Seurat)
 library(SeuratObject)
 library(tidyverse)
-# requred: sf, harmony,  presto
-# also:
+library(here)
+library(sf)
+library(harmony)
+library(remotes) # to install presto
+# remotes::install_github("immunogenomics/presto")
+
+# required:
 # patchwork, DT, limma, edgeR
 # others tba
 
-
-
-
-## Paths
-data_dir              <- file.path("data/")
-raw_data_dir          <- file.path("raw_data/")
-
 # Full size data
-seurat_file_00_raw    <- file.path(data_dir, "GSE234713_CosMx_IBD_seurat_00_raw.RDS")
+seurat_file_00_raw    <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw.RDS")
 
 # Subsampled data
-seurat_file_00_raw_subset          <- file.path(data_dir, "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
-seurat_file_01_preprocessed_subset <- file.path(data_dir, "GSE234713_CosMx_IBD_seurat_01_preprocessed_subsampled.RDS")
-seurat_file_02_labelled_subset     <- file.path(data_dir, "GSE234713_CosMx_IBD_seurat_02_labelled_subsampled.RDS")
+seurat_file_00_raw_subset          <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
+seurat_file_01_preprocessed_subset <- here("data", "GSE234713_CosMx_IBD_seurat_01_preprocessed_subsampled.RDS")
+#seurat_file_02_labelled_subset     <- here("data", "GSE234713_CosMx_IBD_seurat_02_labelled_subsampled.RDS")
 
 ## Edited seurat load funcionts
 
@@ -32,7 +30,7 @@ source("scripts/LoadNanostring_edited_function.R")
 
 
 ##  config
-
+# TODO: explain choices
 max_pc_negs        <- 1.5
 max_avg_neg        <- 0.5
 
@@ -42,25 +40,44 @@ sample_codes <- c(HC="Healthy controls",UC="Ulcerative colitis",CD="Crohn's dise
 ################################################################################
 
 ## Load one sample?
-sample_path = file.path(raw_data_dir, "GSM7473682_HC_a")
+sample_path = here("raw_data", "GSM7473682_HC_a")
 so <- LoadNanostring(sample_path,
                      assay='RNA',
                      fov="GSM7473682_HC_a")
 
-#NB: This default method drops most of the metatdata in the seurat object.
+# Explain input data, what it represents, how it will be used for analysis.
+# Define terms like centroids, segments, fov
+
+#NB: This default method drops most of the metadata in the seurat object.
 # e.g. what fov is each cell a member of? is missing.
 # So we won't actually Use it.
 # Trying to get this fixed in seurat.
 
-#so@meta.data
+# Inspect Seurat object
+# Explain that Seurat objects are a data structure to store the count data,
+# and additional metadata. As the data is very high dimensional, it is important
+# that connected information about cells, samples, and data stay connected
+# during data analysis
+so
+
+#An object of class Seurat
+#999 features across 42045 samples within 1 assay
+#Active assay: RNA (999 features, 0 variable features)
+#1 layer present: counts
+#1 spatial field of view present: GSM7473682_HC_a
+
+# Explain: what does each thing define? e.g. features, layers, fovs
+
+# Inspect metadata
+head(so@meta.data)
 #orig.ident nCount_RNA nFeature_RNA
 #1_1   SeuratProject        368          189
 #2_1   SeuratProject        810          286
 #3_1   SeuratProject        119           74
-so$tissue_sample   <- "HC_A"
-so$group           <- "HC"
-so$condition       <- "Healthy Controls"
 
+# Add metadata. Needed to compare
+so$condition       <- "Healthy Controls"
+so$tissue_sample   <- "HC_A" # denotes healthy control, from sample A
 
 ################################################################################
 # Load muliple samples
@@ -68,20 +85,49 @@ so$condition       <- "Healthy Controls"
 
 
 ################################################################################
-# Load a subsampled dataset for working with
+# Load a subsampled dataset for working with multiple samples
 # That takes too long, so loading a preloaded object
+# Add figure that represents the subset
 
-so.raw <- readRDS(seurat_file_00_raw_subset)
+# Explain: Subset data, how many samples and conditions. Represent graphically
+# e.g. three healthy controls (HC) vs. three CD
+so_raw <- readRDS(seurat_file_00_raw_subset)
+so_raw
+
+# An object of class Seurat
+# 999 features across 68624 samples within 2 assays
+# Active assay: RNA (980 features, 0 variable features)
+# 6 layers present: counts.GSM7473682_HC_a, counts.GSM7473683_HC_b, counts.GSM7473684_HC_c, counts.GSM7473688_CD_a, counts.GSM7473689_CD_b, counts.GSM7473690_CD_c
+# 1 other assay present: negprobes
+# 6 spatial fields of view present: GSM7473682_HC_a GSM7473683_HC_b GSM7473684_HC_c GSM7473688_CD_a GSM7473689_CD_b GSM7473690_CD_c
+# Explain: difference between this SO vs. previous one (`so`)
+#     - layers represent the different samples and their condition
+#     - RNA and negprobes assays and what data they represent
+
+# Display metadata columns
+names(so_raw@meta.data)
+
+# There is a lot of information. Use something like skimr for EDA and to
+# understand each field
+skimr::skim(so_raw@meta.data)
+
+# Explain: number of rows (68624) represent data points (?)
+# Identify important metadata columns and discuss what they mean
 
 ################################################################################
 # Spatial plot
 ################################################################################
 
-# Subset a seurat objecct by cells, just like a table.
-# so[features, cells]
-so.sample <- so.raw[, so.raw$tissue_sample=="HC_a"]
+# View the tissue_sample metadata to prepare for the next step
+table(so_raw$tissue_sample)
 
-#so.sample
+# Subset a seurat object by cells, just like a table.
+# so[features, cells]
+so_sample <- so_raw[, so_raw$tissue_sample=="HC_a"]
+
+# Some warnings with not validating FOV, centroid, and seurat objects
+
+so_sample
 #An object of class Seurat
 #999 features across 8795 samples within 2 assays
 #Active assay: RNA (980 features, 0 variable features)
@@ -91,8 +137,11 @@ so.sample <- so.raw[, so.raw$tissue_sample=="HC_a"]
 
 # seurat fov = slide
 # bruker cosmx fov = region on slide
+# Note: layer and FOVs are now only for a single sample, HC_a
 
-ImageDimPlot(so.sample,
+# Visualise clusters in a spatial context
+# Explain: key arguments
+ImageDimPlot(so_sample,
              fov          = "GSM7473682_HC_a",
              axes = TRUE,
              border.color = "white", border.size = 0.1,
@@ -103,7 +152,7 @@ ImageDimPlot(so.sample,
 
 
 # Also we have 'centroids' - whats the difference?
-ImageDimPlot(so.sample,
+ImageDimPlot(so_sample,
              fov          = "GSM7473682_HC_a",
              axes = TRUE,
              border.color = "white", border.size = 0.1,
@@ -114,7 +163,7 @@ ImageDimPlot(so.sample,
 
 
 #And and individual gene
-ImageDimPlot(so.sample,
+ImageDimPlot(so_sample,
              fov          = "GSM7473682_HC_a",
              axes = TRUE,
              border.color = "white", border.size = 0.1,
@@ -137,17 +186,16 @@ ImageDimPlot(so.sample,
 # SOme operations only work on a single
 # Join layers / split layers.
 # tHis is useful for later steps, but annoying now.
-so.raw <- JoinLayers(so.raw)
-GetAssayData(so.raw, assay = "RNA", layer = "counts")
+so_raw <- JoinLayers(so_raw)
+GetAssayData(so_raw, assay = "RNA", layer = "counts")
 
 
 ################################################################################
 # QC + Filtering
 ################################################################################
 
-
 # Total counts per cell
-ggplot(so.raw@meta.data, aes(x=nCount_RNA, col=orig.ident)) +
+ggplot(so_raw@meta.data, aes(x=nCount_RNA, col=orig.ident)) +
   geom_density() +
   scale_x_log10() +
   theme_bw() +
@@ -161,29 +209,29 @@ min_count_per_cell <- 100
 ## Negative probe counts
 
 #Negative counts per cell
-#Negatvive probes are in a separate assay.
+#Negative probes are in a separate assay.
 # This is a matter of preference, you could keep them with the rest.
-so[['RNA']]
-so[['negprobes']]
+so_raw[['RNA']]
+so_raw[['negprobes']]
 
-so.raw$pc_neg <-  ( so.raw$nCount_negprobes / (so.raw$nCount_RNA + so.raw$nCount_negprobes) ) * 100
-so.raw[["negprobes"]] <- JoinLayers(so.raw[["negprobes"]]) # For caluclating these, need to have the negprobes merged
-so.raw$avg_neg <-  colMeans(so.raw[["negprobes"]])   # only defined firsts sample.
+so_raw$pc_neg <-  ( so_raw$nCount_negprobes / (so_raw$nCount_RNA + so_raw$nCount_negprobes) ) * 100
+so_raw[["negprobes"]] <- JoinLayers(so_raw[["negprobes"]]) # For caluclating these, need to have the negprobes merged
+so_raw$avg_neg <-  colMeans(so_raw[["negprobes"]])   # only defined firsts sample.
 
 
 # Discuss difference with Xenium - xenium lower counts, lower background.
 max_pc_neg         <- 5
 
-ggplot(so.raw@meta.data, aes(y=avg_neg, x=nCount_RNA)) +
+ggplot(so_raw@meta.data, aes(y=avg_neg, x=nCount_RNA)) +
   geom_point(pch=3, alpha=0.1) +
   scale_x_log10() +
   theme_bw() +
   ggtitle("Negative probes vs counts")
 
-ggplot(so.raw@meta.data, aes(y=pc_neg, x=nCount_RNA)) +
+ggplot(so_raw@meta.data, aes(y=pc_neg, x=nCount_RNA)) +
+  geom_hline(yintercept = max_pc_neg, lty=3, colour = "red") +
+  geom_vline(xintercept = min_count_per_cell, lty=3, colour = "red") +
   geom_point(pch=3, alpha=0.1) +
-  geom_hline(yintercept = max_pc_neg, lty=3) +
-  geom_vline(xintercept = min_count_per_cell, lty=3) +
   scale_x_log10() +
   theme_bw() +
   ggtitle("Negative probes vs counts")
@@ -193,14 +241,12 @@ ggplot(so.raw@meta.data, aes(y=pc_neg, x=nCount_RNA)) +
 
 ### Apply a filter
 
-# Should we apply a filter? High stringnec makes the analysis 'easier', but you get gaps spatially.
+# Should we apply a filter? High stringency makes the analysis 'easier', but you get gaps spatially.
 
-dim(so.raw)
-so <- so.raw[ ,so.raw$nCount_RNA >= min_count_per_cell & so.raw$pc_neg <= max_pc_neg ]
+dim(so_raw)
+so <- so_raw[ ,so_raw$nCount_RNA >= min_count_per_cell & so_raw$pc_neg <= max_pc_neg ]
 dim(so)
 table(so@meta.data$orig.ident)
-
-
 
 # Basic preprocessing
 # Split layers out again
@@ -213,6 +259,8 @@ so <- NormalizeData(so)
 ## Do per sample to mimic paper approach somewhat.
 so <- FindVariableFeatures(so, nfeatures = 200)
 VariableFeaturePlot(so)
+
+# Explain: Each point represents a gene, red = HVGs selected
 
 so <- ScaleData(so) # Just 200 variable features
 so <- RunPCA(so, features = VariableFeatures(so))
@@ -268,6 +316,7 @@ if (! file.exists(seurat_file_01_preprocessed_subset)) {
 DimPlot(so, group.by='seurat_clusters')
 DimPlot(so, group.by='orig.ident')
 
+# Cell counts per cluster per sample
 table(so$orig.ident, so$seurat_clusters)
 # < provide So object at this point>
 

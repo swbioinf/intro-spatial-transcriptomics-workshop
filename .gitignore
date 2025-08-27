@@ -59,3 +59,8 @@ data/
 raw_data/
 raw_data/*
 raw_data
+*.tar
+
+# vim
+*.swo
+*.swp
