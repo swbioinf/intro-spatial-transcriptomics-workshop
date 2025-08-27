@@ -30,7 +30,7 @@ source("scripts/LoadNanostring_edited_function.R")
 
 
 ##  config
-
+# TODO: explain choices
 max_pc_negs        <- 1.5
 max_avg_neg        <- 0.5
 
@@ -45,7 +45,10 @@ so <- LoadNanostring(sample_path,
                      assay='RNA',
                      fov="GSM7473682_HC_a")
 
-#NB: This default method drops most of the metatdata in the seurat object.
+# Explain input data, what it represents, how it will be used for analysis.
+# Define terms like centroids, segments, fov
+
+#NB: This default method drops most of the metadata in the seurat object.
 # e.g. what fov is each cell a member of? is missing.
 # So we won't actually Use it.
 # Trying to get this fixed in seurat.
@@ -134,8 +137,11 @@ so_sample
 
 # seurat fov = slide
 # bruker cosmx fov = region on slide
+# Note: layer and FOVs are now only for a single sample, HC_a
 
-ImageDimPlot(so.sample,
+# Visualise clusters in a spatial context
+# Explain: key arguments
+ImageDimPlot(so_sample,
              fov          = "GSM7473682_HC_a",
              axes = TRUE,
              border.color = "white", border.size = 0.1,
@@ -204,7 +210,7 @@ min_count_per_cell <- 100
 ## Negative probe counts
 
 #Negative counts per cell
-#Negatvive probes are in a separate assay.
+#Negative probes are in a separate assay.
 # This is a matter of preference, you could keep them with the rest.
 so[['RNA']]
 so[['negprobes']]
@@ -236,14 +242,12 @@ ggplot(so_raw@meta.data, aes(y=pc_neg, x=nCount_RNA)) +
 
 ### Apply a filter
 
-# Should we apply a filter? High stringnec makes the analysis 'easier', but you get gaps spatially.
+# Should we apply a filter? High stringency makes the analysis 'easier', but you get gaps spatially.
 
 dim(so.raw)
 so <- so.raw[ ,so.raw$nCount_RNA >= min_count_per_cell & so.raw$pc_neg <= max_pc_neg ]
 dim(so)
 table(so@meta.data$orig.ident)
-
-
 
 # Basic preprocessing
 # Split layers out again
@@ -256,6 +260,8 @@ so <- NormalizeData(so)
 ## Do per sample to mimic paper approach somewhat.
 so <- FindVariableFeatures(so, nfeatures = 200)
 VariableFeaturePlot(so)
+
+# Explain: Each point represents a gene, red = HVGs selected
 
 so <- ScaleData(so) # Just 200 variable features
 so <- RunPCA(so, features = VariableFeatures(so))
@@ -311,6 +317,7 @@ if (! file.exists(seurat_file_01_preprocessed_subset)) {
 DimPlot(so, group.by='seurat_clusters')
 DimPlot(so, group.by='orig.ident')
 
+# Cell counts per cluster per sample
 table(so$orig.ident, so$seurat_clusters)
 # < provide So object at this point>
 
