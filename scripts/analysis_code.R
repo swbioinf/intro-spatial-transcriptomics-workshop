@@ -50,15 +50,31 @@ so <- LoadNanostring(sample_path,
 # So we won't actually Use it.
 # Trying to get this fixed in seurat.
 
-#so@meta.data
+# Inspect Seurat object
+# Explain that Seurat objects are a data structure to store the count data,
+# and additional metadata. As the data is very high dimensional, it is important
+# that connected information about cells, samples, and data stay connected
+# during data analysis
+so
+
+#An object of class Seurat
+#999 features across 42045 samples within 1 assay
+#Active assay: RNA (999 features, 0 variable features)
+#1 layer present: counts
+#1 spatial field of view present: GSM7473682_HC_a
+
+# Explain: what does each thing define? e.g. features, layers, fovs
+
+# Inspect metadata
+head(so@meta.data)
 #orig.ident nCount_RNA nFeature_RNA
 #1_1   SeuratProject        368          189
 #2_1   SeuratProject        810          286
 #3_1   SeuratProject        119           74
-so$tissue_sample   <- "HC_A"
-so$group           <- "HC"
-so$condition       <- "Healthy Controls"
 
+# Add metadata. Needed to compare
+so$condition       <- "Healthy Controls"
+so$tissue_sample   <- "HC_A" # denotes healthy control, from sample A
 
 ################################################################################
 # Load muliple samples
@@ -66,20 +82,49 @@ so$condition       <- "Healthy Controls"
 
 
 ################################################################################
-# Load a subsampled dataset for working with
+# Load a subsampled dataset for working with multiple samples
 # That takes too long, so loading a preloaded object
+# Add figure that represents the subset
 
-so.raw <- readRDS(seurat_file_00_raw_subset)
+# Explain: Subset data, how many samples and conditions. Represent graphically
+# e.g. three healthy controls (HC) vs. three CD
+so_raw <- readRDS(seurat_file_00_raw_subset)
+so_raw
+
+# An object of class Seurat
+# 999 features across 68624 samples within 2 assays
+# Active assay: RNA (980 features, 0 variable features)
+# 6 layers present: counts.GSM7473682_HC_a, counts.GSM7473683_HC_b, counts.GSM7473684_HC_c, counts.GSM7473688_CD_a, counts.GSM7473689_CD_b, counts.GSM7473690_CD_c
+# 1 other assay present: negprobes
+# 6 spatial fields of view present: GSM7473682_HC_a GSM7473683_HC_b GSM7473684_HC_c GSM7473688_CD_a GSM7473689_CD_b GSM7473690_CD_c
+# Explain: difference between this SO vs. previous one (`so`)
+#     - layers represent the different samples and their condition
+#     - RNA and negprobes assays and what data they represent
+
+# Display metadata columns
+names(so_raw@meta.data)
+
+# There is a lot of information. Use something like skimr for EDA and to
+# understand each field
+skimr::skim(so_raw@meta.data)
+
+# Explain: number of rows (68624) represent data points (?)
+# Identify important metadata columns and discuss what they mean
 
 ################################################################################
 # Spatial plot
 ################################################################################
 
-# Subset a seurat objecct by cells, just like a table.
-# so[features, cells]
-so.sample <- so.raw[, so.raw$tissue_sample=="HC_a"]
+# View the tissue_sample metadata to prepare for the next step
+table(so_raw$tissue_sample)
 
-#so.sample
+# Subset a seurat object by cells, just like a table.
+# so[features, cells]
+so_sample <- so_raw[, so_raw$tissue_sample=="HC_a"]
+
+# Some warnings with not validating FOV, centroid, and seurat objects
+
+so_sample
 #An object of class Seurat
 #999 features across 8795 samples within 2 assays
 #Active assay: RNA (980 features, 0 variable features)
@@ -178,10 +223,10 @@ ggplot(so.raw@meta.data, aes(y=avg_neg, x=nCount_RNA)) +
   theme_bw() +
   ggtitle("Negative probes vs counts")
 
-ggplot(so.raw@meta.data, aes(y=pc_neg, x=nCount_RNA)) +
+ggplot(so_raw@meta.data, aes(y=pc_neg, x=nCount_RNA)) +
+  geom_hline(yintercept = max_pc_neg, lty=3, colour = "red") +
+  geom_vline(xintercept = min_count_per_cell, lty=3, colour = "red") +
   geom_point(pch=3, alpha=0.1) +
-  geom_hline(yintercept = max_pc_neg, lty=3) +
-  geom_vline(xintercept = min_count_per_cell, lty=3) +
   scale_x_log10() +
   theme_bw() +
   ggtitle("Negative probes vs counts")
