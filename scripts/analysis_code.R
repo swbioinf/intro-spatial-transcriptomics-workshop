@@ -152,7 +152,7 @@ ImageDimPlot(so_sample,
 
 
 # Also we have 'centroids' - whats the difference?
-ImageDimPlot(so.sample,
+ImageDimPlot(so_sample,
              fov          = "GSM7473682_HC_a",
              axes = TRUE,
              border.color = "white", border.size = 0.1,
@@ -163,7 +163,7 @@ ImageDimPlot(so.sample,
 
 
 #And and individual gene
-ImageDimPlot(so.sample,
+ImageDimPlot(so_sample,
              fov          = "GSM7473682_HC_a",
              axes = TRUE,
              border.color = "white", border.size = 0.1,
@@ -186,17 +186,16 @@ ImageDimPlot(so.sample,
 # SOme operations only work on a single
 # Join layers / split layers.
 # tHis is useful for later steps, but annoying now.
-so.raw <- JoinLayers(so.raw)
-GetAssayData(so.raw, assay = "RNA", layer = "counts")
+so_raw <- JoinLayers(so_raw)
+GetAssayData(so_raw, assay = "RNA", layer = "counts")
 
 
 ################################################################################
 # QC + Filtering
 ################################################################################
 
-
 # Total counts per cell
-ggplot(so.raw@meta.data, aes(x=nCount_RNA, col=orig.ident)) +
+ggplot(so_raw@meta.data, aes(x=nCount_RNA, col=orig.ident)) +
   geom_density() +
   scale_x_log10() +
   theme_bw() +
@@ -215,15 +214,15 @@ min_count_per_cell <- 100
 so[['RNA']]
 so[['negprobes']]
 
-so.raw$pc_neg <-  ( so.raw$nCount_negprobes / (so.raw$nCount_RNA + so.raw$nCount_negprobes) ) * 100
-so.raw[["negprobes"]] <- JoinLayers(so.raw[["negprobes"]]) # For caluclating these, need to have the negprobes merged
-so.raw$avg_neg <-  colMeans(so.raw[["negprobes"]])   # only defined firsts sample.
+so_raw$pc_neg <-  ( so_raw$nCount_negprobes / (so_raw$nCount_RNA + so_raw$nCount_negprobes) ) * 100
+so_raw[["negprobes"]] <- JoinLayers(so_raw[["negprobes"]]) # For caluclating these, need to have the negprobes merged
+so_raw$avg_neg <-  colMeans(so_raw[["negprobes"]])   # only defined firsts sample.
 
 
 # Discuss difference with Xenium - xenium lower counts, lower background.
 max_pc_neg         <- 5
 
-ggplot(so.raw@meta.data, aes(y=avg_neg, x=nCount_RNA)) +
+ggplot(so_raw@meta.data, aes(y=avg_neg, x=nCount_RNA)) +
   geom_point(pch=3, alpha=0.1) +
   scale_x_log10() +
   theme_bw() +
@@ -244,8 +243,8 @@ ggplot(so_raw@meta.data, aes(y=pc_neg, x=nCount_RNA)) +
 
 # Should we apply a filter? High stringency makes the analysis 'easier', but you get gaps spatially.
 
-dim(so.raw)
-so <- so.raw[ ,so.raw$nCount_RNA >= min_count_per_cell & so.raw$pc_neg <= max_pc_neg ]
+dim(so_raw)
+so <- so_raw[ ,so_raw$nCount_RNA >= min_count_per_cell & so_raw$pc_neg <= max_pc_neg ]
 dim(so)
 table(so@meta.data$orig.ident)
 
