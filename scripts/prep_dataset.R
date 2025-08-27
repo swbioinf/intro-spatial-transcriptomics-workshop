@@ -2,16 +2,11 @@
 library(Seurat)
 library(SeuratObject)
 library(tidyverse)
-
-
-## Paths
-data_dir              <- file.path("data/")
-raw_data_dir          <- file.path("raw_data/")
-
+library(here)
 
 # Full size data
-seurat_file_00_raw    <- file.path(data_dir, "GSE234713_CosMx_IBD_seurat_00_raw.RDS")
-seurat_file_01_loaded <- file.path(data_dir, "GSE234713_CosMx_IBD_seurat_01_loaded.RDS")
+seurat_file_00_raw    <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw.RDS")
+seurat_file_01_loaded <- here("data", "GSE234713_CosMx_IBD_seurat_01_loaded.RDS")
 
 # Subsampled data
 seurat_file_00_raw_subset <- file.path(data_dir, "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")

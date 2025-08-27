@@ -12,20 +12,13 @@ library(remotes) # to install presto
 # patchwork, DT, limma, edgeR
 # others tba
 
-
-
-
-## Paths
-data_dir              <- file.path("data/")
-raw_data_dir          <- file.path("raw_data/")
-
 # Full size data
-seurat_file_00_raw    <- file.path(data_dir, "GSE234713_CosMx_IBD_seurat_00_raw.RDS")
+seurat_file_00_raw    <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw.RDS")
 
 # Subsampled data
-seurat_file_00_raw_subset          <- file.path(data_dir, "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
-seurat_file_01_preprocessed_subset <- file.path(data_dir, "GSE234713_CosMx_IBD_seurat_01_preprocessed_subsampled.RDS")
-seurat_file_02_labelled_subset     <- file.path(data_dir, "GSE234713_CosMx_IBD_seurat_02_labelled_subsampled.RDS")
+seurat_file_00_raw_subset          <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
+seurat_file_01_preprocessed_subset <- here("data", "GSE234713_CosMx_IBD_seurat_01_preprocessed_subsampled.RDS")
+#seurat_file_02_labelled_subset     <- here("data", "GSE234713_CosMx_IBD_seurat_02_labelled_subsampled.RDS")
 
 ## Edited seurat load funcionts
 
@@ -47,7 +40,7 @@ sample_codes <- c(HC="Healthy controls",UC="Ulcerative colitis",CD="Crohn's dise
 ################################################################################
 
 ## Load one sample?
-sample_path = file.path(raw_data_dir, "GSM7473682_HC_a")
+sample_path = here("raw_data", "GSM7473682_HC_a")
 so <- LoadNanostring(sample_path,
                      assay='RNA',
                      fov="GSM7473682_HC_a")
