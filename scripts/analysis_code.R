@@ -211,8 +211,8 @@ min_count_per_cell <- 100
 #Negative counts per cell
 #Negative probes are in a separate assay.
 # This is a matter of preference, you could keep them with the rest.
-so[['RNA']]
-so[['negprobes']]
+so_raw[['RNA']]
+so_raw[['negprobes']]
 
 so_raw$pc_neg <-  ( so_raw$nCount_negprobes / (so_raw$nCount_RNA + so_raw$nCount_negprobes) ) * 100
 so_raw[["negprobes"]] <- JoinLayers(so_raw[["negprobes"]]) # For caluclating these, need to have the negprobes merged
