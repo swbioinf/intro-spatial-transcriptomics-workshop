@@ -2,8 +2,13 @@
 library(Seurat)
 library(SeuratObject)
 library(tidyverse)
-# requred: sf, harmony,  presto
-# also:
+library(here)
+library(sf)
+library(harmony)
+library(remotes) # to install presto
+# remotes::install_github("immunogenomics/presto")
+
+# required:
 # patchwork, DT, limma, edgeR
 # others tba
 
