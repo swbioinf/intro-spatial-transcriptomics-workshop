@@ -52,10 +52,11 @@
 <li><a class="" href="qc.html"><span class="header-section-number">7</span> QC</a></li>
 <li><a class="" href="basic-visualisation.html"><span class="header-section-number">8</span> Basic visualisation</a></li>
 <li><a class="" href="reduce-dimensionality.html"><span class="header-section-number">9</span> Reduce dimensionality</a></li>
-<li><a class="" href="clustering.html"><span class="header-section-number">10</span> Clustering</a></li>
-<li><a class="" href="analysis-example.html"><span class="header-section-number">11</span> Analysis example</a></li>
-<li><a class="" href="next-steps.html"><span class="header-section-number">12</span> Next steps</a></li>
-<li><a class="" href="resources.html"><span class="header-section-number">13</span> Resources</a></li>
+<li><a class="" href="batch-correction.html"><span class="header-section-number">10</span> Batch Correction</a></li>
+<li><a class="" href="clustering.html"><span class="header-section-number">11</span> Clustering</a></li>
+<li><a class="" href="analysis-example.html"><span class="header-section-number">12</span> Analysis example</a></li>
+<li><a class="" href="next-steps.html"><span class="header-section-number">13</span> Next steps</a></li>
+<li><a class="" href="resources.html"><span class="header-section-number">14</span> Resources</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
 
@@ -123,13 +124,13 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://satijalab.github.io/seurat-object/">SeuratObject</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code>## ── Attaching core tidyverse packages ─── tidyverse 2.0.0 ──
+<pre><code>## ── Attaching core tidyverse packages ─────────────────
 ## ✔ dplyr     1.1.4     ✔ readr     2.1.5
 ## ✔ forcats   1.0.0     ✔ stringr   1.5.1
 ## ✔ ggplot2   3.5.2     ✔ tibble    3.3.0
 ## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
 ## ✔ purrr     1.1.0</code></pre>
-<pre><code>## ── Conflicts ───────────────────── tidyverse_conflicts() ──
+<pre><code>## ── Conflicts ──────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()
 ## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
@@ -180,7 +181,7 @@ study has one sample per slide (easy!), but there are typically more.</p>
 </h3>
 <p>This dataset is a subset of the experimenal data - only the first 5 fov views of each, and only the CD and HC sample groups.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">so.raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>, <span class="st">"GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">so_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>, <span class="st">"GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 
 </div>
 </div>
@@ -216,7 +217,7 @@ study has one sample per slide (easy!), but there are typically more.</p>
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-08-08.</p>
+    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-08-28.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

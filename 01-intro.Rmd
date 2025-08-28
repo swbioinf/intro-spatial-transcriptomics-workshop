@@ -9,3 +9,21 @@ Check everyone can login to servers (10m)
 Link to intro slides.
 
 * Workshop style - interactive
+
+
+
+
+**Schedule**
+
+| Day   | Topic                    |
+|-------|--------------------------|
+| Day 1 | Introduction             |
+|       | Data Loading             |
+|       | QC & Filtering           |
+|       | Normalisation            |
+| Day 2 | Dimensional reduction    |
+|       | Batch correction         |
+|       | Clustering and celltypes |
+|       | Differential expression  |
+
+

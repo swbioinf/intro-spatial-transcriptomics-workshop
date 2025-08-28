@@ -4,15 +4,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 11 Analysis example | Intro to Spatial Transcriptomics</title>
+<title>Chapter 12 Analysis example | Intro to Spatial Transcriptomics</title>
 <meta name="author" content="">
 <meta name="description" content="Differential expression example Info on other tests Link out directly? https://swbioinf.github.io/spatialsnippets/e_DEPseudobulk_insitu.html NB: I’ll probably update that material to include some...">
 <meta name="generator" content="bookdown 0.42.1 with bs4_book()">
-<meta property="og:title" content="Chapter 11 Analysis example | Intro to Spatial Transcriptomics">
+<meta property="og:title" content="Chapter 12 Analysis example | Intro to Spatial Transcriptomics">
 <meta property="og:type" content="book">
 <meta property="og:description" content="Differential expression example Info on other tests Link out directly? https://swbioinf.github.io/spatialsnippets/e_DEPseudobulk_insitu.html NB: I’ll probably update that material to include some...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 11 Analysis example | Intro to Spatial Transcriptomics">
+<meta name="twitter:title" content="Chapter 12 Analysis example | Intro to Spatial Transcriptomics">
 <meta name="twitter:description" content="Differential expression example Info on other tests Link out directly? https://swbioinf.github.io/spatialsnippets/e_DEPseudobulk_insitu.html NB: I’ll probably update that material to include some...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
@@ -52,10 +52,11 @@
 <li><a class="" href="qc.html"><span class="header-section-number">7</span> QC</a></li>
 <li><a class="" href="basic-visualisation.html"><span class="header-section-number">8</span> Basic visualisation</a></li>
 <li><a class="" href="reduce-dimensionality.html"><span class="header-section-number">9</span> Reduce dimensionality</a></li>
-<li><a class="" href="clustering.html"><span class="header-section-number">10</span> Clustering</a></li>
-<li><a class="active" href="analysis-example.html"><span class="header-section-number">11</span> Analysis example</a></li>
-<li><a class="" href="next-steps.html"><span class="header-section-number">12</span> Next steps</a></li>
-<li><a class="" href="resources.html"><span class="header-section-number">13</span> Resources</a></li>
+<li><a class="" href="batch-correction.html"><span class="header-section-number">10</span> Batch Correction</a></li>
+<li><a class="" href="clustering.html"><span class="header-section-number">11</span> Clustering</a></li>
+<li><a class="active" href="analysis-example.html"><span class="header-section-number">12</span> Analysis example</a></li>
+<li><a class="" href="next-steps.html"><span class="header-section-number">13</span> Next steps</a></li>
+<li><a class="" href="resources.html"><span class="header-section-number">14</span> Resources</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
 
@@ -64,9 +65,9 @@
         </div>
       </nav>
 </div>
-  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="analysis-example" class="section level1" number="11">
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="analysis-example" class="section level1" number="12">
 <h1>
-<span class="header-section-number">11</span> Analysis example<a class="anchor" aria-label="anchor" href="#analysis-example"><i class="fas fa-link"></i></a>
+<span class="header-section-number">12</span> Analysis example<a class="anchor" aria-label="anchor" href="#analysis-example"><i class="fas fa-link"></i></a>
 </h1>
 <ul>
 <li><p>Differential expression example</p></li>
@@ -78,11 +79,11 @@
 
 </div>
   <div class="chapter-nav">
-<div class="prev"><a href="clustering.html"><span class="header-section-number">10</span> Clustering</a></div>
-<div class="next"><a href="next-steps.html"><span class="header-section-number">12</span> Next steps</a></div>
+<div class="prev"><a href="clustering.html"><span class="header-section-number">11</span> Clustering</a></div>
+<div class="next"><a href="next-steps.html"><span class="header-section-number">13</span> Next steps</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
-      <ul class="nav navbar-nav"><li><a class="nav-link" href="#analysis-example"><span class="header-section-number">11</span> Analysis example</a></li></ul>
+      <ul class="nav navbar-nav"><li><a class="nav-link" href="#analysis-example"><span class="header-section-number">12</span> Analysis example</a></li></ul>
 
       <div class="book-extra">
         <ul class="list-unstyled">
@@ -98,7 +99,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-08-08.</p>
+    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-08-28.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

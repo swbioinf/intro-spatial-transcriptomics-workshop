@@ -108,7 +108,7 @@ Code example goes here (not run)
 This dataset is a subset of the experimenal data - only the first 5 fov views of each, and only the CD and HC sample groups. 
 
 ```{r eval=FALSE}
-so.raw <- readRDS(file.path(data_dir, "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS"))
+so_raw <- readRDS(file.path(data_dir, "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS"))
 ```
 
 
