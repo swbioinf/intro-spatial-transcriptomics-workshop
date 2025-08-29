@@ -1,7 +1,61 @@
 # Batch Correction
 
 
-* PCA
-* UMAP
+There are regions where the UMAP sees separation by 
+```{r}
+DimPlot(so, group.by='tissue_sample')
+```
 
 
+```{r}
+so <- FindNeighbors(so, dims = 1:num_dims)
+so <- FindClusters(so)  
+```
+
+
+```{r}
+DimPlot(so, group.by='seurat_clusters')
+```
+
+
+```{r}
+so <- FindClusters(so, resolution = 0.2)  
+```
+
+```{r}
+DimPlot(so, group.by='seurat_clusters')
+table(so$orig.ident, so$seurat_clusters)
+```
+
+We can apply batch correction
+
+
+
+This is a step that takes some time to run. Do not run the code below;
+```{r eval=FALSE}
+  # https://satijalab.org/seurat/articles/seurat5_integration
+  # Slow?
+  so <- IntegrateLayers(so, method = HarmonyIntegration, orig.reduction = "pca", new.reduction = "harmony")
+  so <- RunUMAP(so, dims=1:num_dims, reduction = 'harmony')
+
+  DimPlot(so, group.by='tissue_sample')
+
+  so <- FindNeighbors(so, reduction = "harmony", dims = 1:num_dims)
+  so <- FindClusters(so, resolution = 0.2)
+  # don't talk about optimisation of clusters, point people at single cell resources.
+}
+```
+
+Instead, load up a version of the object with theis data.
+
+```{r}
+library(here)
+seurat_file_01_preprocessed_subset <- here("data", "GSE234713_CosMx_IBD_seurat_01_preprocessed_subsampled.RDS")
+so <- readRDS(seurat_file_01_preprocessed_subset)
+```
+
+
+```{r}
+DimPlot(so, group.by='seurat_clusters')
+DimPlot(so, group.by='orig.ident')
+```

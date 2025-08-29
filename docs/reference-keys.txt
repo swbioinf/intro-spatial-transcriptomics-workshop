@@ -12,6 +12,8 @@ load-the-workshop-data
 qc
 basic-visualisation
 reduce-dimensionality
+normalisation
+find-highly-variable-genes.
 batch-correction
 clustering
 analysis-example

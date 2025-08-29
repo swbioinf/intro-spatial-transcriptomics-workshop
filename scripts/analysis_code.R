@@ -248,6 +248,10 @@ so <- so_raw[ ,so_raw$nCount_RNA >= min_count_per_cell & so_raw$pc_neg <= max_pc
 dim(so)
 table(so@meta.data$orig.ident)
 
+# for setting up
+#saveRDS(so, "data/GSE234713_CosMx_IBD_seurat_02_filtered_subset.RDS" )
+
+
 # Basic preprocessing
 # Split layers out again
 # https://satijalab.org/seurat/articles/seurat5_integration

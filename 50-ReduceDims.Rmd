@@ -1,7 +1,92 @@
 # Reduce dimensionality
 
 
-* PCA
-* UMAP
+```{r echo=FALSE, results='hide', warnings=FALSE}
+# Hidden: load up filtered dataset for testsing.
+so <- readRDS("data/GSE234713_CosMx_IBD_seurat_02_filtered_subset.RDS" )
+```
+
+
+## Normalisation
+
+```{r}
+# Basic preprocessing
+# Split layers out again
+# https://satijalab.org/seurat/articles/seurat5_integration
+so <- split(so, f = so$orig.ident)
+
+# Run through preprocessing
+so <- NormalizeData(so)
+```
+
+## Find Highly variable genes.
+
+
+Explain: Each point represents a gene, red = HVGs selected
+```{r}
+so <- FindVariableFeatures(so, nfeatures = 200)
+VariableFeaturePlot(so)
+```
+
+
+```{r}
+so <- ScaleData(so) # Just 200 variable features
+so <- RunPCA(so, features = VariableFeatures(so))
+```
+
+
+```{r}
+DimPlot(so, reduction = "pca", group.by='tissue_sample')
+DimPlot(so, reduction = "pca", group.by='tissue_sample', dims=c(3,4))
+```
+```{r}
+ElbowPlot(so)
+num_dims <- 15
+
+```
+
+
+
+Build a UMAP
+```{r}
+so <- RunUMAP(so, dims=1:num_dims)
+```
+
+
+
+And plot it - DimPlot will plot a UMAP if it is found, but 'umap' (or 'pca') can be explictly specified.
+```{r}
+DimPlot(so, group.by='tissue_sample') # If umap exists, umap.
+# DimPlot(so, group.by='tissue_sample', reduction = 'umap')  # ths same
+```
+
+
+
+
+Now is the time to plot everything;
+
+Categorical factors with 'DimPlot'
+
+```{r}
+DimPlot(so, group.by='tissue_sample')
+DimPlot(so, group.by='condition')
+DimPlot(so, group.by='tissue_sample', split.by='condition')
+```
+And anything continuous with 'FeaturePlot
+
+```{r}
+FeaturePlot(so, 'nCount_RNA') 
+FeaturePlot(so, 'nCount_negprobes') 
+FeaturePlot(so, 'pc_neg') 
+```
+
+Including genes - can pass severable at a time and 
+```{r}
+FeaturePlot(so, c('CD74','PIGR','IGHA1','VWF'), ncol=2 )
+```
+
+
+
+
 
 
