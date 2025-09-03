@@ -1,5 +1,10 @@
-# Input Data
+# Our input data
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Overview
 
 What does the data look like when you get it? Examine raw data.
 
@@ -8,11 +13,9 @@ What does the data look like when you get it? Examine raw data.
 * Brief explanation of different data structures 
 * Sample annotation: Applying sample names to individual slides. Mention difficulty of multiple samples per slide (can we recommend some approach?)
 
-=====
-
+## How the data was generated
 
 ## The raw data
-
 
 For a cosmx SMI slide (like this experiment).
 
@@ -28,89 +31,226 @@ For a cosmx SMI slide (like this experiment).
   * https://github.com/Nanostring-Biostats/CosMxDACustomModules/blob/main/Export/CosMxDAExportSetup.docx  
   
 
-
 For a Xenium slide there is just the one typical output directory; they discuss the formats in the section on [data archiving](https://www.10xgenomics.com/support/software/xenium-onboard-analysis/latest/analysis/xoa-output-archive-data), but again, software tools take the directory as a whole.
 
-
+What is a FoV?
 
 ## Loading the data
 
-
 ### Load one sample from raw data
 
-Load libraries, and paths
-```{r}
+Load libraries required for this step.
+
+```{r echo=F, warning=F, results=F, warning=F}
 library(Seurat)
 library(SeuratObject)
 library(tidyverse)
-
-
-## Paths
-data_dir              <- file.path("data/")
-raw_data_dir          <- file.path("raw_data/")
-
+library(here)
 ```
 
+To load the data, we can use the `Seurat::LoadNanostring()` function. However,
+this default method drops most of the metadata in the Seurat object. For example,
+what field of view (FoV) each cell a member of is missing. 
 
-The code to load one sample should be as follows. 
-```{r eval=FALSE}
-## Load one sample?
-sample_path = file.path(raw_data_dir, "GSM7473682_HC_a")
-so <- LoadNanostring(sample_path,
-                     assay='RNA',
-                     fov="GSM7473682_HC_a")
+We provide an alternate function. In time, this should be fixed within Seurat.
+See comments [here](https://github.com/satijalab/seurat/discussions/9261)
 
-
-# HOWEVER 
-# This default method drops most of the metatdata in the seurat object.
-# e.g. what fov is each cell a member of? is missing.
-
-#so@meta.data
-#orig.ident nCount_RNA nFeature_RNA
-#1_1   SeuratProject        368          189
-#2_1   SeuratProject        810          286
-#3_1   SeuratProject        119           74
-
-# An alternative function is here;
-# In time, this should be fixed within seruat
-# See comments here
-#https://github.com/satijalab/seurat/discussions/9261
-source("scripts/LoadNanostring_edited_function.R")
-
-
-
-
+```{r eval=F}
+source(here("scripts/LoadNanostring_edited_function.R"))
+sample_path <- here("raw_data", "GSM7473682_HC_a")
+so <- LoadNanostring(sample_path, assay='RNA', fov="GSM7473682_HC_a")
 ```
 
+:::{.callout-info}
+#### Why Seurat?
 
+Seurat objects are a data structure to store the count data and additional metadata.
+As the data is very high dimensional, it is important
+that connected information about cells, samples, and data stay connected
+during data analysis.
 
+Flexibility across single-cell transcriptomics.
+:::
 
-Each sample should be annotated with its experimental details. This particular
-study has one sample per slide (easy!), but there are typically more.
+Display the Seurat object.
 
-```{r eval=FALSE}
-so$tissue_sample   <- "HC_A"
-so$group           <- "HC"
+```{r eval=F}
+so
+```
+
+Display the metadata
+
+```{r}
+head(so@meta.data)
+```
+
+| Column         | Definition                                 |
+| -------------- | ------------------------------------------ |
+| Row name       |                                            |
+| `orig.ident`   |                                            |
+| `nCount RNA`   | The number of sequenced transcripts        |
+| `nFeature_RNA` | The number of transcripts mapped to a gene |
+
+Each sample should be annotated with its experimental details. This is important
+so we know which groups to compare downstream, i.e. case vs. control comparison.
+This particular study has one sample per slide (easy!), but there are typically
+more. 
+
+```{r}
 so$condition       <- "Healthy Controls"
+so$tissue_sample   <- "HC_A" # denotes healthy control, from sample A
 ```
 
-
+Explain input data, what it represents, how it will be used for analysis.
+Define terms like centroids, segments, fov
 
 ### Load all samples from raw data
 
 Code example goes here (not run)
 
-
-
 ### Load the workshop data
 
+Load a subsampled dataset for working with multiple samples
+That takes too long, so loading a preloaded object
+Add figure that represents the subset
 
-This dataset is a subset of the experimenal data - only the first 5 fov views of each, and only the CD and HC sample groups. 
+Explain: Subset data, how many samples and conditions. Represent graphically
+e.g. three healthy controls (HC) vs. three CD
 
-```{r eval=FALSE}
-so_raw <- readRDS(file.path(data_dir, "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS"))
+```{r}
+so_path  <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
+so <- readRDS(so_path)
 ```
 
+```{r}
+so
+```
 
+| Term                     | Definition |
+| ------------------------ | ---------- |
+| `features`               |            |
+| `samples`                |            |
+| `assay`                  |            |
+| `layer`                  |            |
+| `spatial fields of view` |            |
 
+Explain: difference between this SO vs. previous one (`so`)
+    - layers represent the different samples and their condition
+    - RNA and negprobes assays and what data they represent
+
+Display the metadata columns:
+
+```{r}
+names(so@meta.data)
+```
+
+There is a lot of information. Use something like skimr for EDA and to
+understand each field at a glance
+
+```{r}
+skimr::skim(so@meta.data)
+```
+
+Explain: number of rows (68624) represent data points (?)
+Identify important metadata columns and discuss what they mean
+
+This dataset is a subset of the experimental data - only the first 5 fovs of
+each, and only the CD and HC sample groups. 
+
+View the tissue_sample metadata to prepare for the next step
+
+```{r}
+table(so$tissue_sample)
+```
+
+Subset one of the tissue samples `HC_a` for plotting.
+
+```{r}
+so_hca <- so[, so$tissue_sample=="HC_a"]
+```
+
+Some warnings with not validating FOV, centroid, and seurat objects - are these
+important?
+
+```{r}
+so_hca
+```
+
+seurat fov = slide
+bruker cosmx fov = region on slide
+
+Note: layer and FOVs are now only for a single sample, HC_a
+
+Visualise clusters in a spatial context
+
+Explain: key arguments
+
+By segments
+
+```{r}
+ImageDimPlot(so_hca,
+             fov = "GSM7473682_HC_a",
+             axes = TRUE,
+             border.color = "white", 
+             border.size = 0.1,
+             group.by = "fov_name",
+             boundaries = "segmentation",
+             crop = TRUE,
+             nmols = 10000)
+```
+
+By centroids
+
+```{r}
+ImageDimPlot(so_hca,
+             fov = "GSM7473682_HC_a",
+             axes = TRUE,
+             border.color = "white", 
+             border.size = 0.1,
+             group.by = "fov_name",
+             boundaries = "centroids",
+             crop = TRUE,
+             nmols = 10000)
+```
+
+By an individual gene.
+
+Do not need fov_name this time
+
+```{r}
+#And and individual gene
+ImageDimPlot(so_hca,
+             fov = "GSM7473682_HC_a",
+             axes = TRUE,
+             border.color = "white",
+             border.size = 0.1,
+             #group.by = "fov_name",
+             boundaries   = "segmentation",
+             molecules = "S100A6",
+             crop = TRUE,
+             nmols = 10000)
+```
+
+Where are my counts?
+
+```{r eval=F}
+GetAssayData(so, assay = "RNA", layer = "counts")
+```
+
+Oh no an error:
+
+``` 
+#Error in `GetAssayData()` at SeuratObject/R/seurat.R:1901:3:
+#  ! GetAssayData doesn't work for multiple layers in v5 assay.
+```
+
+Seurat *5* vs Seurat 4. Multiple assays fovs.
+SOme operations only work on a single
+Join layers / split layers.
+tHis is useful for later steps, but annoying now.
+
+```{r}
+so <- JoinLayers(so)
+GetAssayData(so, assay = "RNA", layer = "counts")
+```
 
