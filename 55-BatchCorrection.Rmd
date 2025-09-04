@@ -1,37 +1,36 @@
 # Batch Correction
 
 
-There are regions where the UMAP sees separation by 
+There are regions in the UMAP where we can see some separation by sample. This is common in spatial data, especially when working with human data.
+
+(In fact, this example isn't too bad, but for the purposes of this work, we will go through the process of batch correction).
+
+
 ```{r}
 DimPlot(so, group.by='tissue_sample')
 ```
 
-
-```{r}
-so <- FindNeighbors(so, dims = 1:num_dims)
-so <- FindClusters(so)  
+This becomes more obvious if we split the plot by sample as well;
+```{r fig.width=12, fig.height=8}
+DimPlot(so, group.by='tissue_sample', split.by = 'tissue_sample', ncol = 3)
 ```
 
 
-```{r}
-DimPlot(so, group.by='seurat_clusters')
-```
 
-
-```{r}
-so <- FindClusters(so, resolution = 0.2)  
-```
-
-```{r}
-DimPlot(so, group.by='seurat_clusters')
-table(so$orig.ident, so$seurat_clusters)
-```
-
-We can apply batch correction
+If were were to continue on to cell clustering at analysis at this point, we might find that we build clusters around individual samples. We instead want to make cell clusters that form around cell 'types' (or transcriptionallly similar cell states) across multiple samples, which can be matched and compared across experimental groups. N
 
 
 
-This is a step that takes some time to run. Do not run the code below;
+We can apply a *batch correction* or *integration* method to adjust our principal components to deemphasise the betweeen-sample effect. Seurat implements several such methods, and has a full ['Introduction to scRNA-seq integration' vignette ](https://satijalab.org/seurat/articles/integration_introduction). We will use the 'harmony' method, from  Korsunsky et al 2019: https://www.nature.com/articles/s41592-019-0619-0
+
+
+Its worth noting that these same methods can be applied to combine data from multiple experiments (e.g. public data), or even technologies!
+
+
+This is one of the most computationally intensive steps of the analysis. It can take hours to run and use many Gb of RAM, scaling with the size of your experiment. 
+
+
+This is the code to the integration and generate a new UMAP. Do not run this code today!
 ```{r eval=FALSE}
   # https://satijalab.org/seurat/articles/seurat5_integration
   # Slow?
@@ -40,8 +39,10 @@ This is a step that takes some time to run. Do not run the code below;
 
   DimPlot(so, group.by='tissue_sample')
 
-  so <- FindNeighbors(so, reduction = "harmony", dims = 1:num_dims)
-  so <- FindClusters(so, resolution = 0.2)
+  
+  ## TODO Remove clustering from this section, update object
+  #so <- FindNeighbors(so, reduction = "harmony", dims = 1:num_dims)
+  #so <- FindClusters(so, resolution = 0.2)
   # don't talk about optimisation of clusters, point people at single cell resources.
 }
 ```
@@ -49,13 +50,28 @@ This is a step that takes some time to run. Do not run the code below;
 Instead, load up a version of the object with theis data.
 
 ```{r}
-library(here)
 seurat_file_01_preprocessed_subset <- here("data", "GSE234713_CosMx_IBD_seurat_01_preprocessed_subsampled.RDS")
 so <- readRDS(seurat_file_01_preprocessed_subset)
 ```
 
 
+Looking in the summary of the seurat object we see 3x dimensional reductions:
+
+* **pca** : Our original principal components, with no batch correction.
+* **harmony** : The harmony output, values like the PCA, but adjusted for batch correction.
+* **umap** : Our new umap which was based on harmony (because we passed *reduction = 'harmony'* to RunUMAP). This overwrote the old UMAP.
+
 ```{r}
-DimPlot(so, group.by='seurat_clusters')
+so
+```
+
+
+
+When plotting the new UMAP, the samples are move overlaid, though not perfectly so.
+
+```{r}
 DimPlot(so, group.by='orig.ident')
+```
+```{r fig.width=12, fig.height=8}
+DimPlot(so, group.by='tissue_sample', split.by = 'tissue_sample', ncol = 3)
 ```

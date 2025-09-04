@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Chapter 10 Batch Correction | Intro to Spatial Transcriptomics</title>
 <meta name="author" content="">
-<meta name="description" content="There are regions where the UMAP sees separation by DimPlot(so, group.by='tissue_sample') so &lt;- FindNeighbors(so, dims = 1:num_dims) ## Computing nearest neighbor graph ## Computing SNN so &lt;-...">
+<meta name="description" content="There are regions in the UMAP where we can see some separation by sample. This is common in spatial data, especially when working with human data. (In fact, this example isn’t too bad, but for the...">
 <meta name="generator" content="bookdown 0.42.1 with bs4_book()">
 <meta property="og:title" content="Chapter 10 Batch Correction | Intro to Spatial Transcriptomics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="There are regions where the UMAP sees separation by DimPlot(so, group.by='tissue_sample') so &lt;- FindNeighbors(so, dims = 1:num_dims) ## Computing nearest neighbor graph ## Computing SNN so &lt;-...">
+<meta property="og:description" content="There are regions in the UMAP where we can see some separation by sample. This is common in spatial data, especially when working with human data. (In fact, this example isn’t too bad, but for the...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Chapter 10 Batch Correction | Intro to Spatial Transcriptomics">
-<meta name="twitter:description" content="There are regions where the UMAP sees separation by DimPlot(so, group.by='tissue_sample') so &lt;- FindNeighbors(so, dims = 1:num_dims) ## Computing nearest neighbor graph ## Computing SNN so &lt;-...">
+<meta name="twitter:description" content="There are regions in the UMAP where we can see some separation by sample. This is common in spatial data, especially when working with human data. (In fact, this example isn’t too bad, but for the...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.7.0/transition.js"></script><script src="libs/bs3compat-0.7.0/tabs.js"></script><script src="libs/bs3compat-0.7.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
@@ -69,78 +69,62 @@
 <h1>
 <span class="header-section-number">10</span> Batch Correction<a class="anchor" aria-label="anchor" href="#batch-correction"><i class="fas fa-link"></i></a>
 </h1>
-<p>There are regions where the UMAP sees separation by</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<p>There are regions in the UMAP where we can see some separation by sample. This is common in spatial data, especially when working with human data.</p>
+<p>(In fact, this example isn’t too bad, but for the purposes of this work, we will go through the process of batch correction).</p>
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'tissue_sample'</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-17-1.png" width="672"></div>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindNeighbors.html">FindNeighbors</a></span><span class="op">(</span><span class="va">so</span>, dims <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">num_dims</span><span class="op">)</span></span></code></pre></div>
-<pre><code>## Computing nearest neighbor graph</code></pre>
-<pre><code>## Computing SNN</code></pre>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindClusters.html">FindClusters</a></span><span class="op">(</span><span class="va">so</span><span class="op">)</span>  </span></code></pre></div>
-<pre><code>## Modularity Optimizer version 1.3.0 by Ludo Waltman and Nees Jan van Eck
-## 
-## Number of nodes: 50662
-## Number of edges: 1265113
-## 
-## Running Louvain algorithm...
-## Maximum modularity in 10 random starts: 0.8339
-## Number of communities: 15
-## Elapsed time: 32 seconds</code></pre>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'seurat_clusters'</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-19-1.png" width="672"></div>
-<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindClusters.html">FindClusters</a></span><span class="op">(</span><span class="va">so</span>, resolution <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span>  </span></code></pre></div>
-<pre><code>## Modularity Optimizer version 1.3.0 by Ludo Waltman and Nees Jan van Eck
-## 
-## Number of nodes: 50662
-## Number of edges: 1265113
-## 
-## Running Louvain algorithm...
-## Maximum modularity in 10 random starts: 0.9068
-## Number of communities: 6
-## Elapsed time: 35 seconds</code></pre>
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'seurat_clusters'</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-21-1.png" width="672"></div>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">so</span><span class="op">$</span><span class="va">orig.ident</span>, <span class="va">so</span><span class="op">$</span><span class="va">seurat_clusters</span><span class="op">)</span></span></code></pre></div>
-<pre><code>##                  
-##                      0    1    2    3    4    5
-##   GSM7473682_HC_a 1519 1980 1556  367 1159  162
-##   GSM7473683_HC_b 1814 5772 3102  612 2337  136
-##   GSM7473684_HC_c 1099 2132 1260  310  117   54
-##   GSM7473688_CD_a  876 1277 1587  156   84   30
-##   GSM7473689_CD_b 3961    0 1047 6464  852  110
-##   GSM7473690_CD_c 5284 1577  902  297  512  158</code></pre>
-<p>We can apply batch correction</p>
-<p>This is a step that takes some time to run. Do not run the code below;</p>
-<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="batch-correction.html#cb67-1" tabindex="-1"></a>  <span class="co"># https://satijalab.org/seurat/articles/seurat5_integration</span></span>
-<span id="cb67-2"><a href="batch-correction.html#cb67-2" tabindex="-1"></a>  <span class="co"># Slow?</span></span>
-<span id="cb67-3"><a href="batch-correction.html#cb67-3" tabindex="-1"></a>  so <span class="ot">&lt;-</span> <span class="fu">IntegrateLayers</span>(so, <span class="at">method =</span> HarmonyIntegration, <span class="at">orig.reduction =</span> <span class="st">"pca"</span>, <span class="at">new.reduction =</span> <span class="st">"harmony"</span>)</span>
-<span id="cb67-4"><a href="batch-correction.html#cb67-4" tabindex="-1"></a>  so <span class="ot">&lt;-</span> <span class="fu">RunUMAP</span>(so, <span class="at">dims=</span><span class="dv">1</span><span class="sc">:</span>num_dims, <span class="at">reduction =</span> <span class="st">'harmony'</span>)</span>
-<span id="cb67-5"><a href="batch-correction.html#cb67-5" tabindex="-1"></a></span>
-<span id="cb67-6"><a href="batch-correction.html#cb67-6" tabindex="-1"></a>  <span class="fu">DimPlot</span>(so, <span class="at">group.by=</span><span class="st">'tissue_sample'</span>)</span>
-<span id="cb67-7"><a href="batch-correction.html#cb67-7" tabindex="-1"></a></span>
-<span id="cb67-8"><a href="batch-correction.html#cb67-8" tabindex="-1"></a>  so <span class="ot">&lt;-</span> <span class="fu">FindNeighbors</span>(so, <span class="at">reduction =</span> <span class="st">"harmony"</span>, <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span>num_dims)</span>
-<span id="cb67-9"><a href="batch-correction.html#cb67-9" tabindex="-1"></a>  so <span class="ot">&lt;-</span> <span class="fu">FindClusters</span>(so, <span class="at">resolution =</span> <span class="fl">0.2</span>)</span>
-<span id="cb67-10"><a href="batch-correction.html#cb67-10" tabindex="-1"></a>  <span class="co"># don't talk about optimisation of clusters, point people at single cell resources.</span></span>
-<span id="cb67-11"><a href="batch-correction.html#cb67-11" tabindex="-1"></a><span class="er">}</span></span></code></pre></div>
+<p>This becomes more obvious if we split the plot by sample as well;</p>
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'tissue_sample'</span>, split.by <span class="op">=</span> <span class="st">'tissue_sample'</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-18-1.png" width="1152"></div>
+<p>If were were to continue on to cell clustering at analysis at this point, we might find that we build clusters around individual samples. We instead want to make cell clusters that form around cell ‘types’ (or transcriptionallly similar cell states) across multiple samples, which can be matched and compared across experimental groups. N</p>
+<p>We can apply a <em>batch correction</em> or <em>integration</em> method to adjust our principal components to deemphasise the betweeen-sample effect. Seurat implements several such methods, and has a full <a href="https://satijalab.org/seurat/articles/integration_introduction">‘Introduction to scRNA-seq integration’ vignette</a>. We will use the ‘harmony’ method, from Korsunsky et al 2019: <a href="https://www.nature.com/articles/s41592-019-0619-0" class="uri">https://www.nature.com/articles/s41592-019-0619-0</a></p>
+<p>Its worth noting that these same methods can be applied to combine data from multiple experiments (e.g. public data), or even technologies!</p>
+<p>This is one of the most computationally intensive steps of the analysis. It can take hours to run and use many Gb of RAM, scaling with the size of your experiment.</p>
+<p>This is the code to the integration and generate a new UMAP. Do not run this code today!</p>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="batch-correction.html#cb59-1" tabindex="-1"></a>  <span class="co"># https://satijalab.org/seurat/articles/seurat5_integration</span></span>
+<span id="cb59-2"><a href="batch-correction.html#cb59-2" tabindex="-1"></a>  <span class="co"># Slow?</span></span>
+<span id="cb59-3"><a href="batch-correction.html#cb59-3" tabindex="-1"></a>  so <span class="ot">&lt;-</span> <span class="fu">IntegrateLayers</span>(so, <span class="at">method =</span> HarmonyIntegration, <span class="at">orig.reduction =</span> <span class="st">"pca"</span>, <span class="at">new.reduction =</span> <span class="st">"harmony"</span>)</span>
+<span id="cb59-4"><a href="batch-correction.html#cb59-4" tabindex="-1"></a>  so <span class="ot">&lt;-</span> <span class="fu">RunUMAP</span>(so, <span class="at">dims=</span><span class="dv">1</span><span class="sc">:</span>num_dims, <span class="at">reduction =</span> <span class="st">'harmony'</span>)</span>
+<span id="cb59-5"><a href="batch-correction.html#cb59-5" tabindex="-1"></a></span>
+<span id="cb59-6"><a href="batch-correction.html#cb59-6" tabindex="-1"></a>  <span class="fu">DimPlot</span>(so, <span class="at">group.by=</span><span class="st">'tissue_sample'</span>)</span>
+<span id="cb59-7"><a href="batch-correction.html#cb59-7" tabindex="-1"></a></span>
+<span id="cb59-8"><a href="batch-correction.html#cb59-8" tabindex="-1"></a>  </span>
+<span id="cb59-9"><a href="batch-correction.html#cb59-9" tabindex="-1"></a>  <span class="do">## </span><span class="al">TODO</span><span class="do"> Remove clustering from this section, update object</span></span>
+<span id="cb59-10"><a href="batch-correction.html#cb59-10" tabindex="-1"></a>  <span class="co">#so &lt;- FindNeighbors(so, reduction = "harmony", dims = 1:num_dims)</span></span>
+<span id="cb59-11"><a href="batch-correction.html#cb59-11" tabindex="-1"></a>  <span class="co">#so &lt;- FindClusters(so, resolution = 0.2)</span></span>
+<span id="cb59-12"><a href="batch-correction.html#cb59-12" tabindex="-1"></a>  <span class="co"># don't talk about optimisation of clusters, point people at single cell resources.</span></span>
+<span id="cb59-13"><a href="batch-correction.html#cb59-13" tabindex="-1"></a><span class="er">}</span></span></code></pre></div>
 <p>Instead, load up a version of the object with theis data.</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code>## here() starts at /home/s.williams/projects/intro-spatial-transcriptomics-workshop</code></pre>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">seurat_file_01_preprocessed_subset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"GSE234713_CosMx_IBD_seurat_01_preprocessed_subsampled.RDS"</span><span class="op">)</span></span>
 <span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="va">seurat_file_01_preprocessed_subset</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'seurat_clusters'</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-24-1.png" width="672"></div>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<p>Looking in the summary of the seurat object we see 3x dimensional reductions:</p>
+<ul>
+<li>
+<strong>pca</strong> : Our original principal components, with no batch correction.</li>
+<li>
+<strong>harmony</strong> : The harmony output, values like the PCA, but adjusted for batch correction.</li>
+<li>
+<strong>umap</strong> : Our new umap which was based on harmony (because we passed <em>reduction = ‘harmony’</em> to RunUMAP). This overwrote the old UMAP.</li>
+</ul>
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">so</span></span></code></pre></div>
+<pre><code>## An object of class Seurat 
+## 999 features across 50662 samples within 2 assays 
+## Active assay: RNA (980 features, 200 variable features)
+##  13 layers present: counts.GSM7473682_HC_a, counts.GSM7473683_HC_b, counts.GSM7473684_HC_c, counts.GSM7473688_CD_a, counts.GSM7473689_CD_b, counts.GSM7473690_CD_c, data.GSM7473682_HC_a, data.GSM7473683_HC_b, data.GSM7473684_HC_c, data.GSM7473688_CD_a, data.GSM7473689_CD_b, data.GSM7473690_CD_c, scale.data
+##  1 other assay present: negprobes
+##  3 dimensional reductions calculated: pca, harmony, umap
+##  6 spatial fields of view present: GSM7473682_HC_a GSM7473683_HC_b GSM7473684_HC_c GSM7473688_CD_a GSM7473689_CD_b GSM7473690_CD_c</code></pre>
+<p>When plotting the new UMAP, the samples are move overlaid, though not perfectly so.</p>
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'orig.ident'</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-24-2.png" width="672"></div>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-22-1.png" width="672"></div>
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'tissue_sample'</span>, split.by <span class="op">=</span> <span class="st">'tissue_sample'</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-23-1.png" width="1152"></div>
 
 </div>
   <div class="chapter-nav">
@@ -164,7 +148,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-08-29.</p>
+    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-09-04.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

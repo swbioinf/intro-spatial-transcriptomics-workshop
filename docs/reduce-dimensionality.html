@@ -73,7 +73,7 @@
 <h2>
 <span class="header-section-number">9.1</span> Normalisation<a class="anchor" aria-label="anchor" href="#normalisation"><i class="fas fa-link"></i></a>
 </h2>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Basic preprocessing</span></span>
 <span><span class="co"># Split layers out again</span></span>
 <span><span class="co"># https://satijalab.org/seurat/articles/seurat5_integration</span></span>
@@ -93,7 +93,7 @@
 <span class="header-section-number">9.2</span> Find Highly variable genes.<a class="anchor" aria-label="anchor" href="#find-highly-variable-genes."><i class="fas fa-link"></i></a>
 </h2>
 <p>Explain: Each point represents a gene, red = HVGs selected</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindVariableFeatures.html">FindVariableFeatures</a></span><span class="op">(</span><span class="va">so</span>, nfeatures <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span></code></pre></div>
 <pre><code>## Finding variable features for layer counts.GSM7473682_HC_a</code></pre>
 <pre><code>## Finding variable features for layer counts.GSM7473683_HC_b</code></pre>
@@ -101,13 +101,13 @@
 <pre><code>## Finding variable features for layer counts.GSM7473688_CD_a</code></pre>
 <pre><code>## Finding variable features for layer counts.GSM7473689_CD_b</code></pre>
 <pre><code>## Finding variable features for layer counts.GSM7473690_CD_c</code></pre>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/VariableFeaturePlot.html">VariableFeaturePlot</a></span><span class="op">(</span><span class="va">so</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-8-1.png" width="672"></div>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/ScaleData.html">ScaleData</a></span><span class="op">(</span><span class="va">so</span><span class="op">)</span> <span class="co"># Just 200 variable features</span></span></code></pre></div>
 <pre><code>## Centering and scaling data matrix</code></pre>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/RunPCA.html">RunPCA</a></span><span class="op">(</span><span class="va">so</span>, features <span class="op">=</span> <span class="fu"><a href="https://satijalab.github.io/seurat-object/reference/VariableFeatures.html">VariableFeatures</a></span><span class="op">(</span><span class="va">so</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code>## PC_ 1 
 ## Positive:  PIGR, EPCAM, KRT8, KRT19, CLDN4, FCGBP, LGALS3, S100A6, CD24, AGR2 
@@ -144,75 +144,78 @@
 ## Negative:  KRT20, CEACAM1, SELENOP, AQP8, PLAC8, CEACAM6, CDKN1A, DST, EZR, KRT17 
 ##     GSN, KRT19, SFN, FOS, EPHA2, LAMA3, CLDN4, CXCR4, HLA-DRA, HLA-DPA1 
 ##     MAF, HLA-DPB1, IL7R, CCL21, LGALS3, PTGDS, CCL19, HLA-DQA1, C1QC, MT2A</code></pre>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, reduction <span class="op">=</span> <span class="st">"pca"</span>, group.by<span class="op">=</span><span class="st">'tissue_sample'</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-10-1.png" width="672"></div>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, reduction <span class="op">=</span> <span class="st">"pca"</span>, group.by<span class="op">=</span><span class="st">'tissue_sample'</span>, dims<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-10-2.png" width="672"></div>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/ElbowPlot.html">ElbowPlot</a></span><span class="op">(</span><span class="va">so</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-11-1.png" width="672"></div>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">num_dims</span> <span class="op">&lt;-</span> <span class="fl">15</span></span></code></pre></div>
 <p>Build a UMAP</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/RunUMAP.html">RunUMAP</a></span><span class="op">(</span><span class="va">so</span>, dims<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="va">num_dims</span><span class="op">)</span></span></code></pre></div>
 <pre><code>## Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric
 ## To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
 ## This message will be shown once per session</code></pre>
-<pre><code>## 06:19:26 UMAP embedding parameters a = 0.9922 b = 1.112</code></pre>
-<pre><code>## 06:19:26 Read 50662 rows and found 15 numeric columns</code></pre>
-<pre><code>## 06:19:26 Using Annoy for neighbor search, n_neighbors = 30</code></pre>
-<pre><code>## 06:19:26 Building Annoy index with metric = cosine, n_trees = 50</code></pre>
+<pre><code>## 06:47:59 UMAP embedding parameters a = 0.9922 b = 1.112</code></pre>
+<pre><code>## 06:47:59 Read 50662 rows and found 15 numeric columns</code></pre>
+<pre><code>## 06:47:59 Using Annoy for neighbor search, n_neighbors = 30</code></pre>
+<pre><code>## 06:47:59 Building Annoy index with metric = cosine, n_trees = 50</code></pre>
 <pre><code>## 0%   10   20   30   40   50   60   70   80   90   100%</code></pre>
 <pre><code>## [----|----|----|----|----|----|----|----|----|----|</code></pre>
 <pre><code>## **************************************************|
-## 06:19:34 Writing NN index file to temp file /tmp/RtmpucFKjs/file17153e3745bd72
-## 06:19:34 Searching Annoy index using 1 thread, search_k = 3000
-## 06:20:00 Annoy recall = 100%
-## 06:20:02 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
-## 06:20:06 Initializing from normalized Laplacian + noise (using RSpectra)
-## 06:20:08 Commencing optimization for 200 epochs, with 2235096 positive edges
-## 06:20:08 Using rng type: pcg
-## 06:20:32 Optimization finished</code></pre>
+## 06:48:06 Writing NN index file to temp file /tmp/Rtmp42UJ5n/file194de051d146c7
+## 06:48:06 Searching Annoy index using 1 thread, search_k = 3000
+## 06:48:32 Annoy recall = 100%
+## 06:48:33 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
+## 06:48:38 Initializing from normalized Laplacian + noise (using RSpectra)
+## 06:48:40 Commencing optimization for 200 epochs, with 2235096 positive edges
+## 06:48:40 Using rng type: pcg
+## 06:49:04 Optimization finished</code></pre>
 <p>And plot it - DimPlot will plot a UMAP if it is found, but ‘umap’ (or ‘pca’) can be explictly specified.</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'tissue_sample'</span><span class="op">)</span> <span class="co"># If umap exists, umap.</span></span></code></pre></div>
 <div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-13-1.png" width="672"></div>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># DimPlot(so, group.by='tissue_sample', reduction = 'umap')  # ths same</span></span></code></pre></div>
 <p>Now is the time to plot everything;</p>
 <p>Categorical factors with ‘DimPlot’</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'tissue_sample'</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-14-1.png" width="672"></div>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'condition'</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-14-2.png" width="672"></div>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'tissue_sample'</span>, split.by<span class="op">=</span><span class="st">'condition'</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure">
 <img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-14-3.png" width="672">
 And anything continuous with ’FeaturePlot</div>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">so</span>, <span class="st">'nCount_RNA'</span><span class="op">)</span> </span></code></pre></div>
-<pre><code>## Warning: The `slot` argument of `FetchData()` is deprecated as of SeuratObject 5.0.0.
-## ℹ Please use the `layer` argument instead.
-## ℹ The deprecated feature was likely used in the Seurat package.
-##   Please report the issue at &lt;https://github.com/satijalab/seurat/issues&gt;.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-## generated.</code></pre>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-15-1.png" width="672"></div>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">so</span>, <span class="st">'nCount_RNA'</span><span class="op">)</span> </span></code></pre></div>
+<pre><code>## Warning: The `slot` argument of `FetchData()` is deprecated as of
+## SeuratObject 5.0.0.
+## ℹ Please use the `layer` argument instead.
+## ℹ The deprecated feature was likely used in the Seurat
+##   package.
+##   Please report the issue at
+##   &lt;https://github.com/satijalab/seurat/issues&gt;.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where
+## this warning was generated.</code></pre>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-15-1.png" width="672"></div>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">so</span>, <span class="st">'nCount_negprobes'</span><span class="op">)</span> </span></code></pre></div>
 <div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-15-2.png" width="672"></div>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">so</span>, <span class="st">'pc_neg'</span><span class="op">)</span> </span></code></pre></div>
 <div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-15-3.png" width="672"></div>
 <p>Including genes - can pass severable at a time and</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">so</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'CD74'</span>,<span class="st">'PIGR'</span>,<span class="st">'IGHA1'</span>,<span class="st">'VWF'</span><span class="op">)</span>, ncol<span class="op">=</span><span class="fl">2</span> <span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-16-1.png" width="672"></div>
 
@@ -243,7 +246,7 @@ And anything continuous with ’FeaturePlot</div>
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-08-29.</p>
+    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-09-04.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

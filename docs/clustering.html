@@ -78,6 +78,47 @@
 <li>call typing</li>
 <li>Cell type annotation</li>
 </ul>
+<p>To generate clusters, we first build a ‘neighbourhood’ graph. This is a network graph, that links up cells on the basis of their transcriptional similarity (‘neighbours’). Its not something for looking at directly, its simply stored inside the object, but its an importantin input for downstream steps like clustering.</p>
+<p>Forget to run it and you’ll generate an error.</p>
+<p>Note that we need to specify the ‘harmony’ reduction, else it would default to ‘pca’. Just like the UMAP, we want our clusters to represent different cell types or states, not the differences between individuals.</p>
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindNeighbors.html">FindNeighbors</a></span><span class="op">(</span><span class="va">so</span>, reduction <span class="op">=</span> <span class="st">"harmony"</span>, dims <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">15</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Computing nearest neighbor graph</code></pre>
+<pre><code>## Computing SNN</code></pre>
+<p>Now clustering can be as simple as running ‘FindClusters’.</p>
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindClusters.html">FindClusters</a></span><span class="op">(</span><span class="va">so</span><span class="op">)</span>  </span></code></pre></div>
+<pre><code>## Modularity Optimizer version 1.3.0 by Ludo Waltman and Nees Jan van Eck
+## 
+## Number of nodes: 50662
+## Number of edges: 1195831
+## 
+## Running Louvain algorithm...
+## Maximum modularity in 10 random starts: 0.8230
+## Number of communities: 12
+## Elapsed time: 34 seconds</code></pre>
+<pre><code>## 1 singletons identified. 11 final clusters.</code></pre>
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'seurat_clusters'</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-26-1.png" width="672"></div>
+<p>ACTIVITY: Choose a clustering resolution between 0.1 and 2 - plot on UMAP and spatially. Share in chat. What resuolution is good? How can we decide?</p>
+<p>For the res of the workshop, we’ll use resolution of 0.2</p>
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindClusters.html">FindClusters</a></span><span class="op">(</span><span class="va">so</span>, resolution <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span>  </span></code></pre></div>
+<pre><code>## Modularity Optimizer version 1.3.0 by Ludo Waltman and Nees Jan van Eck
+## 
+## Number of nodes: 50662
+## Number of edges: 1195831
+## 
+## Running Louvain algorithm...
+## Maximum modularity in 10 random starts: 0.9031
+## Number of communities: 7
+## Elapsed time: 31 seconds</code></pre>
+<pre><code>## 1 singletons identified. 6 final clusters.</code></pre>
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'seurat_clusters'</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-28-1.png" width="672"></div>
+
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="batch-correction.html"><span class="header-section-number">10</span> Batch Correction</a></div>
@@ -100,7 +141,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-08-29.</p>
+    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-09-04.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
