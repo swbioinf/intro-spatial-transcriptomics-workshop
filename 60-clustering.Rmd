@@ -1,19 +1,8 @@
 # Clustering{#clustering}
 
 
-Dimensional reduction + clustering. (20min)
 
-PCA + UMAP can take some explanation time. Try to keep brief. Link to further info.
-
-Plot clusters on tissue (10min)
-
-
-discuss: 
-
-* cell type determination
-* call typing
-* Cell type annotation
-
+## Generate Clusters
 
 To generate clusters, we first build a 'neighbourhood' graph. This is a network graph, that links up cells on the basis of their transcriptional similarity ('neighbours'). Its not something for looking at directly, its simply stored inside the object, but its an importantin input for downstream steps like clustering. 
 
@@ -21,18 +10,17 @@ Forget to run it and you'll generate an error.
 
 Note that we need to specify the 'harmony' reduction, else it would default to 'pca'. Just like the UMAP, we want our clusters to represent different cell types or states, not the differences between individuals. 
 
-```{r}
+```{r message=FALSE}
 so <- FindNeighbors(so, reduction = "harmony", dims = 1:15)
 ```
 
 
 Now clustering can be as simple as running 'FindClusters'. 
-```{r}
+```{r message=FALSE}
 so <- FindClusters(so)  
 ```
 
-
-```{r}
+```{r message=FALSE}
 DimPlot(so, group.by='seurat_clusters')
 ```
 
@@ -42,11 +30,19 @@ DimPlot(so, group.by='seurat_clusters')
 ACTIVITY: Choose a clustering resolution between 0.1 and 2 - plot on UMAP and spatially. Share in chat. What resuolution is good? How can we decide? 
 
 
-For the res of the workshop, we'll use resolution of 0.2
+For the res of the workshop, we'll use resolution of 0.2.
 
-```{r}
+For more info regarding selecting the 'right' clustering resolution, consider the [clustree](https://doi.org/10.1093/gigascience/giy083) package. There is an example of its use [here]( https://swbioinf.github.io/scRNAseqInR_Doco/clustering.html) in the context of single cell transcriptomics.
+
+
+
+```{r message=FALSE, warning=FALSE}
 so <- FindClusters(so, resolution = 0.2)  
 ```
+
+
+
+
 
 
 ```{r}

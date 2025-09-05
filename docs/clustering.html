@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Chapter 11 Clustering | Intro to Spatial Transcriptomics</title>
 <meta name="author" content="">
-<meta name="description" content="Dimensional reduction + clustering. (20min) PCA + UMAP can take some explanation time. Try to keep brief. Link to further info. Plot clusters on tissue (10min) discuss: cell type determination...">
+<meta name="description" content="11.1 Generate Clusters To generate clusters, we first build a ‘neighbourhood’ graph. This is a network graph, that links up cells on the basis of their transcriptional similarity (‘neighbours’)....">
 <meta name="generator" content="bookdown 0.42.1 with bs4_book()">
 <meta property="og:title" content="Chapter 11 Clustering | Intro to Spatial Transcriptomics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="Dimensional reduction + clustering. (20min) PCA + UMAP can take some explanation time. Try to keep brief. Link to further info. Plot clusters on tissue (10min) discuss: cell type determination...">
+<meta property="og:description" content="11.1 Generate Clusters To generate clusters, we first build a ‘neighbourhood’ graph. This is a network graph, that links up cells on the basis of their transcriptional similarity (‘neighbours’)....">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Chapter 11 Clustering | Intro to Spatial Transcriptomics">
-<meta name="twitter:description" content="Dimensional reduction + clustering. (20min) PCA + UMAP can take some explanation time. Try to keep brief. Link to further info. Plot clusters on tissue (10min) discuss: cell type determination...">
+<meta name="twitter:description" content="11.1 Generate Clusters To generate clusters, we first build a ‘neighbourhood’ graph. This is a network graph, that links up cells on the basis of their transcriptional similarity (‘neighbours’)....">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.7.0/transition.js"></script><script src="libs/bs3compat-0.7.0/tabs.js"></script><script src="libs/bs3compat-0.7.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
@@ -51,12 +51,13 @@
 <li><a class="" href="input-data.html"><span class="header-section-number">6</span> Input Data</a></li>
 <li><a class="" href="qc.html"><span class="header-section-number">7</span> QC</a></li>
 <li><a class="" href="basic-visualisation.html"><span class="header-section-number">8</span> Basic visualisation</a></li>
-<li><a class="" href="reduce-dimensionality.html"><span class="header-section-number">9</span> Reduce dimensionality</a></li>
+<li><a class="" href="reduce-dimensionality---umaps.html"><span class="header-section-number">9</span> Reduce dimensionality - UMAPs</a></li>
 <li><a class="" href="batch-correction.html"><span class="header-section-number">10</span> Batch Correction</a></li>
 <li><a class="active" href="clustering.html"><span class="header-section-number">11</span> Clustering</a></li>
-<li><a class="" href="analysis-example.html"><span class="header-section-number">12</span> Analysis example</a></li>
-<li><a class="" href="next-steps.html"><span class="header-section-number">13</span> Next steps</a></li>
-<li><a class="" href="resources.html"><span class="header-section-number">14</span> Resources</a></li>
+<li><a class="" href="clustering-labeling.html"><span class="header-section-number">12</span> Clustering Labeling</a></li>
+<li><a class="" href="analysis-example.html"><span class="header-section-number">13</span> Analysis example</a></li>
+<li><a class="" href="next-steps.html"><span class="header-section-number">14</span> Next steps</a></li>
+<li><a class="" href="resources.html"><span class="header-section-number">15</span> Resources</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
 
@@ -69,24 +70,17 @@
 <h1>
 <span class="header-section-number">11</span> Clustering<a class="anchor" aria-label="anchor" href="#clustering"><i class="fas fa-link"></i></a>
 </h1>
-<p>Dimensional reduction + clustering. (20min)</p>
-<p>PCA + UMAP can take some explanation time. Try to keep brief. Link to further info.</p>
-<p>Plot clusters on tissue (10min)</p>
-<p>discuss:</p>
-<ul>
-<li>cell type determination</li>
-<li>call typing</li>
-<li>Cell type annotation</li>
-</ul>
+<div id="generate-clusters" class="section level2" number="11.1">
+<h2>
+<span class="header-section-number">11.1</span> Generate Clusters<a class="anchor" aria-label="anchor" href="#generate-clusters"><i class="fas fa-link"></i></a>
+</h2>
 <p>To generate clusters, we first build a ‘neighbourhood’ graph. This is a network graph, that links up cells on the basis of their transcriptional similarity (‘neighbours’). Its not something for looking at directly, its simply stored inside the object, but its an importantin input for downstream steps like clustering.</p>
 <p>Forget to run it and you’ll generate an error.</p>
 <p>Note that we need to specify the ‘harmony’ reduction, else it would default to ‘pca’. Just like the UMAP, we want our clusters to represent different cell types or states, not the differences between individuals.</p>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindNeighbors.html">FindNeighbors</a></span><span class="op">(</span><span class="va">so</span>, reduction <span class="op">=</span> <span class="st">"harmony"</span>, dims <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">15</span><span class="op">)</span></span></code></pre></div>
-<pre><code>## Computing nearest neighbor graph</code></pre>
-<pre><code>## Computing SNN</code></pre>
 <p>Now clustering can be as simple as running ‘FindClusters’.</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindClusters.html">FindClusters</a></span><span class="op">(</span><span class="va">so</span><span class="op">)</span>  </span></code></pre></div>
 <pre><code>## Modularity Optimizer version 1.3.0 by Ludo Waltman and Nees Jan van Eck
 ## 
@@ -96,14 +90,14 @@
 ## Running Louvain algorithm...
 ## Maximum modularity in 10 random starts: 0.8230
 ## Number of communities: 12
-## Elapsed time: 34 seconds</code></pre>
-<pre><code>## 1 singletons identified. 11 final clusters.</code></pre>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+## Elapsed time: 47 seconds</code></pre>
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'seurat_clusters'</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-26-1.png" width="672"></div>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-34-1.png" width="672"></div>
 <p>ACTIVITY: Choose a clustering resolution between 0.1 and 2 - plot on UMAP and spatially. Share in chat. What resuolution is good? How can we decide?</p>
-<p>For the res of the workshop, we’ll use resolution of 0.2</p>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<p>For the res of the workshop, we’ll use resolution of 0.2.</p>
+<p>For more info regarding selecting the ‘right’ clustering resolution, consider the <a href="https://doi.org/10.1093/gigascience/giy083">clustree</a> package. There is an example of its use <a href="https://swbioinf.github.io/scRNAseqInR_Doco/clustering.html">here</a> in the context of single cell transcriptomics.</p>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindClusters.html">FindClusters</a></span><span class="op">(</span><span class="va">so</span>, resolution <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span>  </span></code></pre></div>
 <pre><code>## Modularity Optimizer version 1.3.0 by Ludo Waltman and Nees Jan van Eck
 ## 
@@ -113,19 +107,22 @@
 ## Running Louvain algorithm...
 ## Maximum modularity in 10 random starts: 0.9031
 ## Number of communities: 7
-## Elapsed time: 31 seconds</code></pre>
-<pre><code>## 1 singletons identified. 6 final clusters.</code></pre>
-<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+## Elapsed time: 35 seconds</code></pre>
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'seurat_clusters'</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-28-1.png" width="672"></div>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-36-1.png" width="672"></div>
 
+</div>
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="batch-correction.html"><span class="header-section-number">10</span> Batch Correction</a></div>
-<div class="next"><a href="analysis-example.html"><span class="header-section-number">12</span> Analysis example</a></div>
+<div class="next"><a href="clustering-labeling.html"><span class="header-section-number">12</span> Clustering Labeling</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
-      <ul class="nav navbar-nav"><li><a class="nav-link" href="#clustering"><span class="header-section-number">11</span> Clustering</a></li></ul>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#clustering"><span class="header-section-number">11</span> Clustering</a></li>
+<li><a class="nav-link" href="#generate-clusters"><span class="header-section-number">11.1</span> Generate Clusters</a></li>
+</ul>
 
       <div class="book-extra">
         <ul class="list-unstyled">
@@ -141,7 +138,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-09-04.</p>
+    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-09-05.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

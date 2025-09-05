@@ -2,9 +2,25 @@
 
 
 
+## The scope of what was done with this data:
 
 Wrap up (10)
 We have preprocessed some data, now run tests/do analysis => spatial sampler resource.
+
+
+
+
+Summarise what Garrido-Trigo et al _actually_ did with this dataset in their paper;
+
+* Macrophage proximity tests
+* Integration with single cell data 
+* integration with other spatial omics
+* ...
+
+
+
+
+## Other techniques.
 
 Q&A (whatever)
 

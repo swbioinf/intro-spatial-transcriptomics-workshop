@@ -1,5 +1,7 @@
 # Batch Correction
 
+## Do we need batch correction?
+
 
 There are regions in the UMAP where we can see some separation by sample. This is common in spatial data, especially when working with human data.
 
@@ -11,14 +13,17 @@ DimPlot(so, group.by='tissue_sample')
 ```
 
 This becomes more obvious if we split the plot by sample as well;
-```{r fig.width=12, fig.height=8}
+```{r}
 DimPlot(so, group.by='tissue_sample', split.by = 'tissue_sample', ncol = 3)
 ```
 
 
 
-If were were to continue on to cell clustering at analysis at this point, we might find that we build clusters around individual samples. We instead want to make cell clusters that form around cell 'types' (or transcriptionallly similar cell states) across multiple samples, which can be matched and compared across experimental groups. N
+If were were to continue on to cell clustering at analysis at this point, we might find that we build clusters around individual samples. We instead want to make cell clusters that form around cell 'types' (or transcriptionallly similar cell states) across multiple samples, which can be matched and compared across experimental groups.
 
+
+
+## Running batch correction
 
 
 We can apply a *batch correction* or *integration* method to adjust our principal components to deemphasise the betweeen-sample effect. Seurat implements several such methods, and has a full ['Introduction to scRNA-seq integration' vignette ](https://satijalab.org/seurat/articles/integration_introduction). We will use the 'harmony' method, from  Korsunsky et al 2019: https://www.nature.com/articles/s41592-019-0619-0
@@ -67,11 +72,11 @@ so
 
 
 
-When plotting the new UMAP, the samples are move overlaid, though not perfectly so.
+When plotting the new UMAP, the samples are move overlayed. This will make for better vizualisation.
 
 ```{r}
 DimPlot(so, group.by='orig.ident')
 ```
-```{r fig.width=12, fig.height=8}
+```{r}
 DimPlot(so, group.by='tissue_sample', split.by = 'tissue_sample', ncol = 3)
 ```
