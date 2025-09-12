@@ -28,6 +28,7 @@ cluster-markers
 cell-typing-by-reference
 spatial-examination-of-plots
 recording-celltype-annotations.
+pull-in-real-annotation
 analysis-example
 spatially-informed-differntial-expression
 next-steps
