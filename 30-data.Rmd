@@ -1,4 +1,4 @@
-# Our input data
+# Understanding our spatial data
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -6,12 +6,23 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Overview
 
-What does the data look like when you get it? Examine raw data.
-
 * Explain e.g. cosmx in detail, refer to similarities in e.g. xenium
 * Load data into object
 * Brief explanation of different data structures 
 * Sample annotation: Applying sample names to individual slides. Mention difficulty of multiple samples per slide (can we recommend some approach?)
+
+What data do you get? How do these differ between CosMX and Xenium?
+
+High-resolution molecular data:
+
+- Expression matrix
+- Transcript coordinates
+- Read quality
+
+Spatial and imaging data:
+
+- Cell segmentations
+- Image files
 
 ## How the data was generated
 
@@ -35,11 +46,9 @@ For a Xenium slide there is just the one typical output directory; they discuss 
 
 What is a FoV?
 
-## Loading the data
+## Note on `Seurat::LoadNanostring()`
 
-### Load one sample from raw data
-
-Load libraries required for this step.
+Load the libraries required for this step.
 
 ```{r echo=F, warning=F, results=F, warning=F}
 library(Seurat)
@@ -57,9 +66,41 @@ See comments [here](https://github.com/satijalab/seurat/discussions/9261)
 
 ```{r eval=F}
 source(here("scripts/LoadNanostring_edited_function.R"))
-sample_path <- here("raw_data", "GSM7473682_HC_a")
-so <- LoadNanostring(sample_path, assay='RNA', fov="GSM7473682_HC_a")
+example_path <- here("raw_data", "GSM7473682_HC_a")
+example_so <- LoadNanostring(example_path, assay='RNA', fov="GSM7473682_HC_a")
 ```
+
+```{r eval=F}
+example_so
+```
+
+```console
+An object of class Seurat 
+999 features across 42045 samples within 1 assay 
+Active assay: RNA (999 features, 0 variable features)
+ 1 layer present: counts
+ 1 spatial field of view present: GSM7473682_HC_a
+```
+
+Explain what's missing
+
+```{r}
+so$condition       <- "Healthy Controls"
+so$tissue_sample   <- "HC_A" # denotes healthy control, from sample A
+```
+
+### Load all samples from raw data
+
+Code example goes here (not run)
+
+### Load the workshop data
+
+```{r}
+so_path <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
+so <- readRDS(so_path)
+```
+
+Explain processing steps and code to generate this subset.
 
 :::{.callout-info}
 #### Why Seurat?
@@ -68,6 +109,10 @@ Seurat objects are a data structure to store the count data and additional metad
 As the data is very high dimensional, it is important
 that connected information about cells, samples, and data stay connected
 during data analysis.
+
+Other frameworks such as `scverse`, and data classes like `anndata` and 
+`SpatialFeatureExperiment` represent the data differently, but all meet the
+needs above. Differences in compatibility with other tools.
 
 Flexibility across single-cell transcriptomics.
 :::
@@ -78,6 +123,36 @@ Display the Seurat object.
 so
 ```
 
+**999 features across 68624 samples with 2 assays**
+
+- 980 genes + 19 negprobes
+- 68k number of segmented cells analysed
+- two different types of measurements, detailed below
+
+**Active assay: RNA (980 features, 0 variable features):**
+
+- RNA assay: Primary gene expression measurement data (counts)
+- 980 transcripts measured
+- no variable features as feature selection has not been conducted yet
+
+**6 layers present: counts.GSM7473682_HC_a, counts.GSM7473683_HC_b, 
+counts.GSM7473684_HC_c, counts.GSM7473688_CD_a, counts.GSM7473689_CD_b, 
+counts.GSM7473690_CD_c**
+
+- Each layer represents a sample from either HC or CD donors. Required for
+comparison of both groups downstream
+
+**1 other assay present: negprobes**
+
+This secondary assay specifically stores the counts corresponding to negative
+control probes. In spatial transcriptomics, tracking these control probes is
+crucial for quality control, specificity assessment, and defining background
+signal.
+
+**6 spatial fields of view present: GSM7473682_HC_a GSM7473683_HC_b GSM7473684_HC_c GSM7473688_CD_a GSM7473689_CD_b GSM7473690_CD_c:**
+
+The list of six spatial fields of view (FOVs) explicitly links the spatial/image information stored in the Seurat object to the six specific samples/layers identified above. This demonstrates that the data set is ready for spatially resolved analysis and visualization, allowing results (like cell clusters or gene expression) to be mapped back onto the original tissue sections for all six integrated samples.
+    
 Display the metadata
 
 ```{r}
@@ -96,19 +171,8 @@ so we know which groups to compare downstream, i.e. case vs. control comparison.
 This particular study has one sample per slide (easy!), but there are typically
 more. 
 
-```{r}
-so$condition       <- "Healthy Controls"
-so$tissue_sample   <- "HC_A" # denotes healthy control, from sample A
-```
-
 Explain input data, what it represents, how it will be used for analysis.
 Define terms like centroids, segments, fov
-
-### Load all samples from raw data
-
-Code example goes here (not run)
-
-### Load the workshop data
 
 Load a subsampled dataset for working with multiple samples
 That takes too long, so loading a preloaded object
@@ -116,27 +180,6 @@ Add figure that represents the subset
 
 Explain: Subset data, how many samples and conditions. Represent graphically
 e.g. three healthy controls (HC) vs. three CD
-
-```{r}
-so_path  <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
-so <- readRDS(so_path)
-```
-
-```{r}
-so
-```
-
-| Term                     | Definition |
-| ------------------------ | ---------- |
-| `features`               |            |
-| `samples`                |            |
-| `assay`                  |            |
-| `layer`                  |            |
-| `spatial fields of view` |            |
-
-Explain: difference between this SO vs. previous one (`so`)
-    - layers represent the different samples and their condition
-    - RNA and negprobes assays and what data they represent
 
 Display the metadata columns:
 
@@ -251,6 +294,13 @@ tHis is useful for later steps, but annoying now.
 
 ```{r}
 so <- JoinLayers(so)
-GetAssayData(so, assay = "RNA", layer = "counts")
 ```
 
+```{r}
+so@assays
+```
+
+
+```{r eval=F}
+GetAssayData(so, assay = "RNA", layer = "counts")
+```
