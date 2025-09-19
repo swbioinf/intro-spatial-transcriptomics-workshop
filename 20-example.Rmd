@@ -1,43 +1,43 @@
 # Example Experiment {#exampleexperiment}
 
+## Background
 
-Background (Workshop) 15 mins (aim to reduce)
+This workshop will use data from paper *Macrophage and neutrophil heterogeneity
+at single-cell spatial resolution in human inflammatory bowel disease*
+(Garrido-Trigo et al. 2023)[^1].
 
-* E.g. one of the cosmx studies from https://swbioinf.github.io/spatialsnippets/index_data.html
-   + Likely need to subsample the data?
-* This is what the data is
-* Replicate key analyses and plots, explaining the “why we do X instead of Y” throughout.
+[^1]: https://doi.org/10.1038/s41467-023-40156-6
 
+**Hypothesis: There is a difference in immune cell localisation between healthy
+donors vs donors with active inflammatory bowel disease (IBD)**
 
-Notes 
+The authors have made their raw and annotated data available (and their
+[code](https://github.com/HelenaLC/CosMx-SMI-IBD)). There is also a browsable
+interface here: https://servidor2-ciberehd.upc.es/external/garrido/app/.
 
-* If we reproduce something it'll be figure 1d UMAP with celltypes, and maybe the celltype proportions (if time permits.). Maybe Figure 1b simplified - a heatmap of marker genes.
+## The samples and study design
 
+Inflammatory bowel disease (IBD) cohort includes Crohn's disease (CD) and
+ulcerative colitis (UC).
 
-=======
+```{r, echo=F}
+knitr::include_graphics(
+  here::here("images/garrido-trigo_fig1a.png")
+)
+```
 
-Today's workshop will use data from paper *Macrophage and neutrophil heterogeneity at single-cell spatial resolution in human inflammatory bowel disease* (Garrido-Trigo et al. 2023).
+_Fig 1a from Garrido-Trigo et al. (2023)._
 
-Their study explored macrophage and neutorphil subtypes and localisation across immflammatory bowel disease using a combination of single cell RNAseq (10X), spatial RNAseq (cosmx). The authors have made their raw and annotated data available (and their [code](https://github.com/HelenaLC/CosMx-SMI-IBD)). There is also a browseable interface here: https://servidor2-ciberehd.upc.es/external/garrido/app/
+The study included 9 CosMx slides of colonic biopsies, from a total of 9 donors:
 
-The study included 9 cosmx slides of colonic biopsies
+| Cohorts            | Abbreviated | Number of samples |
+| ------------------ | ----------- | ----------------- |
+| Healthy controls   | HC          | 3                 |
+| Ulcerative colitis | UC          | 3                 |
+| Chron's disease    | DC          | 3                 |
 
-* 3x HC - Healthy controls
-* 3x UC - Ulcerative colitis
-* 3x CD - Chrones’s disease
-
-We will do some basic processing of those 9 samples - QC, clustering and visualisation.
+In the original paper, the CosMX SMI cells were annotated via label transfer from
+the scRNA data. Here, we will do some basic processing of those 9 samples - QC,
+clustering and visualisation.
 
 <Image of plot to be made in workshop>
-
-
-
-
-
-
-
-
-
-
-
-
