@@ -85,8 +85,8 @@ Active assay: RNA (999 features, 0 variable features)
 Explain what's missing
 
 ```{r}
-so$condition       <- "Healthy Controls"
-so$tissue_sample   <- "HC_A" # denotes healthy control, from sample A
+#so$condition       <- "Healthy Controls"
+#so$tissue_sample   <- "HC_A" # denotes healthy control, from sample A
 ```
 
 ## Loading all samples from raw data
@@ -195,6 +195,9 @@ more.
 Explain input data, what it represents, how it will be used for analysis.
 Define terms like centroids, segments, fov
 
+- See: https://satijalab.org/seurat/articles/seurat5_spatial_vignette_2#mouse-brain-vizgen-merscope
+- TODO: Excalidraw of these
+
 Load a subsampled dataset for working with multiple samples
 That takes too long, so loading a preloaded object
 Add figure that represents the subset
@@ -298,35 +301,45 @@ ImageDimPlot(so_hca,
              nmols = 10000)
 ```
 
+```{r, eval=F}
+ImageFeaturePlot(so_hca, fov = "GSM7473682_HC_a", features = "S100A6")
+```
+```console
+Warning: No layers found matching search pattern provided
+Warning in FetchData.Assay5(object = object[[DefaultAssay(object = object)]],  :
+  data layer is not found and counts layer is used
+```
+
+Cannot use `ImageFeaturePlot` yet, without normalisation, dim red etc.
+
 ## Count data
 
 Where are my counts?
 
-```{r eval=F}
-#GetAssayData(so, assay = "RNA", layer = "counts")
-```
-
-Oh no an error:
-
-``` 
-#Error in `GetAssayData()` at SeuratObject/R/seurat.R:1901:3:
-#  ! GetAssayData doesn't work for multiple layers in v5 assay.
-```
-
-Seurat *5* vs Seurat 4. Multiple assays fovs.
-SOme operations only work on a single
-Join layers / split layers.
-tHis is useful for later steps, but annoying now.
+TODO: Excalidraw flowchart of assays e.g. 
 
 ```{r}
-#so <- JoinLayers(so)
+so@assays
+```
+
+### Gene expression count matrices
+
+```{r}
+head(so@assays$RNA$counts.GSM7473682_HC_a)
+```
+
+Row = gene
+
+Column = cell for the sample
+
+### Negative probes
+
+```{r}
+so@assays$negprobes
 ```
 
 ```{r}
-#so@assays
+rownames(so@assays$negprobes)
 ```
 
-
-```{r eval=F}
-#GetAssayData(so, assay = "RNA", layer = "counts")
-```
+19 different negative probes.

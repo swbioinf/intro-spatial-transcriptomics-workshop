@@ -1,15 +1,21 @@
 # Quality control and filtering
 
-* Basic QC plots + filtering (20min)
-* (Negative probes if using cosmx)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 
-Load libraries for this step.
-
-```{r}
+# load libraries for this step
 library(Seurat)
 library(tidyverse)
 library(here)
 ```
+
+## Overview
+
+* Basic QC plots + filtering (20min)
+* (Negative probes if using cosmx)
+* Identify low quality cells
+
+## The count data
 
 Read in subsampled seurat object
 
@@ -35,18 +41,11 @@ so@meta.data %>%
   ggplot(aes(x = nCount_RNA, y = nFeature_RNA, colour = tissue_sample)) +
   geom_point(alpha = 0.2, size = 0.8) +
   facet_wrap(~tissue_sample) +
-  theme_light()
+  theme_light() +
+  theme(legend.position = "none")
 ```
 
 ## Negative counts per cell
-
-Negative probes are in a separate assay.
-This is a matter of preference, you could keep them with the rest.
-
-```{r}
-so_raw[['RNA']]
-so_raw[['negprobes']]
-```
 
 ```{r}
 so_raw$pc_neg <-  ( so_raw$nCount_negprobes / (so_raw$nCount_RNA + so_raw$nCount_negprobes) ) * 100
