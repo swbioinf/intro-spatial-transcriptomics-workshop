@@ -89,18 +89,31 @@ so$condition       <- "Healthy Controls"
 so$tissue_sample   <- "HC_A" # denotes healthy control, from sample A
 ```
 
-### Load all samples from raw data
+## Loading all samples from raw data
 
-Code example goes here (not run)
+We use a subsampled data for this workshop, for three healthy control samples (HC)
+and three Crohn's disease samples (CD).
 
-### Load the workshop data
+The first four field of views are used.
+
+```{r, eval=F}
+# How was this created?
+seurat_file_00_raw <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw.RDS")
+so_raw_full <- readRDS(seurat_file_00_raw)
+so_raw_subset <- so_raw_full[, so_raw_full$group %in% c("CD", "HC") & so_raw_full@meta.data$fov <= 4]
+saveRDS(so_raw_subset, here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS"))
+```
+
+## Loading the workshop data
+
+TODO: Add image for all FOVs, and outline the ones we are using
 
 ```{r}
 so_path <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
 so <- readRDS(so_path)
 ```
 
-Explain processing steps and code to generate this subset.
+### Understanding the `SeuratObject`
 
 :::{.callout-info}
 #### Why Seurat?
@@ -151,8 +164,16 @@ signal.
 
 **6 spatial fields of view present: GSM7473682_HC_a GSM7473683_HC_b GSM7473684_HC_c GSM7473688_CD_a GSM7473689_CD_b GSM7473690_CD_c:**
 
-The list of six spatial fields of view (FOVs) explicitly links the spatial/image information stored in the Seurat object to the six specific samples/layers identified above. This demonstrates that the data set is ready for spatially resolved analysis and visualization, allowing results (like cell clusters or gene expression) to be mapped back onto the original tissue sections for all six integrated samples.
+The list of six spatial fields of view (FOVs) explicitly links the spatial/image
+information stored in the Seurat object to the six specific samples/layers
+identified above. This demonstrates that the data set is ready for spatially
+resolved analysis and visualization, allowing results (like cell clusters or
+gene expression) to be mapped back onto the original tissue sections for all
+six integrated samples.
     
+
+### Understanding the Seurat metadata
+
 Display the metadata
 
 ```{r}
@@ -161,8 +182,8 @@ head(so@meta.data)
 
 | Column         | Definition                                 |
 | -------------- | ------------------------------------------ |
-| Row name       |                                            |
-| `orig.ident`   |                                            |
+| Row name       | The sample and cell                        |
+| `orig.ident`   | Sample                                     |
 | `nCount RNA`   | The number of sequenced transcripts        |
 | `nFeature_RNA` | The number of transcripts mapped to a gene |
 
@@ -197,14 +218,20 @@ skimr::skim(so@meta.data)
 Explain: number of rows (68624) represent data points (?)
 Identify important metadata columns and discuss what they mean
 
-This dataset is a subset of the experimental data - only the first 5 fovs of
+This dataset is a subset of the experimental data - only the first 4 fovs of
 each, and only the CD and HC sample groups. 
+
+seurat fov = slide
+bruker cosmx fov = region on slide
+
 
 View the tissue_sample metadata to prepare for the next step
 
 ```{r}
 table(so$tissue_sample)
 ```
+
+## Visualising our spatial data
 
 Subset one of the tissue samples `HC_a` for plotting.
 
@@ -218,9 +245,6 @@ important?
 ```{r}
 so_hca
 ```
-
-seurat fov = slide
-bruker cosmx fov = region on slide
 
 Note: layer and FOVs are now only for a single sample, HC_a
 
@@ -274,10 +298,12 @@ ImageDimPlot(so_hca,
              nmols = 10000)
 ```
 
+## Count data
+
 Where are my counts?
 
 ```{r eval=F}
-GetAssayData(so, assay = "RNA", layer = "counts")
+#GetAssayData(so, assay = "RNA", layer = "counts")
 ```
 
 Oh no an error:
@@ -293,14 +319,14 @@ Join layers / split layers.
 tHis is useful for later steps, but annoying now.
 
 ```{r}
-so <- JoinLayers(so)
+#so <- JoinLayers(so)
 ```
 
 ```{r}
-so@assays
+#so@assays
 ```
 
 
 ```{r eval=F}
-GetAssayData(so, assay = "RNA", layer = "counts")
+#GetAssayData(so, assay = "RNA", layer = "counts")
 ```

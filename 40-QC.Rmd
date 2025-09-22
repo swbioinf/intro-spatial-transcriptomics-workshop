@@ -1,5 +1,71 @@
-# QC
-
+# Quality control and filtering
 
 * Basic QC plots + filtering (20min)
 * (Negative probes if using cosmx)
+
+Load libraries for this step.
+
+```{r}
+library(Seurat)
+library(tidyverse)
+library(here)
+```
+
+Read in subsampled seurat object
+
+```{r}
+so_path  <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
+so <- readRDS(so_path)
+```
+
+
+```{r}
+# Total counts per cell
+ggplot(so@meta.data, aes(x=nCount_RNA, col=orig.ident)) +
+  geom_density() +
+  scale_x_log10() +
+  theme_bw() +
+  ggtitle("Transcript Counts per cell")
+```
+
+Suggest to view QC metrics as co-variates - may lack context if displayed alone:
+
+```{r}
+so@meta.data %>%
+  ggplot(aes(x = nCount_RNA, y = nFeature_RNA, colour = tissue_sample)) +
+  geom_point(alpha = 0.2, size = 0.8) +
+  facet_wrap(~tissue_sample) +
+  theme_light()
+```
+
+## Negative counts per cell
+
+Negative probes are in a separate assay.
+This is a matter of preference, you could keep them with the rest.
+
+```{r}
+so_raw[['RNA']]
+so_raw[['negprobes']]
+```
+
+```{r}
+so_raw$pc_neg <-  ( so_raw$nCount_negprobes / (so_raw$nCount_RNA + so_raw$nCount_negprobes) ) * 100
+so_raw[["negprobes"]] <- JoinLayers(so_raw[["negprobes"]]) # For caluclating these, need to have the negprobes merged
+so_raw$avg_neg <-  colMeans(so_raw[["negprobes"]])   # only defined firsts sample.
+
+# Discuss difference with Xenium - xenium lower counts, lower background.
+max_pc_neg         <- 5
+
+ggplot(so_raw@meta.data, aes(y=avg_neg, x=nCount_RNA)) +
+  geom_point(pch=3, alpha=0.1) +
+  scale_x_log10() +
+  theme_bw() +
+  ggtitle("Negative probes vs counts")
+
+ggplot(so_raw@meta.data, aes(y=pc_neg, x=nCount_RNA)) +
+  geom_hline(yintercept = max_pc_neg, lty=3, colour = "red") +
+  geom_vline(xintercept = min_count_per_cell, lty=3, colour = "red") +
+  geom_point(pch=3, alpha=0.1) +
+  scale_x_log10() +
+  theme_bw() +
+  ggtitle("Negative probes vs counts")
