@@ -41,7 +41,6 @@ For a cosmx SMI slide (like this experiment).
   * RawFiles/SLIDE/RUN_CODE/CellStatsDir/Morphology2D : Location of images
   * https://github.com/Nanostring-Biostats/CosMxDACustomModules/blob/main/Export/CosMxDAExportSetup.docx  
   
-
 For a Xenium slide there is just the one typical output directory; they discuss the formats in the section on [data archiving](https://www.10xgenomics.com/support/software/xenium-onboard-analysis/latest/analysis/xoa-output-archive-data), but again, software tools take the directory as a whole.
 
 What is a FoV?
@@ -236,51 +235,26 @@ table(so$tissue_sample)
 
 ## Visualising our spatial data
 
-Subset one of the tissue samples `HC_a` for plotting.
-
-```{r}
-so_hca <- so[, so$tissue_sample=="HC_a"]
-```
-
-Some warnings with not validating FOV, centroid, and seurat objects - are these
-important?
-
-```{r}
-so_hca
-```
-
-Note: layer and FOVs are now only for a single sample, HC_a
-
 Visualise clusters in a spatial context
 
-Explain: key arguments
-
-By segments
-
 ```{r}
-ImageDimPlot(so_hca,
-             fov = "GSM7473682_HC_a",
-             axes = TRUE,
-             border.color = "white", 
-             border.size = 0.1,
-             group.by = "fov_name",
-             boundaries = "segmentation",
-             crop = TRUE,
-             nmols = 10000)
+table(so$orig.ident)
 ```
 
-By centroids
+```{r, fig.height=8}
+hc_idents <- unique(so$orig.ident)[1:3]
+cd_idents <- unique(so$orig.ident)[1:3]
+ImageDimPlot(so, fov = hc_idents, group.by = "fov_name", axes = T)
+```
 
-```{r}
-ImageDimPlot(so_hca,
-             fov = "GSM7473682_HC_a",
-             axes = TRUE,
-             border.color = "white", 
-             border.size = 0.1,
-             group.by = "fov_name",
-             boundaries = "centroids",
-             crop = TRUE,
-             nmols = 10000)
+```{r, fig.height=8}
+hc_idents <- unique(so$orig.ident)[1:3]
+ImageDimPlot(so, fov = hc_idents, group.by = "fov_name", axes = T)
+```
+
+```{r, fig.height=8}
+cd_idents <- unique(so$orig.ident)[4:6]
+ImageDimPlot(so, fov = cd_idents, group.by = "fov_name", axes = T)
 ```
 
 By an individual gene.
@@ -312,11 +286,11 @@ Warning in FetchData.Assay5(object = object[[DefaultAssay(object = object)]],  :
 
 Cannot use `ImageFeaturePlot` yet, without normalisation, dim red etc.
 
-## Count data
+## Count data (`assays`)
 
 Where are my counts?
 
-TODO: Excalidraw flowchart of assays e.g. 
+TODO: Excalidraw flowchart of assays
 
 ```{r}
 so@assays
@@ -325,7 +299,7 @@ so@assays
 ### Gene expression count matrices
 
 ```{r}
-head(so@assays$RNA$counts.GSM7473682_HC_a)
+so@assays$RNA$counts.GSM7473682_HC_a[1:5,1:5]
 ```
 
 Row = gene
@@ -333,6 +307,9 @@ Row = gene
 Column = cell for the sample
 
 ### Negative probes
+
+Explain that negprobes are negative controls to see how noisy your data is.
+These do not bind to anything etc.
 
 ```{r}
 so@assays$negprobes
@@ -343,3 +320,9 @@ rownames(so@assays$negprobes)
 ```
 
 19 different negative probes.
+
+```{r}
+so@assays$negprobes[1:5, 1:5]
+```
+
+In the next lesson, 

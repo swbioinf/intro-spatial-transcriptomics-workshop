@@ -15,7 +15,7 @@ library(here)
 * (Negative probes if using cosmx)
 * Identify low quality cells
 
-## The count data
+## QC metrics
 
 Read in subsampled seurat object
 
@@ -33,6 +33,15 @@ ggplot(so@meta.data, aes(x=nCount_RNA, col=orig.ident)) +
   theme_bw() +
   ggtitle("Transcript Counts per cell")
 ```
+**Exercise:** Display density of negprobes
+
+```{r}
+ggplot(so@meta.data, aes(x=nCount_negprobes, col=orig.ident)) +
+  geom_density() +
+  scale_x_log10() +
+  theme_bw() +
+  ggtitle("Transcript Counts per cell")
+```
 
 Suggest to view QC metrics as co-variates - may lack context if displayed alone:
 
@@ -45,26 +54,58 @@ so@meta.data %>%
   theme(legend.position = "none")
 ```
 
-## Negative counts per cell
+Point out where bad quality cells would reside
+
+## Spatial
 
 ```{r}
-so_raw$pc_neg <-  ( so_raw$nCount_negprobes / (so_raw$nCount_RNA + so_raw$nCount_negprobes) ) * 100
-so_raw[["negprobes"]] <- JoinLayers(so_raw[["negprobes"]]) # For caluclating these, need to have the negprobes merged
-so_raw$avg_neg <-  colMeans(so_raw[["negprobes"]])   # only defined firsts sample.
+unique(so$orig.ident)
+```
 
+```{r}
+ImageFeaturePlot(so, fov = "GSM7473684_HC_c", features = "nCount_RNA")
+```
+
+```{r}
+ImageFeaturePlot(so, fov = "GSM7473684_HC_c", features = "nCount_negprobes")
+```
+
+## FilterNegative counts per cell
+
+Key metrics:
+
+- `so$percent_neg`: The percentage of negative probes per cell
+- `so$mean_neg`: The average negative probes per cell
+
+```{r}
+so$percent_neg <- (so$nCount_negprobes / (so$nCount_RNA + so$nCount_negprobes)) * 100
+
+# Join layers to calculate average_neg
+so@assays$negprobes <- JoinLayers(so@assays$negprobes)
+so$mean_neg <- colMeans(so@assays$negprobes) # Only defined first sample
+```
+
+```{r}
 # Discuss difference with Xenium - xenium lower counts, lower background.
 max_pc_neg         <- 5
 
-ggplot(so_raw@meta.data, aes(y=avg_neg, x=nCount_RNA)) +
-  geom_point(pch=3, alpha=0.1) +
+ggplot(so@meta.data, aes(y=mean_neg, x=nCount_RNA)) +
+  geom_point(alpha=0.1) +
   scale_x_log10() +
   theme_bw() +
   ggtitle("Negative probes vs counts")
 
-ggplot(so_raw@meta.data, aes(y=pc_neg, x=nCount_RNA)) +
+min_count_per_cell <- 1
+ggplot(so@meta.data, aes(x = nCount_RNA, y = mean_neg)) +
   geom_hline(yintercept = max_pc_neg, lty=3, colour = "red") +
   geom_vline(xintercept = min_count_per_cell, lty=3, colour = "red") +
   geom_point(pch=3, alpha=0.1) +
   scale_x_log10() +
   theme_bw() +
   ggtitle("Negative probes vs counts")
+```
+
+```{r}
+ImageFeaturePlot(so, fov = unique(so$orig.ident), features = c("percent_neg"))
+```
+
