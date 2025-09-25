@@ -426,7 +426,34 @@ ggplot(celltype_summary_table, aes(x=tissue_sample, y=n_cells, fill=celltype)) +
 
 
 # Next Steps:
-# Differntial expression
 
+
+################################################################################
+# Next steps
+
+
+# Morans I?
+
+
+so <- readRDS("data/GSE234713_CosMx_IBD_seurat_01_preprocessed_subsampled.RDS")
+
+
+so.sample <- subset(so, tissue_sample == "HC_a")
+
+
+# If the Seurat method above crashes (segfault), a workaround is
+# funning FindSpatiallyVariableFeatures at the assay level
+so.sample.assay <- so.sample[['RNA']]
+tc <- GetTissueCoordinates(so.sample)
+rownames(tc)<- tc$cell
+# When given an 'assay' FindSpatiallyVariableFeatures returns an assay. Put it back in the seurat object.
+so.sample[['RNA']] <- FindSpatiallyVariableFeatures(
+  so.sample.assay,
+  layer = "scale.data",
+  spatial.location = tc,
+  features = VariableFeatures(so.sample)[1:10],
+  selection.method = "moransi",
+  nfeatures=10 # mark top 10 spatially variable
+)
 
 
