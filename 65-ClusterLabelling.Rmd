@@ -127,6 +127,29 @@ ggplot(celltype_summary_table, aes(x=seurat_clusters, y=n_cells, fill=singleR_la
 
 ```
 
+## TODO: Cell typeing by appropriate reference
+
+
+
+<!-- https://cellxgene.cziscience.com/e/7357cee7-9f7f-4ab0-8cec-90de8f047e38.cxg/ -->
+<!-- https://cellxgene.cziscience.com/collections/e5f58829-1a66-40b5-a624-9046778e74f5 -->
+
+
+Check out the annotations for large intestinve vs the cellXgene webseite: https://cellxgene.cziscience.com/e/7357cee7-9f7f-4ab0-8cec-90de8f047e38.cxg/ 
+
+
+Broad cell class looks pretty good. There's colon included. Some individual level effect in the UMAP (stem cells limited to 1-2 samples) 
+
+
+Grab the .h5ad file for the large intestine
+https://datasets.cellxgene.cziscience.com/82e3b450-6704-43de-8036-af1838daa7df.h5ad 
+
+
+Its h5ad format. That's from python.
+
+We can read that with schard package.
+
+
 
 
 ## Spatial examination of plots
@@ -139,7 +162,7 @@ Plotting both whole sample, and a zoomed in region of just one of the FOVs (in t
 ```{r  message=FALSE, warnings=FALSE}
 so_sample <- so[, so$tissue_sample=="HC_a"]
 ImageDimPlot(so_sample,
-             fov          = "GSM7473682_HC_a",
+             fov          = "GSM7473682.HC.a",
              axes = TRUE,
              border.color = NA, border.size = 0.1,
              group.by = "seurat_clusters",
@@ -152,7 +175,7 @@ ImageDimPlot(so_sample,
 ```{r message=FALSE, warnings=FALSE}
 so_fov    <- so_sample[, so_sample$fov==1]
 ImageDimPlot(so_fov,
-             fov          = "GSM7473682_HC_a",
+             fov          = "GSM7473682.HC.a",
              axes = TRUE,
              border.color = NA, border.size = 0.1,
              group.by = "seurat_clusters",
@@ -161,7 +184,7 @@ ImageDimPlot(so_fov,
              nmols = 10000)
 
 ImageDimPlot(so_fov,
-             fov          = "GSM7473682_HC_a",
+             fov          = "GSM7473682.HC.a",
              axes = TRUE,
              border.color = NA, border.size = 0.1,
              group.by = "singleR_labels_filt",
@@ -226,7 +249,7 @@ From there can use celltype labels on visualiation:
 ```{r message=FALSE, warnings=FALSE}
 so_fov    <- so[, so$tissue_sample=="HC_a" & so_sample$fov==1]
 ImageDimPlot(so_fov,
-             fov          = "GSM7473682_HC_a",
+             fov          = "GSM7473682.HC.a",
              axes = TRUE,
              border.color = NA, border.size = 0.1,
              group.by = "celltype",
