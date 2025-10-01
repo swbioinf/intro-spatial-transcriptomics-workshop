@@ -37,7 +37,7 @@ DoHeatmap(so.mini, assay='RNA', features = marker_table_top$gene)
 ```
 
 
-## Cell typing by reference
+## OLD Cell typing by reference
 
 There are a number of tools that classify cells into types on the basis of similarity with a reference dataset. SingleR is one such tool.
 
@@ -127,28 +127,56 @@ ggplot(celltype_summary_table, aes(x=seurat_clusters, y=n_cells, fill=singleR_la
 
 ```
 
-## TODO: Cell typeing by appropriate reference
+## Cell typing by reference
+
+There are a number of tools that classify cells into types on the basis of similarity with a reference dataset. SingleR is one such tool.
+
+```{r message=FALSE, warnings=FALSE}
+library(SingleR)
+```
+
+
+But first we need to aquire a reference dataset. 
+
+A typical reference would be from a public single cell datasets from a matched celltype with a trusted annotation. Look for a relevant paper which has provided their GEO accession number or similar. Note that not every study remembers to publish their annotations alongside their raw data, but the authors might be willing to supply you with a processed dataset if you ask.
+
+Alternativly, there are some databases of single cell datasets - see [Human Cell Atlas](https://data.humancellatlas.org/) or [CELLxGENE datasets](https://cellxgene.cziscience.com/datasets). These databases also let you browse the data online - which is an excellent resource for the design or cell annotation stages; you can look up gene expression in a particular celltype to see if it matches what you are seeing.
 
 
 
-<!-- https://cellxgene.cziscience.com/e/7357cee7-9f7f-4ab0-8cec-90de8f047e38.cxg/ -->
-<!-- https://cellxgene.cziscience.com/collections/e5f58829-1a66-40b5-a624-9046778e74f5 -->
+The tabula sapiens project ([paper](https://www.science.org/doi/10.1126/science.abl4896)) as built a single cell atalas from a good number of human tissues. Its data is browseable and hosted in the [cellXgene tabular sapiens collection](https://cellxgene.cziscience.com/collections/e5f58829-1a66-40b5-a624-9046778e74f5)
 
 
-Check out the annotations for large intestinve vs the cellXgene webseite: https://cellxgene.cziscience.com/e/7357cee7-9f7f-4ab0-8cec-90de8f047e38.cxg/ 
+These are colon tissue samples, and there is a large intestine set listed (which includes colon samples). Conveniently, we can browse the data online to check if it will be suitable: via a [cellXgene interface](https://cellxgene.cziscience.com/e/7357cee7-9f7f-4ab0-8cec-90de8f047e38.cxg/)
+
+Broad cell class looks pretty good. There's colon included. Some individual level effect in the UMAP (stem cells limited to 1-2 samples). It'll work, and theres an easy link to download the data.
 
 
-Broad cell class looks pretty good. There's colon included. Some individual level effect in the UMAP (stem cells limited to 1-2 samples) 
+The reference dataset has been pre-downloaded onto the VMs
+```{sh eval=FALSE}
+# Do not run, but these were the linux shell commands to get and rename the data
+wget https://datasets.cellxgene.cziscience.com/82e3b450-6704-43de-8036-af1838daa7df.h5ad
+mv 82e3b450-6704-43de-8036-af1838daa7df.h5ad tabula_sapiens_large_intestine_82e3b450-6704-43de-8036-af1838daa7df.h5ad
+```
 
 
-Grab the .h5ad file for the large intestine
-https://datasets.cellxgene.cziscience.com/82e3b450-6704-43de-8036-af1838daa7df.h5ad 
+Its a .h5ad file, common from pythonic analyses. Luckily we can use the schard package to read it into R directly. But not to a seurat object. 
+
+```{r eval=FALSE}
+library(schard)
+sce.ts_intestine = schard::h5ad2sce(ts_largeintestine_h5ad)
+```
+
+Instead it builds a SingleCellExperiment object - a data format central to bioconductor packages (this is fine, singleR is from bioconductor too!). SCE objects work quite similarly to seurat objects, but have different notation - e.g. _colData_ and _rowData_ access the cell and gene information respectively.
+```{r eval=FALSE}
+DT::data.table(head(colData(sce.ts_intestine)))
+DT::data.table(head(rowData(sce.ts_intestine)))
+```
+
+TODO: LOAD PRECALLED from cell_typeing.R
 
 
-Its h5ad format. That's from python.
-
-We can read that with schard package.
-
+UPDATE FOR BETTER CALLING.
 
 
 

@@ -37,7 +37,7 @@ For real line, would pick all VariableFeatures (or all genes).
 
 
 ```{r}
-so <- FindVariableFeatures(so, nfeatures=15)
+so <- FindVariableFeatures(so, nfeatures=10)
 ```
 
 ```{r}

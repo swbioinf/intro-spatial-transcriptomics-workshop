@@ -25,8 +25,8 @@ clustering
 generate-clusters
 clustering-labeling
 cluster-markers
+old-cell-typing-by-reference
 cell-typing-by-reference
-todo-cell-typeing-by-appropriate-reference
 spatial-examination-of-plots
 recording-celltype-annotations.
 pull-in-real-annotation
@@ -35,7 +35,7 @@ spatially-informed-differntial-expression
 analysis-example-1
 run-moransi-once
 run-moransi-on-all-samples
-explore-that
+explore-moransi-results
 co-occurance-tests-potential-addition
 next-steps
 the-scope-of-what-was-done-with-this-data
