@@ -1,0 +1,315 @@
+# Clustering Labeling
+
+Classifing cells into meaningful celltypes (or cell states) is a time consuming, but extremely improtant, part of a spatial analysis.
+
+It may involve pulling together multiple lines of evidence to assign celltype labels to cluster labels. Some approaches outlined below:
+
+
+
+## Cluster Markers
+
+
+```{r message=FALSE}
+DimPlot(so, group.by='seurat_clusters')
+```
+
+
+
+```{r message=FALSE, warnings=FALSE}
+so <- JoinLayers(so)
+marker_table <- FindAllMarkers(so, group.by='seurat_clusters', only.pos=TRUE)
+```
+
+
+```{r}
+marker_table_top <- marker_table %>%
+    group_by(cluster) %>%
+    dplyr::filter(avg_log2FC > 1, p_val_adj < 0.01) %>%
+    slice_head(n = 5)
+```
+
+
+Plot cluster specific genes on a heatmap on a subset of 5000 cells.
+```{r message=FALSE, warnings=FALSE}    
+#DefaultLayer(so[['RNA']]) <- 'data'
+so.mini <- so[, sample(colnames(so), size =5000, replace=F)]
+DoHeatmap(so.mini, assay='RNA', features = marker_table_top$gene) 
+```
+
+
+## OLD Cell typing by reference
+
+There are a number of tools that classify cells into types on the basis of similarity with a reference dataset. SingleR is one such tool.
+
+```{r message=FALSE, warnings=FALSE}
+library(SingleR)
+```
+
+
+But first we need to aquire a reference dataset. 
+
+A typical reference would be from a public single cell datasets from a matched celltype with a trusted annotation. Look for a relevant paper which has provided their GEO accession number or similar. Note that not every study remembers to publish their annotations alongside their raw data, but the authors might be willing to supply you with a processed dataset if you ask.
+
+Alternativly, there are some databases of single cell datasets - see [Human Cell Atlas](https://data.humancellatlas.org/) or [CELLxGENE datasets](https://cellxgene.cziscience.com/datasets). These databases also let you browse the data online - which is an excellent resource for the design or cell annotation stages; you can look up gene expression in a particular celltype to see if it matches what you are seeing.
+
+There is also a package 'celldex' which hosts a small number of reference datasets ready to go. So for today, we will use the 'human primary cell atalas' reference, which includes celltypes from various different sites; Note that a sample specific reference would be better!
+
+```{r message=FALSE, warnings=FALSE}
+library(celldex)
+# Gives us a 'SummarizedExperiment object'
+se_ref <- celldex::HumanPrimaryCellAtlasData()
+```
+
+A reference dataset approach can only choose from the celltypes it has.
+```{r}
+unique(se_ref$label.main)
+```
+
+Note that singleR and celldex are bioconductor packages - they don't natively work with Seurat objects. Rather SpatialExperiments/SpatialFeatureExperiment/SingleCellExperiments/SummarizedExperiment (For software folk; these inherit from SummarizedExperiment)
+
+We could build a 'SingleCellExperiment' object - but singleR works just fine with a matrix of expression.
+
+
+```{r}
+norm_matrix <- GetAssayData(so, assay = 'RNA', layer = 'data')
+predictions <- SingleR::SingleR(test = norm_matrix, ref = se_ref, labels = se_ref$label.main)
+```
+
+
+Store back in the object, and plot. There are too many celltypes to show nicely, and some aren't that relevant.
+
+```{r}
+so$singleR_labels <- predictions$labels
+DimPlot(so, group.by='singleR_labels')
+```
+
+
+TODO: Ideally use a better reference that doesn't need this much post processing to be useful! Or make clearer what is being done here.
+
+
+
+```{r}
+so$singleR_delta.next <- predictions$delta.next
+VlnPlot(so, features='singleR_delta.next', group.by='singleR_labels', pt.size = 0) + NoLegend()
+
+min_delta_next_threshold <- 0.05
+min_cells_in_group       <- 50
+so$singleR_labels_thresh <- ifelse ( so$singleR_delta.next > min_delta_next_threshold ,  so$singleR_labels, NA)
+DimPlot(so, group.by='singleR_labels_thresh')
+
+
+
+counts_per_group <- table(so$singleR_labels_thresh)
+keep_groups      <- names(counts_per_group)[counts_per_group > 50]
+so$singleR_labels_filt <- ifelse( so$singleR_labels_thresh %in% keep_groups ,    so$singleR_labels_thresh, NA) 
+DimPlot(so, group.by='singleR_labels_filt')
+
+```
+
+Its nice to line those classifications up with clusters.
+
+```{r}
+## Celltype proportions
+celltype_summary_table<- so@meta.data %>% as_tibble() %>%
+  group_by(seurat_clusters, singleR_labels_filt ) %>%
+  summarise(n_cells = n())
+
+
+
+ggplot(celltype_summary_table, aes(x=seurat_clusters, y=n_cells, fill=singleR_labels_filt)) +
+  geom_bar(position="fill", stat="identity") +
+  theme_bw() +
+  coord_flip() +
+  theme(legend.position = "bottom") +
+  scale_y_continuous(expand = c(0,0)) +
+  ggtitle( "Celltyping vs clustering") 
+
+
+```
+
+## Cell typing by reference
+
+There are a number of tools that classify cells into types on the basis of similarity with a reference dataset. SingleR is one such tool.
+
+```{r message=FALSE, warnings=FALSE}
+library(SingleR)
+```
+
+
+But first we need to aquire a reference dataset. 
+
+A typical reference would be from a public single cell datasets from a matched celltype with a trusted annotation. Look for a relevant paper which has provided their GEO accession number or similar. Note that not every study remembers to publish their annotations alongside their raw data, but the authors might be willing to supply you with a processed dataset if you ask.
+
+Alternativly, there are some databases of single cell datasets - see [Human Cell Atlas](https://data.humancellatlas.org/) or [CELLxGENE datasets](https://cellxgene.cziscience.com/datasets). These databases also let you browse the data online - which is an excellent resource for the design or cell annotation stages; you can look up gene expression in a particular celltype to see if it matches what you are seeing.
+
+
+
+The tabula sapiens project ([paper](https://www.science.org/doi/10.1126/science.abl4896)) as built a single cell atalas from a good number of human tissues. Its data is browseable and hosted in the [cellXgene tabular sapiens collection](https://cellxgene.cziscience.com/collections/e5f58829-1a66-40b5-a624-9046778e74f5)
+
+
+These are colon tissue samples, and there is a large intestine set listed (which includes colon samples). Conveniently, we can browse the data online to check if it will be suitable: via a [cellXgene interface](https://cellxgene.cziscience.com/e/7357cee7-9f7f-4ab0-8cec-90de8f047e38.cxg/)
+
+Broad cell class looks pretty good. There's colon included. Some individual level effect in the UMAP (stem cells limited to 1-2 samples). It'll work, and theres an easy link to download the data.
+
+
+The reference dataset has been pre-downloaded onto the VMs
+```{sh eval=FALSE}
+# Do not run, but these were the linux shell commands to get and rename the data
+wget https://datasets.cellxgene.cziscience.com/82e3b450-6704-43de-8036-af1838daa7df.h5ad
+mv 82e3b450-6704-43de-8036-af1838daa7df.h5ad tabula_sapiens_large_intestine_82e3b450-6704-43de-8036-af1838daa7df.h5ad
+```
+
+
+Its a .h5ad file, common from pythonic analyses. Luckily we can use the schard package to read it into R directly. But not to a seurat object. 
+
+```{r eval=FALSE}
+library(schard)
+sce.ts_intestine = schard::h5ad2sce(ts_largeintestine_h5ad)
+```
+
+Instead it builds a SingleCellExperiment object - a data format central to bioconductor packages (this is fine, singleR is from bioconductor too!). SCE objects work quite similarly to seurat objects, but have different notation - e.g. _colData_ and _rowData_ access the cell and gene information respectively.
+```{r eval=FALSE}
+DT::data.table(head(colData(sce.ts_intestine)))
+DT::data.table(head(rowData(sce.ts_intestine)))
+```
+
+TODO: LOAD PRECALLED from cell_typeing.R
+
+
+UPDATE FOR BETTER CALLING.
+
+
+
+## Spatial examination of plots
+
+The clusters were defined purely on transcriptional similarity, but when plotted on tissue, their location pattern emerges.
+Here we can see that cluster 1 is epithelial cells. 
+
+Plotting both whole sample, and a zoomed in region of just one of the FOVs (in the cosmx definition) within it.
+
+```{r  message=FALSE, warnings=FALSE}
+so_sample <- so[, so$tissue_sample=="HC_a"]
+ImageDimPlot(so_sample,
+             fov          = "GSM7473682.HC.a",
+             axes = TRUE,
+             border.color = NA, border.size = 0.1,
+             group.by = "seurat_clusters",
+             boundaries   = "segmentation",
+             crop=TRUE,
+             nmols = 10000)
+
+```
+
+```{r message=FALSE, warnings=FALSE}
+so_fov    <- so_sample[, so_sample$fov==1]
+ImageDimPlot(so_fov,
+             fov          = "GSM7473682.HC.a",
+             axes = TRUE,
+             border.color = NA, border.size = 0.1,
+             group.by = "seurat_clusters",
+             boundaries   = "segmentation",
+             crop=TRUE,
+             nmols = 10000)
+
+ImageDimPlot(so_fov,
+             fov          = "GSM7473682.HC.a",
+             axes = TRUE,
+             border.color = NA, border.size = 0.1,
+             group.by = "singleR_labels_filt",
+             boundaries   = "segmentation",
+             crop=TRUE,
+             nmols = 10000)
+
+```
+
+
+
+
+
+
+
+## Recording celltype annotations.
+
+
+
+```{r}
+## Apply some cluster names
+so$cluster_code <- factor( paste0("c", so$seurat_clusters),   levels=paste0('c', levels(so$seurat_clusters)))
+Idents(so) <- so$cluster_code
+
+cluster_content <- list(
+  c0 = "Unknown",
+  c1 = "IntestinalEpithelia", # PIGR expression, epithelial location
+  c2 = "Fibroblasts",         # Collagen rich
+  c3 = "Plasma",              # MZB1, DERL3, JCHAIN
+  c4 = "Endothelia",          # Mostly endothelial in cell typing.
+  c5 = "Unknown"
+)
+
+# c5 => c5: Mono
+so$cluster_labels <- factor (
+  paste0(names(cluster_content[as.character(so$cluster_code)]), ": ", cluster_content[as.character(so$cluster_code)]) ,
+  levels = paste0( names(cluster_content), ": ", cluster_content)
+)
+```
+
+```{r message=FALSE}
+DimPlot(so, group.by='cluster_labels')
+```
+
+### Pull in real annotation
+
+The authors of this study have shared their actual celltypes. So in lieu of trying to figur this out - directly import their annotation 
+
+
+```{r}
+annotation_file <- 'data/GSE234713_CosMx_annotation.csv.gz'
+anno_table <- read_csv(annotation_file, show_col_types = F)
+anno_table <- as.data.frame(anno_table)
+rownames(anno_table) <- anno_table$id
+
+so$celltype <- factor(anno_table[colnames(so),]$subset)
+
+```
+
+From there can use celltype labels on visualiation:
+
+```{r message=FALSE, warnings=FALSE}
+so_fov    <- so[, so$tissue_sample=="HC_a" & so_sample$fov==1]
+ImageDimPlot(so_fov,
+             fov          = "GSM7473682.HC.a",
+             axes = TRUE,
+             border.color = NA, border.size = 0.1,
+             group.by = "celltype",
+             boundaries   = "segmentation",
+             crop=TRUE,
+             nmols = 10000)
+```
+
+
+Or use them in other comparisons.
+
+```{r}
+
+## Celltype proportions
+celltype_summary_table<- so@meta.data %>% as_tibble() %>%
+  group_by(condition, tissue_sample, celltype ) %>%
+  summarise(n_cells = n())
+
+
+
+ggplot(celltype_summary_table, aes(x=tissue_sample, y=n_cells, fill=celltype)) +
+  geom_bar(position="fill", stat="identity") +
+  theme_bw() +
+  coord_flip() +
+  theme(legend.position = "bottom") +
+  scale_y_continuous(expand = c(0,0)) +
+  ggtitle( "Celltype composition") +
+  facet_wrap(~condition, ncol = 1, scales = 'free_y')
+
+
+```
+
+
+
+
