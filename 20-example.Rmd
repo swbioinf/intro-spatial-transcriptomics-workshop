@@ -30,14 +30,14 @@ _Fig 1a from Garrido-Trigo et al. (2023)._
 
 The study included 9 CosMx slides of colonic biopsies, from a total of 9 donors:
 
-| Cohorts            | Abbreviated | Number of samples |
-| ------------------ | ----------- | ----------------- |
-| Healthy controls   | HC          | 3                 |
-| Ulcerative colitis | UC          | 3                 |
-| Chron's disease    | DC          | 3                 |
+| Cohorts                | Abbreviated | Number of samples |
+| ---------------------- | ----------- | ----------------- |
+| **Healthy controls**   | HC          | 3                 |
+| Ulcerative colitis     | UC          | 3                 |
+| **Crohn's disease**    | DC          | 3                 |
 
 In the original paper, the CosMX SMI cells were annotated via label transfer from
-the scRNA data. Here, we will do some basic processing of those 9 samples - QC,
-clustering and visualisation.
+the scRNA data. For the workshop, we will process the spatial transcriptomics
+data independently, on the healthy control (HC) and Chrohn's disease (CD) samples.
 
 <Image of plot to be made in workshop>

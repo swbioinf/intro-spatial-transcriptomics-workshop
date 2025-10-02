@@ -24,23 +24,75 @@ so_path  <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
 so <- readRDS(so_path)
 ```
 
+### Identifying potential technical artefacts
 
-```{r}
+Library size (total transcripts) and cell areas are good indicators of technical
+artefacts introduced during data generation steps. 
+
+Possible artefacts:
+- low quality cells
+- cell segmentation challenges (combining two cells, not aligned with real cell
+boundaries, leading to high area and low RNA count)
+
+Understanding these can help with biological interpretation downstream,
+for example, discerning whether differences in cells are due to e.g. cell type
+differences, or technical artefacts.
+
+```{r warning=F}
 # Total counts per cell
 ggplot(so@meta.data, aes(x=nCount_RNA, col=orig.ident)) +
   geom_density() +
   scale_x_log10() +
   theme_bw() +
-  ggtitle("Transcript Counts per cell")
+  annotation_logticks(sides = "b") +
+  ggtitle("Transcript counts per cell")
 ```
-**Exercise:** Display density of negprobes
 
-```{r}
-ggplot(so@meta.data, aes(x=nCount_negprobes, col=orig.ident)) +
+The transcripts per cell all display a log-normal distribution with shifting medians.
+
+Indicates no largely low-quality cells, and a good example of library size effects that should be normalised downstream, prior to analyses.
+
+```{r warning=F}
+# Total counts per cell
+ggplot(so@meta.data, aes(x=Area, col=orig.ident)) +
   geom_density() +
   scale_x_log10() +
   theme_bw() +
-  ggtitle("Transcript Counts per cell")
+  annotation_logticks(sides = "b") +
+  ggtitle("Area (μm^2) per cell")
+```
+
+Areas also follow log-normal distributions with medians ranging between 3,000 -
+4,000 $\mu m^2$. Sample/FOV `CD.c` has slightly smaller cell area with a median
+of ~2,000 $\mu m^2$.
+
+Useful to view bivariate metrics - the larger the cell, the more transcripts, in
+general.
+
+```{r, warning=F}
+ggplot(so@meta.data, aes(x=Area, y=nCount_RNA)) +
+  geom_point(size = 0.1, alpha = 0.4) +
+  scale_x_log10() +
+  scale_y_log10() +
+  annotation_logticks(sides = "bl") +
+  facet_wrap(~orig.ident) +
+  theme_light()
+```
+
+
+**Exercise:** Display density of negprobes
+
+**Tip:** View the metadata columns using `names(so@meta.data)`, and locate the
+name that corresponds to the number of negative probes.
+
+**Tip:** Use the previous code block and replace `nCount_RNA` with
+`nCount_negprobes`. Remember to update the `ggtitle()` label.
+
+```{r warning=F}
+ggplot(so@meta.data, aes(x=nCount_negprobes, col=orig.ident)) +
+  geom_density() +
+  theme_bw() +
+  ggtitle("Negative probe counts per cell")
 ```
 
 Suggest to view QC metrics as co-variates - may lack context if displayed alone:
@@ -54,7 +106,24 @@ so@meta.data %>%
   theme(legend.position = "none")
 ```
 
+The more transcripts detected `nCount_RNA`, the more mapped genes there are. Bad quality cells
+
 Point out where bad quality cells would reside
+
+## FoV QC (CosMX only)
+
+Good to check library sizes across FOVs - red flags include FOVs with close to
+no cells.
+
+```{r}
+so@meta.data %>%
+  unite(col = unique_fov_names, orig.ident, fov, remove = F) %>%
+  ggplot(aes(x = nCount_RNA, col = orig.ident, group = unique_fov_names)) +
+  geom_density() +
+  scale_x_log10() +
+  theme_light() +
+  annotation_logticks(sides = "b")
+```
 
 ## Spatial
 
@@ -70,7 +139,7 @@ ImageFeaturePlot(so, fov = "GSM7473684_HC_c", features = "nCount_RNA")
 ImageFeaturePlot(so, fov = "GSM7473684_HC_c", features = "nCount_negprobes")
 ```
 
-## FilterNegative counts per cell
+## Filter negative counts per cell
 
 Key metrics:
 
@@ -106,6 +175,20 @@ ggplot(so@meta.data, aes(x = nCount_RNA, y = mean_neg)) +
 ```
 
 ```{r}
-ImageFeaturePlot(so, fov = unique(so$orig.ident), features = c("percent_neg"))
+hc_idents <- unique(so$orig.ident)[1:3]
+cd_idents <- unique(so$orig.ident)[1:3]
 ```
 
+```{r}
+ImageFeaturePlot(so, fov = hc_idents, features = c("percent_neg"))
+```
+
+```{r}
+ImageFeaturePlot(so, fov = cd_idents, features = c("percent_neg"))
+```
+
+Note: You can also conduct QC in low dimensional steps following the
+normalisation and dimension reduction steps in this workshop. QC is often
+iterative. First pass should be permissive with filtering.
+
+For the workshop we will proceed directly with the pre-processing steps.

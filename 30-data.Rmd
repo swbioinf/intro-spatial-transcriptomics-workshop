@@ -43,7 +43,12 @@ For a cosmx SMI slide (like this experiment).
   
 For a Xenium slide there is just the one typical output directory; they discuss the formats in the section on [data archiving](https://www.10xgenomics.com/support/software/xenium-onboard-analysis/latest/analysis/xoa-output-archive-data), but again, software tools take the directory as a whole.
 
-What is a FoV?
+## Cell segmentation
+
+- Out of scope for workshop
+- commercial options
+- Third party tools often recommended: image-based (cellpose), transcript-based (proseg), hybrid (baysor), segmentation-free approaches
+- Deep learning commonly applied here
 
 ## Note on `Seurat::LoadNanostring()`
 
@@ -147,9 +152,9 @@ so
 - 980 transcripts measured
 - no variable features as feature selection has not been conducted yet
 
-**6 layers present: counts.GSM7473682_HC_a, counts.GSM7473683_HC_b, 
-counts.GSM7473684_HC_c, counts.GSM7473688_CD_a, counts.GSM7473689_CD_b, 
-counts.GSM7473690_CD_c**
+**6 layers present: counts.GSM7473682.HC.a, counts.GSM7473683.HC.b, 
+counts.GSM7473684.HC.c, counts.GSM7473688.CD.a, counts.GSM7473689.CD.b, 
+counts.GSM7473690.CD.c**
 
 - Each layer represents a sample from either HC or CD donors. Required for
 comparison of both groups downstream
@@ -161,17 +166,30 @@ control probes. In spatial transcriptomics, tracking these control probes is
 crucial for quality control, specificity assessment, and defining background
 signal.
 
-**6 spatial fields of view present: GSM7473682_HC_a GSM7473683_HC_b GSM7473684_HC_c GSM7473688_CD_a GSM7473689_CD_b GSM7473690_CD_c:**
+**6 spatial fields of view present: GSM7473682.HC.a GSM7473683.HC.b GSM7473684.HC.c GSM7473688.CD.a GSM7473689.CD.b GSM7473690.CD.c:**
 
 The list of six spatial fields of view (FOVs) explicitly links the spatial/image
 information stored in the Seurat object to the six specific samples/layers
 identified above. This demonstrates that the data set is ready for spatially
-resolved analysis and visualization, allowing results (like cell clusters or
+resolved analysis and visualisation, allowing results (like cell clusters or
 gene expression) to be mapped back onto the original tissue sections for all
 six integrated samples.
-    
 
-### Understanding the Seurat metadata
+:::{.callout-tip}
+#### CosMX sample names
+
+Note that the field of view names are delimited by `.`. At the time of writing,
+underscores will cause some functions to fail silently. For more information,
+see [this issue](https://github.com/satijalab/seurat/issues/10103)
+:::
+
+:::{.callout-tip}
+#### Xenium
+
+Xenium does not have FoVs.
+
+TODO: expand
+:::
 
 Display the metadata
 
@@ -191,18 +209,12 @@ so we know which groups to compare downstream, i.e. case vs. control comparison.
 This particular study has one sample per slide (easy!), but there are typically
 more. 
 
-Explain input data, what it represents, how it will be used for analysis.
-Define terms like centroids, segments, fov
+TODO: Explain input data, what it represents, how it will be used for analysis.
+
+TODO: Define terms like centroids, segments, fov
 
 - See: https://satijalab.org/seurat/articles/seurat5_spatial_vignette_2#mouse-brain-vizgen-merscope
 - TODO: Excalidraw of these
-
-Load a subsampled dataset for working with multiple samples
-That takes too long, so loading a preloaded object
-Add figure that represents the subset
-
-Explain: Subset data, how many samples and conditions. Represent graphically
-e.g. three healthy controls (HC) vs. three CD
 
 Display the metadata columns:
 
@@ -217,7 +229,8 @@ understand each field at a glance
 skimr::skim(so@meta.data)
 ```
 
-Explain: number of rows (68624) represent data points (?)
+Explain: number of rows (68624) represents a cell
+
 Identify important metadata columns and discuss what they mean
 
 This dataset is a subset of the experimental data - only the first 4 fovs of
@@ -226,12 +239,13 @@ each, and only the CD and HC sample groups.
 seurat fov = slide
 bruker cosmx fov = region on slide
 
+View the `tissue_sample` metadata to prepare for the next step. This represents
 
-View the tissue_sample metadata to prepare for the next step
 
 ```{r}
 table(so$tissue_sample)
 ```
+
 
 ## Visualising our spatial data
 
@@ -261,22 +275,8 @@ By an individual gene.
 
 Do not need fov_name this time
 
-```{r}
-#And and individual gene
-ImageDimPlot(so_hca,
-             fov = "GSM7473682_HC_a",
-             axes = TRUE,
-             border.color = "white",
-             border.size = 0.1,
-             #group.by = "fov_name",
-             boundaries   = "segmentation",
-             molecules = "S100A6",
-             crop = TRUE,
-             nmols = 10000)
-```
-
 ```{r, eval=F}
-ImageFeaturePlot(so_hca, fov = "GSM7473682_HC_a", features = "S100A6")
+ImageFeaturePlot(so, fov = "GSM7473682.HC.a", features = "S100A6")
 ```
 ```console
 Warning: No layers found matching search pattern provided
@@ -299,7 +299,7 @@ so@assays
 ### Gene expression count matrices
 
 ```{r}
-so@assays$RNA$counts.GSM7473682_HC_a[1:5,1:5]
+so@assays$RNA$counts.GSM7473682.HC.a[1:5,1:5]
 ```
 
 Row = gene
