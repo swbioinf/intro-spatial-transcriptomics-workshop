@@ -103,156 +103,26 @@
 <code class="sourceCode R"><span><span class="va">marker_table_top</span> <span class="op">&lt;-</span> <span class="va">marker_table</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">avg_log2FC</span> <span class="op">&gt;</span> <span class="fl">1</span>, <span class="va">p_val_adj</span> <span class="op">&lt;</span> <span class="fl">0.01</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<p>Plot cluster specific genes on a heatmap on a subset of 5000 cells.</p>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#DefaultLayer(so[['RNA']]) &lt;- 'data'</span></span>
-<span><span class="va">so.mini</span> <span class="op">&lt;-</span> <span class="va">so</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">so</span><span class="op">)</span>, size <span class="op">=</span><span class="fl">5000</span>, replace<span class="op">=</span><span class="cn">F</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
-<pre><code>## Warning: Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Centroids objects
-## Not validating Centroids objects</code></pre>
-<pre><code>## Warning: Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Centroids objects</code></pre>
-<pre><code>## Warning: Not validating FOV objects
-## Not validating FOV objects
-## Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Seurat objects</code></pre>
-<pre><code>## Warning: Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Centroids objects
-## Not validating Centroids objects</code></pre>
-<pre><code>## Warning: Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Centroids objects</code></pre>
-<pre><code>## Warning: Not validating FOV objects
-## Not validating FOV objects
-## Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Seurat objects</code></pre>
-<pre><code>## Warning: Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Centroids objects
-## Not validating Centroids objects</code></pre>
-<pre><code>## Warning: Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Centroids objects</code></pre>
-<pre><code>## Warning: Not validating FOV objects
-## Not validating FOV objects
-## Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Seurat objects</code></pre>
-<pre><code>## Warning: Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Centroids objects
-## Not validating Centroids objects</code></pre>
-<pre><code>## Warning: Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Centroids objects</code></pre>
-<pre><code>## Warning: Not validating FOV objects
-## Not validating FOV objects
-## Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Seurat objects</code></pre>
-<pre><code>## Warning: Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Centroids objects
-## Not validating Centroids objects</code></pre>
-<pre><code>## Warning: Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Centroids objects</code></pre>
-<pre><code>## Warning: Not validating FOV objects
-## Not validating FOV objects
-## Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Seurat objects</code></pre>
-<pre><code>## Warning: Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Centroids objects
-## Not validating Centroids objects</code></pre>
-<pre><code>## Warning: Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Centroids objects</code></pre>
-<pre><code>## Warning: Not validating FOV objects
-## Not validating FOV objects
-## Not validating FOV objects</code></pre>
-<pre><code>## Warning: Not validating Seurat objects</code></pre>
-<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DoHeatmap.html">DoHeatmap</a></span><span class="op">(</span><span class="va">so.mini</span>, assay<span class="op">=</span><span class="st">'RNA'</span>, features <span class="op">=</span> <span class="va">marker_table_top</span><span class="op">$</span><span class="va">gene</span><span class="op">)</span> </span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DotPlot.html">DotPlot</a></span><span class="op">(</span><span class="va">so</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">marker_table_top</span><span class="op">$</span><span class="va">gene</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, vjust <span class="op">=</span> <span class="fl">0.5</span>, hjust<span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-40-1.png" width="672"></div>
+<!-- Plot cluster specific genes on a heatmap on a subset of 5000 cells. -->
+<!-- ```{r message=FALSE, warnings=FALSE}     -->
+<!-- #DefaultLayer(so[['RNA']]) <- 'data' -->
+<!-- so.mini <- so[, sample(colnames(so), size =5000, replace=F)] -->
+<!-- DoHeatmap(so.mini, assay='RNA', features = marker_table_top$gene)  -->
+<!-- ``` -->
 </div>
-<div id="old-cell-typing-by-reference" class="section level2" number="12.2">
+<div id="cell-typing-by-reference" class="section level2" number="12.2">
 <h2>
-<span class="header-section-number">12.2</span> OLD Cell typing by reference<a class="anchor" aria-label="anchor" href="#old-cell-typing-by-reference"><i class="fas fa-link"></i></a>
+<span class="header-section-number">12.2</span> Cell typing by reference<a class="anchor" aria-label="anchor" href="#cell-typing-by-reference"><i class="fas fa-link"></i></a>
 </h2>
 <p>There are a number of tools that classify cells into types on the basis of similarity with a reference dataset. SingleR is one such tool.</p>
-<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/SingleR-inc/SingleR">SingleR</a></span><span class="op">)</span></span></code></pre></div>
 <pre><code>## Warning: replacing previous import 'S4Arrays::makeNindexFromArrayViewport' by
 ## 'DelayedArray::makeNindexFromArrayViewport' when loading 'SummarizedExperiment'</code></pre>
-<p>But first we need to aquire a reference dataset.</p>
-<p>A typical reference would be from a public single cell datasets from a matched celltype with a trusted annotation. Look for a relevant paper which has provided their GEO accession number or similar. Note that not every study remembers to publish their annotations alongside their raw data, but the authors might be willing to supply you with a processed dataset if you ask.</p>
-<p>Alternativly, there are some databases of single cell datasets - see <a href="https://data.humancellatlas.org/">Human Cell Atlas</a> or <a href="https://cellxgene.cziscience.com/datasets">CELLxGENE datasets</a>. These databases also let you browse the data online - which is an excellent resource for the design or cell annotation stages; you can look up gene expression in a particular celltype to see if it matches what you are seeing.</p>
-<p>There is also a package ‘celldex’ which hosts a small number of reference datasets ready to go. So for today, we will use the ‘human primary cell atalas’ reference, which includes celltypes from various different sites; Note that a sample specific reference would be better!</p>
-<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LTLA/celldex">celldex</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code>## Warning: replacing previous import 'S4Arrays::makeNindexFromArrayViewport' by
-## 'DelayedArray::makeNindexFromArrayViewport' when loading 'HDF5Array'</code></pre>
-<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Gives us a 'SummarizedExperiment object'</span></span>
-<span><span class="va">se_ref</span> <span class="op">&lt;-</span> <span class="fu">celldex</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/celldex/man/HumanPrimaryCellAtlasData.html">HumanPrimaryCellAtlasData</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>A reference dataset approach can only choose from the celltypes it has.</p>
-<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">se_ref</span><span class="op">$</span><span class="va">label.main</span><span class="op">)</span></span></code></pre></div>
-<pre><code>##  [1] "DC"                   "Smooth_muscle_cells"  "Epithelial_cells"    
-##  [4] "B_cell"               "Neutrophils"          "T_cells"             
-##  [7] "Monocyte"             "Erythroblast"         "BM &amp; Prog."          
-## [10] "Endothelial_cells"    "Gametocytes"          "Neurons"             
-## [13] "Keratinocytes"        "HSC_-G-CSF"           "Macrophage"          
-## [16] "NK_cell"              "Embryonic_stem_cells" "Tissue_stem_cells"   
-## [19] "Chondrocytes"         "Osteoblasts"          "BM"                  
-## [22] "Platelets"            "Fibroblasts"          "iPS_cells"           
-## [25] "Hepatocytes"          "MSC"                  "Neuroepithelial_cell"
-## [28] "Astrocyte"            "HSC_CD34+"            "CMP"                 
-## [31] "GMP"                  "MEP"                  "Myelocyte"           
-## [34] "Pre-B_cell_CD34-"     "Pro-B_cell_CD34+"     "Pro-Myelocyte"</code></pre>
-<p>Note that singleR and celldex are bioconductor packages - they don’t natively work with Seurat objects. Rather SpatialExperiments/SpatialFeatureExperiment/SingleCellExperiments/SummarizedExperiment (For software folk; these inherit from SummarizedExperiment)</p>
-<p>We could build a ‘SingleCellExperiment’ object - but singleR works just fine with a matrix of expression.</p>
-<div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">norm_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.github.io/seurat-object/reference/AssayData.html">GetAssayData</a></span><span class="op">(</span><span class="va">so</span>, assay <span class="op">=</span> <span class="st">'RNA'</span>, layer <span class="op">=</span> <span class="st">'data'</span><span class="op">)</span></span>
-<span><span class="va">predictions</span> <span class="op">&lt;-</span> <span class="fu">SingleR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SingleR/man/SingleR.html">SingleR</a></span><span class="op">(</span>test <span class="op">=</span> <span class="va">norm_matrix</span>, ref <span class="op">=</span> <span class="va">se_ref</span>, labels <span class="op">=</span> <span class="va">se_ref</span><span class="op">$</span><span class="va">label.main</span><span class="op">)</span></span></code></pre></div>
-<p>Store back in the object, and plot. There are too many celltypes to show nicely, and some aren’t that relevant.</p>
-<div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">so</span><span class="op">$</span><span class="va">singleR_labels</span> <span class="op">&lt;-</span> <span class="va">predictions</span><span class="op">$</span><span class="va">labels</span></span>
-<span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'singleR_labels'</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-45-1.png" width="672"></div>
-<p>TODO: Ideally use a better reference that doesn’t need this much post processing to be useful! Or make clearer what is being done here.</p>
-<div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">so</span><span class="op">$</span><span class="va">singleR_delta.next</span> <span class="op">&lt;-</span> <span class="va">predictions</span><span class="op">$</span><span class="va">delta.next</span></span>
-<span><span class="fu"><a href="https://satijalab.org/seurat/reference/VlnPlot.html">VlnPlot</a></span><span class="op">(</span><span class="va">so</span>, features<span class="op">=</span><span class="st">'singleR_delta.next'</span>, group.by<span class="op">=</span><span class="st">'singleR_labels'</span>, pt.size <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/SeuratTheme.html">NoLegend</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-46-1.png" width="672"></div>
-<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">min_delta_next_threshold</span> <span class="op">&lt;-</span> <span class="fl">0.05</span></span>
-<span><span class="va">min_cells_in_group</span>       <span class="op">&lt;-</span> <span class="fl">50</span></span>
-<span><span class="va">so</span><span class="op">$</span><span class="va">singleR_labels_thresh</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span> <span class="op">(</span> <span class="va">so</span><span class="op">$</span><span class="va">singleR_delta.next</span> <span class="op">&gt;</span> <span class="va">min_delta_next_threshold</span> ,  <span class="va">so</span><span class="op">$</span><span class="va">singleR_labels</span>, <span class="cn">NA</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'singleR_labels_thresh'</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-46-2.png" width="672"></div>
-<div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">counts_per_group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">so</span><span class="op">$</span><span class="va">singleR_labels_thresh</span><span class="op">)</span></span>
-<span><span class="va">keep_groups</span>      <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">counts_per_group</span><span class="op">)</span><span class="op">[</span><span class="va">counts_per_group</span> <span class="op">&gt;</span> <span class="fl">50</span><span class="op">]</span></span>
-<span><span class="va">so</span><span class="op">$</span><span class="va">singleR_labels_filt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span> <span class="va">so</span><span class="op">$</span><span class="va">singleR_labels_thresh</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="va">keep_groups</span> ,    <span class="va">so</span><span class="op">$</span><span class="va">singleR_labels_thresh</span>, <span class="cn">NA</span><span class="op">)</span> </span>
-<span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'singleR_labels_filt'</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-46-3.png" width="672"></div>
-<p>Its nice to line those classifications up with clusters.</p>
-<div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## Celltype proportions</span></span>
-<span><span class="va">celltype_summary_table</span><span class="op">&lt;-</span> <span class="va">so</span><span class="op">@</span><span class="va">meta.data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">seurat_clusters</span>, <span class="va">singleR_labels_filt</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>n_cells <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by 'seurat_clusters'. You can override using the
-## `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb114"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">celltype_summary_table</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">seurat_clusters</span>, y<span class="op">=</span><span class="va">n_cells</span>, fill<span class="op">=</span><span class="va">singleR_labels_filt</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>position<span class="op">=</span><span class="st">"fill"</span>, stat<span class="op">=</span><span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html">coord_flip</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span> <span class="st">"Celltyping vs clustering"</span><span class="op">)</span> </span></code></pre></div>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-47-1.png" width="672"></div>
-</div>
-<div id="cell-typing-by-reference" class="section level2" number="12.3">
-<h2>
-<span class="header-section-number">12.3</span> Cell typing by reference<a class="anchor" aria-label="anchor" href="#cell-typing-by-reference"><i class="fas fa-link"></i></a>
-</h2>
-<p>There are a number of tools that classify cells into types on the basis of similarity with a reference dataset. SingleR is one such tool.</p>
-<div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/SingleR-inc/SingleR">SingleR</a></span><span class="op">)</span></span></code></pre></div>
 <p>But first we need to aquire a reference dataset.</p>
 <p>A typical reference would be from a public single cell datasets from a matched celltype with a trusted annotation. Look for a relevant paper which has provided their GEO accession number or similar. Note that not every study remembers to publish their annotations alongside their raw data, but the authors might be willing to supply you with a processed dataset if you ask.</p>
 <p>Alternativly, there are some databases of single cell datasets - see <a href="https://data.humancellatlas.org/">Human Cell Atlas</a> or <a href="https://cellxgene.cziscience.com/datasets">CELLxGENE datasets</a>. These databases also let you browse the data online - which is an excellent resource for the design or cell annotation stages; you can look up gene expression in a particular celltype to see if it matches what you are seeing.</p>
@@ -260,28 +130,126 @@
 <p>These are colon tissue samples, and there is a large intestine set listed (which includes colon samples). Conveniently, we can browse the data online to check if it will be suitable: via a <a href="https://cellxgene.cziscience.com/e/7357cee7-9f7f-4ab0-8cec-90de8f047e38.cxg/">cellXgene interface</a></p>
 <p>Broad cell class looks pretty good. There’s colon included. Some individual level effect in the UMAP (stem cells limited to 1-2 samples). It’ll work, and theres an easy link to download the data.</p>
 <p>The reference dataset has been pre-downloaded onto the VMs</p>
-<div class="sourceCode" id="cb116"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb116-1"><a href="clustering-labeling.html#cb116-1" tabindex="-1"></a><span class="co"># Do not run, but these were the linux shell commands to get and rename the data</span></span>
-<span id="cb116-2"><a href="clustering-labeling.html#cb116-2" tabindex="-1"></a><span class="fu">wget</span> https://datasets.cellxgene.cziscience.com/82e3b450-6704-43de-8036-af1838daa7df.h5ad</span>
-<span id="cb116-3"><a href="clustering-labeling.html#cb116-3" tabindex="-1"></a><span class="fu">mv</span> 82e3b450-6704-43de-8036-af1838daa7df.h5ad tabula_sapiens_large_intestine_82e3b450-6704-43de-8036-af1838daa7df.h5ad</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb65-1"><a href="clustering-labeling.html#cb65-1" tabindex="-1"></a><span class="co"># Do not run, but these were the linux shell commands to get and rename the data</span></span>
+<span id="cb65-2"><a href="clustering-labeling.html#cb65-2" tabindex="-1"></a><span class="fu">wget</span> https://datasets.cellxgene.cziscience.com/82e3b450-6704-43de-8036-af1838daa7df.h5ad</span>
+<span id="cb65-3"><a href="clustering-labeling.html#cb65-3" tabindex="-1"></a><span class="fu">mv</span> 82e3b450-6704-43de-8036-af1838daa7df.h5ad tabula_sapiens_large_intestine_82e3b450-6704-43de-8036-af1838daa7df.h5ad</span></code></pre></div>
 <p>Its a .h5ad file, common from pythonic analyses. Luckily we can use the schard package to read it into R directly. But not to a seurat object.</p>
-<div class="sourceCode" id="cb117"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">schard</span><span class="op">)</span></span>
 <span><span class="va">sce.ts_intestine</span> <span class="op">=</span> <span class="fu">schard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/schard/man/h5ad2sce.html">h5ad2sce</a></span><span class="op">(</span><span class="va">ts_largeintestine_h5ad</span><span class="op">)</span></span></code></pre></div>
 <p>Instead it builds a SingleCellExperiment object - a data format central to bioconductor packages (this is fine, singleR is from bioconductor too!). SCE objects work quite similarly to seurat objects, but have different notation - e.g. <em>colData</em> and <em>rowData</em> access the cell and gene information respectively.</p>
-<div class="sourceCode" id="cb118"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">DT</span><span class="fu">::</span><span class="fu">data.table</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">colData</a></span><span class="op">(</span><span class="va">sce.ts_intestine</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu">DT</span><span class="fu">::</span><span class="fu">data.table</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span><span class="op">(</span><span class="va">sce.ts_intestine</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>TODO: LOAD PRECALLED from cell_typeing.R</p>
-<p>UPDATE FOR BETTER CALLING.</p>
+<p>TODO: SHOW CODE FOR calling
+TODO: LOAD PRECALLED from cell_typeing.R</p>
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">predictions_broad</span> <span class="op">&lt;-</span> <span class="fu">SingleR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SingleR/man/SingleR.html">SingleR</a></span><span class="op">(</span>test <span class="op">=</span> <span class="va">norm_matrix</span>,</span>
+<span>                                ref   <span class="op">=</span> <span class="va">ref_norm_matrix</span>,</span>
+<span>                                labels <span class="op">=</span> <span class="va">sce.ts_intestine.genename</span><span class="op">$</span><span class="va">broad_cell_class</span>,</span>
+<span>                                aggr.ref <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># builds a pseudubulk reference , speedier processing</span></span>
+<span>                                BPPARAM <span class="op">=</span> <span class="fu">MulticoreParam</span><span class="op">(</span>workers<span class="op">=</span><span class="fl">8</span><span class="op">)</span></span>
+<span>                                <span class="op">)</span></span>
+<span></span>
+<span><span class="va">predictions_detailed</span> <span class="op">&lt;-</span> <span class="fu">SingleR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SingleR/man/SingleR.html">SingleR</a></span><span class="op">(</span>test <span class="op">=</span> <span class="va">norm_matrix</span>,</span>
+<span>                                ref   <span class="op">=</span> <span class="va">ref_norm_matrix</span>,</span>
+<span>                                labels <span class="op">=</span> <span class="va">sce.ts_intestine.genename</span><span class="op">$</span><span class="va">cell_type</span>,</span>
+<span>                                aggr.ref <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># builds a pseudubulk reference , speedier processing</span></span>
+<span>                                BPPARAM <span class="op">=</span> <span class="fu">MulticoreParam</span><span class="op">(</span>workers<span class="op">=</span><span class="fl">8</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">predictions_broad_file</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="st">"data"</span>,<span class="st">"predictions_with_ts_intestine_broad_cell_class.RDS"</span><span class="op">)</span></span>
+<span><span class="va">predictions_detailed_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="st">"data"</span>,<span class="st">"predictions_with_ts_intestine_detailed_celltype.RDS"</span><span class="op">)</span></span>
+<span><span class="va">predictions_broad</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="va">predictions_broad_file</span><span class="op">)</span></span>
+<span><span class="va">predictions_detailed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="va">predictions_detailed_file</span><span class="op">)</span></span></code></pre></div>
+<p>The predictions look like this</p>
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">predictions_broad</span></span></code></pre></div>
+<pre><code>## DataFrame with 50662 rows and 4 columns
+##                                        scores                 labels delta.next
+##                                      &lt;matrix&gt;            &lt;character&gt;  &lt;numeric&gt;
+## HC_a_1_1    0.1252298:0.0421483:0.1439010:... intestinal epithelia..  0.1699674
+## HC_a_2_1    0.1858187:0.1358003:0.2486781:... intestinal epithelia..  0.2162555
+## HC_a_3_1    0.0680558:0.0333607:0.0556612:... intestinal epithelia..  0.0690115
+## HC_a_4_1    0.1267659:0.1065211:0.1137483:... intestinal epithelia..  0.0564796
+## HC_a_5_1    0.1268115:0.0372846:0.1150281:... intestinal epithelia..  0.1349850
+## ...                                       ...                    ...        ...
+## CD_c_2598_4 0.0865032:0.1583952:0.0896210:... lymphocyte of b line..  0.0653858
+## CD_c_2599_4 0.1130322:0.2223292:0.1551975:... lymphocyte of b line..  0.1015308
+## CD_c_2604_4 0.0346508:0.0963272:0.0198204:... lymphocyte of b line..  0.0548568
+## CD_c_2606_4 0.1538878:0.1865196:0.1481035:... lymphocyte of b line..  0.0138602
+## CD_c_2608_4 0.0197512:0.0411252:0.0296443:...   innate lymphoid cell  0.0593001
+##                      pruned.labels
+##                        &lt;character&gt;
+## HC_a_1_1    intestinal epithelia..
+## HC_a_2_1    intestinal epithelia..
+## HC_a_3_1    intestinal epithelia..
+## HC_a_4_1    intestinal epithelia..
+## HC_a_5_1    intestinal epithelia..
+## ...                            ...
+## CD_c_2598_4 lymphocyte of b line..
+## CD_c_2599_4 lymphocyte of b line..
+## CD_c_2604_4 lymphocyte of b line..
+## CD_c_2606_4 lymphocyte of b line..
+## CD_c_2608_4   innate lymphoid cell</code></pre>
+<p>Pull them both into the annotation</p>
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># We can do this because the order of cell is the same</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">predictions_broad</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">so</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">so</span><span class="op">$</span><span class="va">singleR_pred_broad</span>    <span class="op">&lt;-</span> <span class="va">predictions_broad</span><span class="op">$</span><span class="va">pruned.labels</span></span>
+<span><span class="va">so</span><span class="op">$</span><span class="va">singleR_pred_detailed</span> <span class="op">&lt;-</span> <span class="va">predictions_detailed</span><span class="op">$</span><span class="va">pruned.labels</span></span></code></pre></div>
+<p>And plot on the UMAP</p>
+<p>The clusters:</p>
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-49-1.png" width="672"></div>
+<p>The broad predictions</p>
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by <span class="op">=</span> <span class="st">'singleR_pred_broad'</span>, label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-50-1.png" width="672"></div>
+<p>And the detailed predictions. The detailed celltypes are more difficult to see - but some have clearly labelled.</p>
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by <span class="op">=</span> <span class="st">'singleR_pred_detailed'</span>, label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/SeuratTheme.html">NoLegend</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-51-1.png" width="672"></div>
+<p>The delta next score gives you the distance between the called celltype, and the next most likely. A small difference could indicate uncertainty - from a difficult to classify cell, stray counts from a neighbouring cell ,</p>
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">so</span><span class="op">$</span><span class="va">singleR_delta.next_broad</span>    <span class="op">&lt;-</span> <span class="va">predictions_broad</span><span class="op">$</span><span class="va">delta.next</span></span>
+<span><span class="va">so</span><span class="op">$</span><span class="va">singleR_delta.next_detailed</span> <span class="op">&lt;-</span> <span class="va">predictions_detailed</span><span class="op">$</span><span class="va">delta.next</span></span>
+<span></span>
+<span><span class="fu"><a href="https://satijalab.org/seurat/reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">so</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'singleR_delta.next_broad'</span>,<span class="st">'singleR_delta.next_detailed'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-52-1.png" width="672"></div>
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/VlnPlot.html">VlnPlot</a></span><span class="op">(</span><span class="va">so</span>, features<span class="op">=</span><span class="st">'singleR_delta.next_broad'</span>, group.by<span class="op">=</span><span class="st">'singleR_pred_broad'</span>, pt.size <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/SeuratTheme.html">NoLegend</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-52-2.png" width="672"></div>
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/VlnPlot.html">VlnPlot</a></span><span class="op">(</span><span class="va">so</span>, features<span class="op">=</span><span class="st">'singleR_delta.next_detailed'</span>, group.by<span class="op">=</span><span class="st">'singleR_pred_detailed'</span>, pt.size <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/SeuratTheme.html">NoLegend</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-52-3.png" width="672"></div>
+<p>Its nice to line those classifications up with clusters.</p>
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Celltype proportions</span></span>
+<span><span class="va">celltype_summary_table</span><span class="op">&lt;-</span> <span class="va">so</span><span class="op">@</span><span class="va">meta.data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">seurat_clusters</span>, <span class="va">singleR_pred_broad</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>n_cells <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## `summarise()` has grouped output by 'seurat_clusters'. You can override using
+## the `.groups` argument.</code></pre>
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">celltype_summary_table</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">seurat_clusters</span>, y<span class="op">=</span><span class="va">n_cells</span>, fill<span class="op">=</span><span class="va">singleR_pred_broad</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>position<span class="op">=</span><span class="st">"fill"</span>, stat<span class="op">=</span><span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html">coord_flip</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span> <span class="st">"Celltyping vs clustering"</span><span class="op">)</span> </span></code></pre></div>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-53-1.png" width="672"></div>
 </div>
-<div id="spatial-examination-of-plots" class="section level2" number="12.4">
+<div id="spatial-examination-of-plots" class="section level2" number="12.3">
 <h2>
-<span class="header-section-number">12.4</span> Spatial examination of plots<a class="anchor" aria-label="anchor" href="#spatial-examination-of-plots"><i class="fas fa-link"></i></a>
+<span class="header-section-number">12.3</span> Spatial examination of plots<a class="anchor" aria-label="anchor" href="#spatial-examination-of-plots"><i class="fas fa-link"></i></a>
 </h2>
 <p>The clusters were defined purely on transcriptional similarity, but when plotted on tissue, their location pattern emerges.
 Here we can see that cluster 1 is epithelial cells.</p>
 <p>Plotting both whole sample, and a zoomed in region of just one of the FOVs (in the cosmx definition) within it.</p>
-<div class="sourceCode" id="cb119"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">so_sample</span> <span class="op">&lt;-</span> <span class="va">so</span><span class="op">[</span>, <span class="va">so</span><span class="op">$</span><span class="va">tissue_sample</span><span class="op">==</span><span class="st">"HC_a"</span><span class="op">]</span></span></code></pre></div>
 <pre><code>## Warning: Not validating FOV objects</code></pre>
 <pre><code>## Warning: Not validating Centroids objects
@@ -297,17 +265,18 @@ Here we can see that cluster 1 is epithelial cells.</p>
 ## Not validating Seurat objects
 ## Not validating Seurat objects
 ## Not validating Seurat objects</code></pre>
-<div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/ImageDimPlot.html">ImageDimPlot</a></span><span class="op">(</span><span class="va">so_sample</span>,</span>
 <span>             fov          <span class="op">=</span> <span class="st">"GSM7473682.HC.a"</span>,</span>
 <span>             axes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>             border.color <span class="op">=</span> <span class="cn">NA</span>, border.size <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>             cols <span class="op">=</span> <span class="st">'polychrome'</span>, <span class="co">#See DiscretePalette()</span></span>
 <span>             group.by <span class="op">=</span> <span class="st">"seurat_clusters"</span>,</span>
 <span>             boundaries   <span class="op">=</span> <span class="st">"segmentation"</span>,</span>
 <span>             crop<span class="op">=</span><span class="cn">TRUE</span>,</span>
 <span>             nmols <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-52-1.png" width="672"></div>
-<div class="sourceCode" id="cb127"><pre class="downlit sourceCode r">
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-54-1.png" width="672"></div>
+<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">so_fov</span>    <span class="op">&lt;-</span> <span class="va">so_sample</span><span class="op">[</span>, <span class="va">so_sample</span><span class="op">$</span><span class="va">fov</span><span class="op">==</span><span class="fl">1</span><span class="op">]</span></span></code></pre></div>
 <pre><code>## Warning: Not validating FOV objects</code></pre>
 <pre><code>## Warning: Not validating Centroids objects
@@ -318,68 +287,76 @@ Here we can see that cluster 1 is epithelial cells.</p>
 ## Not validating FOV objects
 ## Not validating FOV objects</code></pre>
 <pre><code>## Warning: Not validating Seurat objects</code></pre>
-<div class="sourceCode" id="cb134"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/ImageDimPlot.html">ImageDimPlot</a></span><span class="op">(</span><span class="va">so_fov</span>,</span>
 <span>             fov          <span class="op">=</span> <span class="st">"GSM7473682.HC.a"</span>,</span>
 <span>             axes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>             border.color <span class="op">=</span> <span class="cn">NA</span>, border.size <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>             cols <span class="op">=</span> <span class="st">'polychrome'</span>, <span class="co">#See DiscretePalette()</span></span>
 <span>             group.by <span class="op">=</span> <span class="st">"seurat_clusters"</span>,</span>
 <span>             boundaries   <span class="op">=</span> <span class="st">"segmentation"</span>,</span>
 <span>             crop<span class="op">=</span><span class="cn">TRUE</span>,</span>
 <span>             nmols <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-53-1.png" width="672"></div>
-<div class="sourceCode" id="cb135"><pre class="downlit sourceCode r">
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-55-1.png" width="672"></div>
+<p>What about the two sets of predictions?</p>
+<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/ImageDimPlot.html">ImageDimPlot</a></span><span class="op">(</span><span class="va">so_fov</span>,</span>
 <span>             fov          <span class="op">=</span> <span class="st">"GSM7473682.HC.a"</span>,</span>
 <span>             axes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>             border.color <span class="op">=</span> <span class="cn">NA</span>, border.size <span class="op">=</span> <span class="fl">0.1</span>,</span>
-<span>             group.by <span class="op">=</span> <span class="st">"singleR_labels_filt"</span>,</span>
+<span>             group.by <span class="op">=</span>  <span class="st">'singleR_pred_broad'</span>,</span>
 <span>             boundaries   <span class="op">=</span> <span class="st">"segmentation"</span>,</span>
-<span>             crop<span class="op">=</span><span class="cn">TRUE</span>,</span>
-<span>             nmols <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span></code></pre></div>
-<pre><code>## Warning: Removing 1669 cells missing data for vars requested</code></pre>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-53-2.png" width="672"></div>
+<span>             cols <span class="op">=</span> <span class="st">'polychrome'</span>, <span class="co">#See DiscretePalette()</span></span>
+<span>             crop<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-56-1.png" width="672"></div>
 </div>
-<div id="recording-celltype-annotations." class="section level2" number="12.5">
+<div id="recording-celltype-annotations." class="section level2" number="12.4">
 <h2>
-<span class="header-section-number">12.5</span> Recording celltype annotations.<a class="anchor" aria-label="anchor" href="#recording-celltype-annotations."><i class="fas fa-link"></i></a>
+<span class="header-section-number">12.4</span> Recording celltype annotations.<a class="anchor" aria-label="anchor" href="#recording-celltype-annotations."><i class="fas fa-link"></i></a>
 </h2>
-<div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Apply some cluster names</span></span>
 <span><span class="va">so</span><span class="op">$</span><span class="va">cluster_code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"c"</span>, <span class="va">so</span><span class="op">$</span><span class="va">seurat_clusters</span><span class="op">)</span>,   levels<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">'c'</span>, <span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span><span class="op">(</span><span class="va">so</span><span class="op">$</span><span class="va">seurat_clusters</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://satijalab.github.io/seurat-object/reference/Idents.html">Idents</a></span><span class="op">(</span><span class="va">so</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">so</span><span class="op">$</span><span class="va">cluster_code</span></span>
 <span></span>
 <span><span class="va">cluster_content</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
-<span>  c0 <span class="op">=</span> <span class="st">"Unknown"</span>,</span>
-<span>  c1 <span class="op">=</span> <span class="st">"IntestinalEpithelia"</span>, <span class="co"># PIGR expression, epithelial location</span></span>
-<span>  c2 <span class="op">=</span> <span class="st">"Fibroblasts"</span>,         <span class="co"># Collagen rich</span></span>
-<span>  c3 <span class="op">=</span> <span class="st">"Plasma"</span>,              <span class="co"># MZB1, DERL3, JCHAIN</span></span>
-<span>  c4 <span class="op">=</span> <span class="st">"Endothelia"</span>,          <span class="co"># Mostly endothelial in cell typing.</span></span>
-<span>  c5 <span class="op">=</span> <span class="st">"Unknown"</span></span>
+<span>  c0 <span class="op">=</span> <span class="st">"B lymphocyte lineage"</span>, <span class="co"># JCHAIN/ MZB1 / DERL3 </span></span>
+<span>  c1 <span class="op">=</span> <span class="st">"Stem cell"</span>, </span>
+<span>  c2 <span class="op">=</span> <span class="st">"Mixed"</span>,         </span>
+<span>  c3 <span class="op">=</span> <span class="st">"Fibroblast"</span>,              </span>
+<span>  c4 <span class="op">=</span> <span class="st">"Macrophage and Dendritic cell"</span>,  <span class="co"># See detailed predctions, and macrophages are important in this study.  </span></span>
+<span>  c5 <span class="op">=</span> <span class="st">"Intestinal epithelial cell"</span>,</span>
+<span>  c6 <span class="op">=</span> <span class="st">"Contractile cell"</span>,</span>
+<span>  c7 <span class="op">=</span> <span class="st">"B lymphocyte lineage"</span>,  <span class="co"># CD37 / CIITA / IGHM </span></span>
+<span>  c8 <span class="op">=</span> <span class="st">"Endothelia"</span>,</span>
+<span>  c9 <span class="op">=</span> <span class="st">"granulocyte"</span>,</span>
+<span>  c10 <span class="op">=</span> <span class="st">"Mixed"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># c5 =&gt; c5: Mono</span></span>
+<span><span class="co"># c1 =&gt; c1: Stem cell</span></span>
 <span><span class="va">so</span><span class="op">$</span><span class="va">cluster_labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span> <span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">cluster_content</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">so</span><span class="op">$</span><span class="va">cluster_code</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>, <span class="st">": "</span>, <span class="va">cluster_content</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">so</span><span class="op">$</span><span class="va">cluster_code</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> ,</span>
 <span>  levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">cluster_content</span><span class="op">)</span>, <span class="st">": "</span>, <span class="va">cluster_content</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb138"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'cluster_labels'</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-55-1.png" width="672"></div>
-<div id="pull-in-real-annotation" class="section level3" number="12.5.1">
+<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">so</span>, group.by<span class="op">=</span><span class="st">'cluster_labels'</span>, label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/SeuratTheme.html">NoLegend</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-58-1.png" width="672"></div>
+<div id="pull-in-real-annotation" class="section level3" number="12.4.1">
 <h3>
-<span class="header-section-number">12.5.1</span> Pull in real annotation<a class="anchor" aria-label="anchor" href="#pull-in-real-annotation"><i class="fas fa-link"></i></a>
+<span class="header-section-number">12.4.1</span> Pull in real annotation<a class="anchor" aria-label="anchor" href="#pull-in-real-annotation"><i class="fas fa-link"></i></a>
 </h3>
 <p>The authors of this study have shared their actual celltypes. So in lieu of trying to figur this out - directly import their annotation</p>
-<div class="sourceCode" id="cb139"><pre class="downlit sourceCode r">
+<p>The ‘singleR2’ set is very detailed!</p>
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">annotation_file</span> <span class="op">&lt;-</span> <span class="st">'data/GSE234713_CosMx_annotation.csv.gz'</span></span>
 <span><span class="va">anno_table</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="va">annotation_file</span>, show_col_types <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
 <span><span class="va">anno_table</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">anno_table</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">anno_table</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">anno_table</span><span class="op">$</span><span class="va">id</span></span>
 <span></span>
-<span><span class="va">so</span><span class="op">$</span><span class="va">celltype</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">anno_table</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">so</span><span class="op">)</span>,<span class="op">]</span><span class="op">$</span><span class="va">subset</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">so</span><span class="op">$</span><span class="va">paper_celltype</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">anno_table</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">so</span><span class="op">)</span>,<span class="op">]</span><span class="op">$</span><span class="va">subset</span><span class="op">)</span></span>
+<span><span class="va">so</span><span class="op">$</span><span class="va">paper_singleR2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">anno_table</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">so</span><span class="op">)</span>,<span class="op">]</span><span class="op">$</span><span class="va">SingleR2</span><span class="op">)</span></span></code></pre></div>
 <p>From there can use celltype labels on visualiation:</p>
-<div class="sourceCode" id="cb140"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">so_fov</span>    <span class="op">&lt;-</span> <span class="va">so</span><span class="op">[</span>, <span class="va">so</span><span class="op">$</span><span class="va">tissue_sample</span><span class="op">==</span><span class="st">"HC_a"</span> <span class="op">&amp;</span> <span class="va">so_sample</span><span class="op">$</span><span class="va">fov</span><span class="op">==</span><span class="fl">1</span><span class="op">]</span></span></code></pre></div>
 <pre><code>## Warning in so$tissue_sample == "HC_a" &amp; so_sample$fov == 1: longer object
 ## length is not a multiple of shorter object length</code></pre>
@@ -397,27 +374,42 @@ Here we can see that cluster 1 is epithelial cells.</p>
 ## Not validating Seurat objects
 ## Not validating Seurat objects
 ## Not validating Seurat objects</code></pre>
-<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/ImageDimPlot.html">ImageDimPlot</a></span><span class="op">(</span><span class="va">so_fov</span>,</span>
 <span>             fov          <span class="op">=</span> <span class="st">"GSM7473682.HC.a"</span>,</span>
 <span>             axes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>             border.color <span class="op">=</span> <span class="cn">NA</span>, border.size <span class="op">=</span> <span class="fl">0.1</span>,</span>
-<span>             group.by <span class="op">=</span> <span class="st">"celltype"</span>,</span>
+<span>             group.by <span class="op">=</span> <span class="st">"paper_celltype"</span>,</span>
 <span>             boundaries   <span class="op">=</span> <span class="st">"segmentation"</span>,</span>
-<span>             crop<span class="op">=</span><span class="cn">TRUE</span>,</span>
-<span>             nmols <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span></code></pre></div>
+<span>             crop<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code>## Warning: Removing 1 cells missing data for vars requested</code></pre>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-57-1.png" width="672"></div>
-<p>Or use them in other comparisons.</p>
-<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-60-1.png" width="672"></div>
+<div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/ImageDimPlot.html">ImageDimPlot</a></span><span class="op">(</span><span class="va">so_fov</span>,</span>
+<span>             fov          <span class="op">=</span> <span class="st">"GSM7473682.HC.a"</span>,</span>
+<span>             axes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>             border.color <span class="op">=</span> <span class="cn">NA</span>, border.size <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>             group.by <span class="op">=</span> <span class="st">"paper_singleR2"</span>,</span>
+<span>             boundaries   <span class="op">=</span> <span class="st">"segmentation"</span>,</span>
+<span>             crop<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Warning: Removing 1 cells missing data for vars requested</code></pre>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-60-2.png" width="672"></div>
+</div>
+</div>
+<div id="fun-with-annotations" class="section level2" number="12.5">
+<h2>
+<span class="header-section-number">12.5</span> Fun with annotations<a class="anchor" aria-label="anchor" href="#fun-with-annotations"><i class="fas fa-link"></i></a>
+</h2>
+<p>Now we can do some fun plots with our cell types - for instance to see if there’s change in proportions between samples. You could test this formally with <a href="https://github.com/phipsonlab/speckle">propellar</a></p>
+<div class="sourceCode" id="cb114"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Celltype proportions</span></span>
 <span><span class="va">celltype_summary_table</span><span class="op">&lt;-</span> <span class="va">so</span><span class="op">@</span><span class="va">meta.data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">condition</span>, <span class="va">tissue_sample</span>, <span class="va">celltype</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">condition</span>, <span class="va">tissue_sample</span>, <span class="va">cluster_labels</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>n_cells <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by 'condition', 'tissue_sample'. You can override
-## using the `.groups` argument.</code></pre>
-<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">celltype_summary_table</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">tissue_sample</span>, y<span class="op">=</span><span class="va">n_cells</span>, fill<span class="op">=</span><span class="va">celltype</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<pre><code>## `summarise()` has grouped output by 'condition', 'tissue_sample'. You can
+## override using the `.groups` argument.</code></pre>
+<div class="sourceCode" id="cb116"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">celltype_summary_table</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">tissue_sample</span>, y<span class="op">=</span><span class="va">n_cells</span>, fill<span class="op">=</span><span class="va">cluster_labels</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>position<span class="op">=</span><span class="st">"fill"</span>, stat<span class="op">=</span><span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html">coord_flip</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -425,9 +417,8 @@ Here we can see that cluster 1 is epithelial cells.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span> <span class="st">"Celltype composition"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">condition</span>, ncol <span class="op">=</span> <span class="fl">1</span>, scales <span class="op">=</span> <span class="st">'free_y'</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-58-1.png" width="672"></div>
+<div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-61-1.png" width="672"></div>
 
-</div>
 </div>
 </div>
   <div class="chapter-nav">
@@ -438,12 +429,12 @@ Here we can see that cluster 1 is epithelial cells.</p>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#clustering-labeling"><span class="header-section-number">12</span> Clustering Labeling</a></li>
 <li><a class="nav-link" href="#cluster-markers"><span class="header-section-number">12.1</span> Cluster Markers</a></li>
-<li><a class="nav-link" href="#old-cell-typing-by-reference"><span class="header-section-number">12.2</span> OLD Cell typing by reference</a></li>
-<li><a class="nav-link" href="#cell-typing-by-reference"><span class="header-section-number">12.3</span> Cell typing by reference</a></li>
-<li><a class="nav-link" href="#spatial-examination-of-plots"><span class="header-section-number">12.4</span> Spatial examination of plots</a></li>
+<li><a class="nav-link" href="#cell-typing-by-reference"><span class="header-section-number">12.2</span> Cell typing by reference</a></li>
+<li><a class="nav-link" href="#spatial-examination-of-plots"><span class="header-section-number">12.3</span> Spatial examination of plots</a></li>
 <li>
-<a class="nav-link" href="#recording-celltype-annotations."><span class="header-section-number">12.5</span> Recording celltype annotations.</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#pull-in-real-annotation"><span class="header-section-number">12.5.1</span> Pull in real annotation</a></li></ul>
+<a class="nav-link" href="#recording-celltype-annotations."><span class="header-section-number">12.4</span> Recording celltype annotations.</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#pull-in-real-annotation"><span class="header-section-number">12.4.1</span> Pull in real annotation</a></li></ul>
 </li>
+<li><a class="nav-link" href="#fun-with-annotations"><span class="header-section-number">12.5</span> Fun with annotations</a></li>
 </ul>
 
       <div class="book-extra">
@@ -460,7 +451,7 @@ Here we can see that cluster 1 is epithelial cells.</p>
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-10-01.</p>
+    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-10-03.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

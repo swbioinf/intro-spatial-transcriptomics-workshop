@@ -1,8 +1,8 @@
-# Reduce dimensionality - UMAPs
+# Reduce dimensionality - UMAPs{#ReducedDimensionality}
 
 
 ```{r echo=FALSE, results='hide', warnings=FALSE}
-# Hidden: load up filtered dataset for testsing.
+# Hidden: load up filtered dataset for testing.
 so <- readRDS("data/GSE234713_CosMx_IBD_seurat_02_filtered_subset.RDS" )
 ```
 
@@ -15,9 +15,9 @@ Why are these steps needed?
 
 1. **Normalisation** Different cells have different total target counts. Normalisation allows them to be comparable.
 2. **Identification of highly variable features (feature selection)**  Identifying the most variable features allows retaining the real biological variability of the data and reduce noise in the data.        
-3. **Scaling the data**: Highly expresed genes can overpower the signal of other less expresed genes with equal importance. Within the same cell the assumption is that the underlying RNA content is constant. A
-4. **Dimensionality reduction (PCA)**: Imagine each gene represents a dimension - or an axis on a plot. We could plot the expression of two genes with a simple scatterplot. But a genome or gene panel has 100s to 1000s of genes - how do you collate all the information from each of those genes in a way that allows you to visualise it in a 2 dimensional image. This is where dimensionality reduction comes in, we calculate meta-features that contains combinations of the variation of different genes. From hundreds of genes, we end up with 10s of meta-features
-5. **Run non-linear dimensional reduction (UMAP)**: Finally, make the UMAP plot that arranges our cells in  a logical and eazy to visualise way. Note the tSNE algorithm (which makes tSNE plots) is an older alternative method to UMAP.
+3. **Scaling the data**: Highly expressed genes can overpower the signal of other less expressed genes with equal importance. Within the same cell the assumption is that the underlying RNA content is constant. 
+4. **Dimensionality reduction (PCA)**: Imagine each gene represents a dimension - or an axis on a plot. We could plot the expression of two genes with a simple scatter plot. But a genome or gene panel has 100s to 1000s of genes - how do you collate all the information from each of those genes in a way that allows you to visualise it in a 2 dimensional image. This is where dimensionality reduction comes in, we calculate meta-features that contains combinations of the variation of different genes. From hundreds of genes, we end up with 10s of meta-features
+5. **Run non-linear dimensional reduction (UMAP)**: Finally, make the UMAP plot that arranges our cells in  a logical and easy to visualise way. Note the tSNE algorithm (which makes tSNE plots) is an older alternative method to UMAP.
 
 ![](images/genes2umap.png){width=100%}
 
@@ -36,25 +36,31 @@ so <- split(so, f = so$orig.ident)
 
 By default, we will use the 'LogNormalize' method in seurat - as described in the NormaliseData function help:
 
-* *"LogNormalize: Feature counts for each cell are divided by the total counts for that cell and multiplied by the scale.factor. This is then natural-log transformed using log1'"*
+> "LogNormalize: Feature counts for each cell are divided by the total counts for that cell and multiplied by the scale.factor. This is then natural-log transformed using log1'"
 
-INFO: For a more indepth discussion of normalisation in spatial datasetsw see Atta et al (2024)
-https://genomebiology.biomedcentral.com/articles/10.1186/s13059-024-03303-w and be aware of spatial-aware methods such as SpaNorm (https://genomebiology.biomedcentral.com/articles/10.1186/s13059-025-03565-y)
+
 
 ```{r message=FALSE}
 so <- NormalizeData(so)
 ```
+
+
+For a more in-depth discussion of normalisation in spatial datasets see [Atta et al (2024)](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-024-03303-w) and be aware of spatial-aware methods such as [SpaNorm](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-025-03565-y)
+
+
+
 
 ## Find Highly variable genes.
 
 
 Which genes vary between cell types/states in our sample? 
 
-We don't yet know anything about celltypes or stats, but we can make the assumption that the genes with high variance anre probably reflecting some biological state. In contrast a 'housekeeper' gene with even expression across all cell types won't be helpful in grouping our cells. 
+We don't yet know anything about celltypes or stats, but we can make the assumption that the genes with high variance and are probably reflecting some biological state. In contrast a 'housekeeper' gene with even expression across all cell types won't be helpful in grouping our cells. 
 
 
 Because we have our data split by sample, seurat will identify variable genes within each sample and combine that information. From the [seurat5 documentation on layers](https://satijalab.org/seurat/articles/seurat5_integration#layers-in-the-seurat-v5-object): 
-_"Note that since the data is split into layers, normalization and variable feature identification is performed for each batch independently (a consensus set of variable features is automatically identified)."_
+
+> "Note that since the data is split into layers, normalization and variable feature identification is performed for each batch independently (a consensus set of variable features is automatically identified)."
 
 
 ```{r message=FALSE}
@@ -62,7 +68,7 @@ so <- FindVariableFeatures(so, nfeatures = 200)
 ```
 
 
-Each point represents one gene - the red ones are our top 200 'highly variable genes' or HVGs. There is no firm rule on how many HVGs we want. For a whole transcriptome that could be 2000, for a 1000 genel we have 200. The exact number doesn't matter so much, we want to capture the genes above the main group of low variance genes.
+Each point represents one gene - the red ones are our top 200 'highly variable genes' or HVGs. There is no firm rule on how many HVGs we want. For a whole transcriptome that could be 2000, for a 1000 genes we have 200. The exact number doesn't matter so much; so long as we capture the genes above the main group of low variance genes.
 
 
 ```{r}
@@ -103,45 +109,44 @@ so
 ```
 
 
-By digging into the seurat object, just to have a look, we can see there is a value for each PC (Principal Compenent) for each cell. 
+By peeking into the seurat object, we can see there is a value for each PC (Principal Component) for each cell. 
 
 ```{r}
 so@reductions$pca@cell.embeddings[1:10,1:5]
 ```
 
 
-In some contexts (e.g. Bulk RNAseq experiemnts), PCs can be enough to group and explore the difference betwen samples. e.g. See [this plot in some DEseq2 documentation] (https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#principal-component-plot-of-the-samples).
+In some contexts (e.g. Bulk RNAseq experiments), PCs can be enough to group and explore the difference between samples. e.g. See [this plot in some DEseq2 documentation](https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#principal-component-plot-of-the-samples).
 
 
 We can try that here, but because of the sheer number of cells and the diversity among them, it rarely works in spatial or single cell datasets - simply a blob.
 
-Plot PC1 vs PC2, and PC3 vs PC4.
+This is PC1 vs PC2.
 
 ```{r}
 DimPlot(so, reduction = "pca", group.by='tissue_sample')
-DimPlot(so, reduction = "pca", group.by='tissue_sample', dims=c(3,4))
 ```
 
-
+<!--DimPlot(so, reduction = "pca", group.by='tissue_sample', dims=c(3,4))-->
 
 ## UMAP
 
 UMAP (Uniform Manifold Approximation and Projection) is a method for summarising 
-multiple principal components into fewer dimensions for vizualisation - generally just x and y.
+multiple principal components into fewer dimensions for visualisation - generally just x and y.
 
 UMAP is:
 
-* Non-linear: Distances between cells in PCA are linear, wheras those in UMAP are non-linear. Ie. A larger distance between two cells does not neccessarily mean a greater transcriptional difference.
-* Non-deterministic: The same data could produce a different layout, though generally the functions use set random numbers avoid this. Even so - removeing just one cell will shuffle the result, and it is a nearly impossible task to reproduce an existing UMAP! General trends should remain stable.
+* **Non-linear**: Distances between cells in PCA are linear, whereas those in UMAP are non-linear. i.e. A larger distance between two cells does not necessarily mean a greater transcriptional difference.
+* **Non-deterministic**: The same data could produce a different layout, though generally the functions use set random numbers avoid this. Even so - removing just one cell will shuffle the result, and it is a nearly impossible task to reproduce an existing UMAP! General trends should remain stable.
 
-If you are interested in exploring how UMAP works futher, this [Understanding UMAP](https://pair-code.github.io/understanding-umap/) page is an excellent interactive resource.
-
-
-
-To build a UMAP we need to decide how many principal components we want to summarise. An 'elbow plot' shows the proportion of variance that is explained by each PC - starting from PC1 - which alwasy explains the most. Eventually the variance explained drops off to a base level - extra PCs aren't adding much there.
+If you are interested in exploring how UMAP works further, this [Understanding UMAP](https://pair-code.github.io/understanding-umap/) page is an excellent interactive resource. And for an in-depth discussion on how they can sometimes be misinterpreted see [Biologists, stop putting UMAP plots in your papers](https://simplystatistics.org/posts/2024-12-23-biologists-stop-including-umap-plots-in-your-papers/).
 
 
-A general rule of thumb is to pick where the standard variantion levels out in the plot below - the 'elbow'. There is no harm in rounding up. Typically this is between 10-20, and is higher for more complex datasets.
+
+To build a UMAP we need to decide how many principal components we want to summarise. An 'elbow plot' shows the proportion of variance that is explained by each PC - starting from PC1 - which always explains the most. Eventually the variance explained drops off to a base level - extra PCs aren't adding much there.
+
+
+A general rule of thumb is to pick where the standard variation levels out in the plot below - the 'elbow'. There is no harm in rounding up. Typically this is between 10-20, and is higher for more complex datasets.
 
 Here we choose 15.
 
@@ -162,7 +167,7 @@ so <- RunUMAP(so, dims=1:num_dims)
 
 And plot it - Here coloured by the tissue sample.
 ```{r}
-# you can specify reduction='umap' explicity
+# you can specify reduction='umap' explicitly
 # DimPlot(so, group.by='tissue_sample', reduction = 'umap') 
 # But by default, if a umap exists in the object, Dimplot will plot it.
 DimPlot(so, group.by='tissue_sample') 
@@ -173,16 +178,16 @@ DimPlot(so, group.by='tissue_sample')
 
 Now is the time to plot any interesting looking metadata on your UMAP. 
 
-* QC : Slide, total RNA, negative probes, slide, batch
-* Experimental: Groups, samples, timepoint, treatment, mouse
+* **QC** : Slide, total RNA, negative probes, slide, batch
+* **Experimental**: Groups, samples, timepoint, treatment, mouse
 
 We want to identify trends and biases that could be technical or experimentally interesting. 
 
-View categorical factors with 'DimPlot', and continuous onces with 'FeaturePlot'. The split.by parameter is quite useful to separate out certain variables, like experimental group.
+View categorical factors with 'DimPlot', and continuous once with 'FeaturePlot'. The split.by parameter is quite useful to separate out certain variables, like experimental group.
 
 
 
-There is a little separation by condition - but it appears that it could be due to the individual (we'll adress this next).
+There is a little separation by condition - but it appears that it could be due to the individual (we'll address this next).
 
 ```{r}
 DimPlot(so, group.by='tissue_sample')
