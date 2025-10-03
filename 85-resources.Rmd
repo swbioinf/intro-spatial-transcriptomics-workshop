@@ -4,13 +4,27 @@
 
 Links to various useful resources.
 
+* [Single cell best practicies](https://www.sc-best-practices.org/) : Comprehensive resource on single cell analysis
+* [OSCA - (Orchestrating Single Cell Analayis with bioconductor )](https://bioconductor.org/books/release/OSCA/) :  A detailed resource on single cell analyses using the bioconductor ecosystem of packages - still applicable to certain spatial analyses.
+* [OSTA (Orchestrating Spatial Transcriptomics Analysis with Bioconductor](https://lmweber.org/OSTA/) : A detailed resource on how to perform spatial analyses using the bioconductor ecosystem of packages. Even if using Seurat, this is a useful resource for detailed explanations of analysis tasks.
+
+* [Voyager Documentaion](https://pachterlab.github.io/voyager/): A bioconductor package for spatial analyses, centred around [SpatialFeatureExperiment](https://bioconductor.org/packages/devel/bioc/html/SpatialFeatureExperiment.html) objects
+* [SCverse](https://scverse.org/): An ecosystem for analysing single cell and spatial single cell data with python.
+
+
+
 * [Seurat spatial vignette (imaging-based )](https://satijalab.org/seurat/articles/seurat5_spatial_vignette_2) : How to load and plot spatial data with seurat - covers different technologies.
-* [Voyager Documentaion](https://pachterlab.github.io/voyager/): A bioconductor package for spatial analyses, centered around [SpatialFeatureExperiment](https://bioconductor.org/packages/devel/bioc/html/SpatialFeatureExperiment.html) objects
-* [SCverse](https://scverse.org/): An ecosystem for analyseing single cell and spatial single cell data with python.
-* [Spatial Sampler](https://swbioinf.github.io/spatialsnippets/index.html) : Worked examples and code snippets to run various statitical tests on single cell spatial data.
+* [Spatial Sampler](https://swbioinf.github.io/spatialsnippets/index.html) : Worked examples and code snippets to run various statistical tests on single cell spatial data.
+* [Understanding UMAP](https://pair-code.github.io/understanding-umap/) : Exploring out UMAP works, and what affects it.
+* [Propeller for testing celltype proportion changes](https://github.com/phipsonlab/speckle): The speckle package has tools to test for changes in celltype proportions between groups 
+* ['Introduction to scRNA-seq integration' vignette](https://satijalab.org/seurat/articles/integration_introduction). 
+* [clustree](https://doi.org/10.1093/gigascience/giy083) : A useful toolkit for choosing cluster resolutions.
+* [Biologists, stop putting UMAP plots in your papers](https://simplystatistics.org/posts/2024-12-23-biologists-stop-including-umap-plots-in-your-papers/): A discussion on how UMAPs can sometimes be misinterpreted
 
 
 
 
+Other references
 
-
+* [Korsunsky et al 2019](https://www.nature.com/articles/s41592-019-0619-0): Harmony paper
+* [Antonsson and Melsted (2025)](https://genome.cshlp.org/content/35/8/1832.full) : Review on batch correction methods in single cell data

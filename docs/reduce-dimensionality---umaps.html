@@ -102,11 +102,10 @@
 <span><span class="co"># https://satijalab.org/seurat/articles/seurat5_integration</span></span>
 <span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span><span class="op">(</span><span class="va">so</span>, f <span class="op">=</span> <span class="va">so</span><span class="op">$</span><span class="va">orig.ident</span><span class="op">)</span></span></code></pre></div>
 <p>By default, we will use the ‘LogNormalize’ method in seurat - as described in the NormaliseData function help:</p>
-<ul>
-<li><em>“LogNormalize: Feature counts for each cell are divided by the total counts for that cell and multiplied by the scale.factor. This is then natural-log transformed using log1’”</em></li>
-</ul>
-<p>INFO: For a more indepth discussion of normalisation in spatial datasetsw see Atta et al (2024)
-<a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-024-03303-w" class="uri">https://genomebiology.biomedcentral.com/articles/10.1186/s13059-024-03303-w</a> and be aware of spatial-aware methods such as SpaNorm (<a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-025-03565-y" class="uri">https://genomebiology.biomedcentral.com/articles/10.1186/s13059-025-03565-y</a>)</p>
+<blockquote>
+<p>“LogNormalize: Feature counts for each cell are divided by the total counts for that cell and multiplied by the scale.factor. This is then natural-log transformed using log1’”</p>
+</blockquote>
+<p>INFO: For a more indepth discussion of normalisation in spatial datasets see <a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-024-03303-w">Atta et al (2024)</a> and be aware of spatial-aware methods such as <a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-025-03565-y">SpaNorm</a></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/NormalizeData.html">NormalizeData</a></span><span class="op">(</span><span class="va">so</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -116,11 +115,13 @@
 </h2>
 <p>Which genes vary between cell types/states in our sample?</p>
 <p>We don’t yet know anything about celltypes or stats, but we can make the assumption that the genes with high variance anre probably reflecting some biological state. In contrast a ‘housekeeper’ gene with even expression across all cell types won’t be helpful in grouping our cells.</p>
-<p>Because we have our data split by sample, seurat will identify variable genes within each sample and combine that information. From the <a href="https://satijalab.org/seurat/articles/seurat5_integration#layers-in-the-seurat-v5-object">seurat5 documentation on layers</a>:
-<em>“Note that since the data is split into layers, normalization and variable feature identification is performed for each batch independently (a consensus set of variable features is automatically identified).”</em></p>
+<p>Because we have our data split by sample, seurat will identify variable genes within each sample and combine that information. From the <a href="https://satijalab.org/seurat/articles/seurat5_integration#layers-in-the-seurat-v5-object">seurat5 documentation on layers</a>:</p>
+<blockquote>
+<p>“Note that since the data is split into layers, normalization and variable feature identification is performed for each batch independently (a consensus set of variable features is automatically identified).”</p>
+</blockquote>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindVariableFeatures.html">FindVariableFeatures</a></span><span class="op">(</span><span class="va">so</span>, nfeatures <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span></code></pre></div>
-<p>Each point represents one gene - the red ones are our top 200 ‘highly variable genes’ or HVGs. There is no firm rule on how many HVGs we want. For a whole transcriptome that could be 2000, for a 1000 genel we have 200. The exact number doesn’t matter so much, we want to capture the genes above the main group of low variance genes.</p>
+<p>Each point represents one gene - the red ones are our top 200 ‘highly variable genes’ or HVGs. There is no firm rule on how many HVGs we want. For a whole transcriptome that could be 2000, for a 1000 genes we have 200. The exact number doesn’t matter so much; so long as we capture the genes above the main group of low variance genes.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://satijalab.org/seurat/reference/VariableFeaturePlot.html">VariableFeaturePlot</a></span><span class="op">(</span><span class="va">so</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-10-1.png" width="672"></div>
@@ -177,7 +178,7 @@
 ## HC_a_8_1  6.869279 -4.0229095  0.15006296  2.51955461 -2.704131
 ## HC_a_9_1  6.880725 -2.3290435  0.86859571  0.26676695 -4.046725
 ## HC_a_10_1 6.177942 -2.8228681  0.08023504  2.98939960 -5.696438</code></pre>
-<p>In some contexts (e.g. Bulk RNAseq experiemnts), PCs can be enough to group and explore the difference betwen samples. e.g. See [this plot in some DEseq2 documentation] (<a href="https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#principal-component-plot-of-the-samples" class="uri">https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#principal-component-plot-of-the-samples</a>).</p>
+<p>In some contexts (e.g. Bulk RNAseq experiemnts), PCs can be enough to group and explore the difference betwen samples. e.g. See <a href="https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#principal-component-plot-of-the-samples">this plot in some DEseq2 documentation</a>.</p>
 <p>We can try that here, but because of the sheer number of cells and the diversity among them, it rarely works in spatial or single cell datasets - simply a blob.</p>
 <p>Plot PC1 vs PC2, and PC3 vs PC4.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
@@ -288,7 +289,7 @@ multiple principal components into fewer dimensions for vizualisation - generall
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-10-01.</p>
+    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-10-03.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -1,4 +1,4 @@
-# Analysis example 
+# Spatially Restricted Genes {#SpatiallyRestrictedGenes}
 
 Link out directly??? https://swbioinf.github.io/spatialsnippets/e_spatiallyRestrictedGenes.html
 
@@ -230,7 +230,7 @@ ImageDimPlot(so.HC_a, group.by = 'fov')
 
 ImageDimPlot(subset(so.HC_a, fov==4), 
              molecules = 'CCL21', 
-             group.by = 'celltype', alpha=0.3,# Show clusters, but faded 
+             group.by = 'cluster_labels', alpha=0.3,# Show clusters, but faded 
              boundaries = "segmentation",  border.color = NA, axes = T, crop=TRUE) 
 ```
 Lots of those around the stromal cells. 
@@ -238,7 +238,7 @@ Lots of those around the stromal cells.
 ```{r}
 ImageDimPlot(subset(so.HC_a, fov==4),
              molecules = c('CCL21','CD8A','MS4A1'), 
-             group.by = 'celltype', alpha=0.3,# Show clusters, but faded 
+             group.by = 'cluster_labels', alpha=0.3,# Show clusters, but faded 
              boundaries = "segmentation",  border.color = NA, axes = T, crop=TRUE) 
 
 ```

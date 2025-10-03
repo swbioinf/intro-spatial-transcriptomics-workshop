@@ -1,11 +1,23 @@
-# Batch Correction
+# Batch Correction{#BatchCorrection}
+
+
+We generally want to compare and analyse matched cell types (or cell states) across different experimental groups. But transcriptional differences between individuals or batch effects from preparation or slide can introduce other unwanted variation that makes it hard to see cell type differences. We can address this will batch correction or integration methods. 
+
+Here is a good description of integration methods and how to choose them, [Single cell best practicies, integration](https://www.sc-best-practices.org/cellular_structure/integration.html), and a review on batch correction methods in single cell data is here [Antonsson and Melsted (2025)](https://genome.cshlp.org/content/35/8/1832.full).
+
+
 
 ## Do we need batch correction?
 
 
 There are regions in the UMAP where we can see some separation by sample. This is common in spatial data, especially when working with human data.
 
-(In fact, this example isn't too bad, but for the purposes of this work, we will go through the process of batch correction).
+This example isn't too bad, but for the purposes of this work, we will go through the process of batch correction.
+
+Of course - if separation aligns with biological groups of interest, correction may not be appropriate; e.g. a knockout can mean a particular celltype never forms, and there is a region with only wild-type samples. Consider what's going on in your experiment!
+
+
+Additionally, batch effects can occur at different variables. This experiment has one sample per slide, and the batch effect is seen at that level. If we had multiple samples per slide, we would need to identify if the batch effect is at the slide or sample (or other) level, then split the data at that level with the _split()_ function. Here our data is already split by sample/slide - so we can continue on.
 
 
 ```{r}
@@ -19,60 +31,52 @@ DimPlot(so, group.by='tissue_sample', split.by = 'tissue_sample', ncol = 3)
 
 
 
-If were were to continue on to cell clustering at analysis at this point, we might find that we build clusters around individual samples. We instead want to make cell clusters that form around cell 'types' (or transcriptionallly similar cell states) across multiple samples, which can be matched and compared across experimental groups.
+If were were to continue on to cell clustering at analysis at this point, we might find that we build clusters around individual samples. 
 
 
 
 ## Running batch correction
 
 
-We can apply a *batch correction* or *integration* method to adjust our principal components to deemphasise the betweeen-sample effect. Seurat implements several such methods, and has a full ['Introduction to scRNA-seq integration' vignette ](https://satijalab.org/seurat/articles/integration_introduction). We will use the 'harmony' method, from  Korsunsky et al 2019: https://www.nature.com/articles/s41592-019-0619-0
+We can apply a *batch correction* or *integration* method to adjust our principal components to de-emphasise the between-sample effect. Seurat implements several such methods, and has a full ['Introduction to scRNA-seq integration' vignette](https://satijalab.org/seurat/articles/integration_introduction). We will use the 'harmony' method, from  [Korsunsky et al 2019](https://www.nature.com/articles/s41592-019-0619-0). 
 
 
 Its worth noting that these same methods can be applied to combine data from multiple experiments (e.g. public data), or even technologies!
 
 
-This is one of the most computationally intensive steps of the analysis. It can take hours to run and use many Gb of RAM, scaling with the size of your experiment. 
+This can be one of the most computationally intensive steps of the analysis. It can take hours to run and use many Gb of RAM, scaling with the size of your experiment. On this small subset, it will take a minute or two. 
 
 
-This is the code to the integration and generate a new UMAP. Do not run this code today!
-```{r eval=FALSE}
-  # https://satijalab.org/seurat/articles/seurat5_integration
-  # Slow?
-  so <- IntegrateLayers(so, method = HarmonyIntegration, orig.reduction = "pca", new.reduction = "harmony")
-  so <- RunUMAP(so, dims=1:num_dims, reduction = 'harmony')
-
-  DimPlot(so, group.by='tissue_sample')
-
-  
-  ## TODO Remove clustering from this section, update object
-  #so <- FindNeighbors(so, reduction = "harmony", dims = 1:num_dims)
-  #so <- FindClusters(so, resolution = 0.2)
-  # don't talk about optimisation of clusters, point people at single cell resources.
-}
-```
-
-Instead, load up a version of the object with theis data.
 
 ```{r}
-seurat_file_01_preprocessed_subset <- here("data", "GSE234713_CosMx_IBD_seurat_01_preprocessed_subsampled.RDS")
-so <- readRDS(seurat_file_01_preprocessed_subset)
+# Run harmony 
+so <- IntegrateLayers(so, method = HarmonyIntegration, orig.reduction = "pca", new.reduction = "harmony")
+# Make a new UMAP, using the harmony values.
+so <- RunUMAP(so, dims=1:num_dims, reduction = 'harmony')
+DimPlot(so, group.by='tissue_sample')
 ```
 
+<!-- TODO: WHEN P1 ready, ensure object doesn't already have clustering loaded. No point doing it yet. -->
+
+<!-- Instead, load up a version of the object with this data. -->
+
+<!-- ```{r} -->
+<!-- seurat_file_01_preprocessed_subset <- here("data", "GSE234713_CosMx_IBD_seurat_01_preprocessed_sub-sampled.RDS") -->
+<!-- so <- readRDS(seurat_file_01_preprocessed_subset) -->
+<!-- ``` -->
 
 Looking in the summary of the seurat object we see 3x dimensional reductions:
 
 * **pca** : Our original principal components, with no batch correction.
 * **harmony** : The harmony output, values like the PCA, but adjusted for batch correction.
-* **umap** : Our new umap which was based on harmony (because we passed *reduction = 'harmony'* to RunUMAP). This overwrote the old UMAP.
+* **umap** : Our new umap which was based on harmony. This overwrote the old UMAP.
 
 ```{r}
 so
 ```
 
 
-
-When plotting the new UMAP, the samples are move overlayed. This will make for better vizualisation.
+When plotting the new UMAP, the samples are move overlayed. Its a better visualisation, and means our clusters will not be biased to samples.
 
 ```{r}
 DimPlot(so, group.by='orig.ident')
