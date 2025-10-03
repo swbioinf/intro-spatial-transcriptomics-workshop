@@ -1,7 +1,10 @@
 # Quality control and filtering
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE
+)
 
 # load libraries for this step
 library(Seurat)
@@ -15,16 +18,14 @@ library(here)
 * (Negative probes if using cosmx)
 * Identify low quality cells
 
-## QC metrics
-
 Read in subsampled seurat object
+
+## Identifying potential technical artefacts
 
 ```{r}
 so_path  <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
 so <- readRDS(so_path)
 ```
-
-### Identifying potential technical artefacts
 
 Library size (total transcripts) and cell areas are good indicators of technical
 artefacts introduced during data generation steps. 
@@ -50,7 +51,8 @@ ggplot(so@meta.data, aes(x=nCount_RNA, col=orig.ident)) +
 
 The transcripts per cell all display a log-normal distribution with shifting medians.
 
-Indicates no largely low-quality cells, and a good example of library size effects that should be normalised downstream, prior to analyses.
+Indicates no largely low-quality cells, and a good example of library size 
+effects that should be normalised downstream, prior to analyses.
 
 ```{r warning=F}
 # Total counts per cell
@@ -59,58 +61,199 @@ ggplot(so@meta.data, aes(x=Area, col=orig.ident)) +
   scale_x_log10() +
   theme_bw() +
   annotation_logticks(sides = "b") +
-  ggtitle("Area (μm^2) per cell")
+  ggtitle("Area (px) per cell")
 ```
 
 Areas also follow log-normal distributions with medians ranging between 3,000 -
-4,000 $\mu m^2$. Sample/FOV `CD.c` has slightly smaller cell area with a median
-of ~2,000 $\mu m^2$.
+4,000px^2. Sample/FOV `CD.c` has slightly smaller cell area with a median
+of ~2,000px^2.
 
 Useful to view bivariate metrics - the larger the cell, the more transcripts, in
 general.
 
 ```{r, warning=F}
-ggplot(so@meta.data, aes(x=Area, y=nCount_RNA)) +
+ggplot(so@meta.data, aes(x=Area, y=nCount_RNA, colour=tissue_sample)) +
   geom_point(size = 0.1, alpha = 0.4) +
   scale_x_log10() +
   scale_y_log10() +
   annotation_logticks(sides = "bl") +
   facet_wrap(~orig.ident) +
+  annotation_logticks(colour = "lightgrey") +
   theme_light()
 ```
 
-
-**Exercise:** Display density of negprobes
-
-**Tip:** View the metadata columns using `names(so@meta.data)`, and locate the
-name that corresponds to the number of negative probes.
-
-**Tip:** Use the previous code block and replace `nCount_RNA` with
-`nCount_negprobes`. Remember to update the `ggtitle()` label.
-
-```{r warning=F}
-ggplot(so@meta.data, aes(x=nCount_negprobes, col=orig.ident)) +
-  geom_density() +
-  theme_bw() +
-  ggtitle("Negative probe counts per cell")
-```
-
-Suggest to view QC metrics as co-variates - may lack context if displayed alone:
+Another good check for low-quality cells is to view the bivariate distribution
+of transcript counts per cell vs. how many of these have been mapped successfully
+to a gene.
 
 ```{r}
 so@meta.data %>%
   ggplot(aes(x = nCount_RNA, y = nFeature_RNA, colour = tissue_sample)) +
-  geom_point(alpha = 0.2, size = 0.8) +
+  geom_point(alpha = 0.4, size = 0.1) +
   facet_wrap(~tissue_sample) +
   theme_light() +
   theme(legend.position = "none")
 ```
 
-The more transcripts detected `nCount_RNA`, the more mapped genes there are. Bad quality cells
+The more transcripts detected `nCount_RNA`, the more mapped genes there should be.
 
 Point out where bad quality cells would reside
 
-## FoV QC (CosMX only)
+## Filtering low-quality cells
+
+### Negative probes as an indicator of noise  
+
+Spatial transcriptomics assays include both RNA-specific probes, and negative
+control probes (or, background probes). While RNA specific-probes hybridise to
+specific targets, negative probes do not bind to anything. Their primary purpose
+is to quantify and account for this technical noise and non-specific signal.
+
+In this step, we will calculate the proportion of negative control probes
+relative to the total counts (RNA) for each cell. Cells exhibiting a high
+percentage of noise (i.e., high proportion of negative probe counts) can be
+flagged and removed during the QC stage.
+
+Key metrics to add to the Seurat object:
+
+- `so$percent_neg`: The percentage of negative probes per cell
+- `so$mean_neg`: The average negative probes per cell
+
+```{r}
+so$percent_neg <- (so$nCount_negprobes / (so$nCount_RNA + so$nCount_negprobes)) * 100
+
+# Join layers to calculate average_neg
+so@assays$negprobes <- JoinLayers(so@assays$negprobes)
+so$mean_neg <- colMeans(so@assays$negprobes) # Only defined first sample
+```
+
+```{r}
+so@meta.data %>%
+  ggplot(aes(x = percent_neg, colour = tissue_sample)) +
+  geom_density() +
+  scale_x_log10() +
+  theme_light() +
+  annotation_logticks(sides = "b", colour = "lightgrey")
+```
+
+Log-normally distributed. CD_b, HC_B samples are less "noisy".
+
+```{r}
+so@meta.data %>%
+  ggplot(aes(x = tissue_sample, y = mean_neg, colour = tissue_sample)) +
+  geom_col() +
+  theme_light() +
+  annotation_logticks(sides = "b", colour = "lightgrey")
+```
+
+```{r}
+# Discuss difference with Xenium - xenium lower counts, lower background.
+ggplot(so@meta.data, aes(y=mean_neg, x=nCount_RNA)) +
+  geom_point(pch=3, alpha=0.1) +
+  scale_x_log10() +
+  theme_bw() +
+  ggtitle("Negative probes vs counts")
+
+ggplot(so@meta.data, aes(y=percent_neg, x=nCount_RNA)) +
+  geom_point(pch=3, alpha=0.1) +
+  scale_x_log10() +
+  coord_cartesian(ylim = c(0, 10)) +
+  facet_wrap(~tissue_sample) +
+  theme_bw() +
+  ggtitle("Negative probes vs counts")
+```
+
+```{r}
+min_ncount_rna <- 90
+max_percent_neg <- 2
+```
+
+```{r}
+ggplot(so@meta.data, aes(y=percent_neg, x=nCount_RNA)) +
+  geom_point(pch=3, alpha=0.1) +
+  geom_hline(yintercept = max_percent_neg, lty=3, colour = "red") +
+  geom_vline(xintercept = min_ncount_rna, lty=3, colour = "red") +
+  scale_x_log10() +
+  coord_cartesian(ylim = c(0, 21)) +
+  facet_wrap(~tissue_sample) +
+  theme_bw() +
+  ggtitle("Negative probes vs counts")
+```
+
+### Applying filters
+
+```{r}
+# Apply a filter
+so@meta.data <- 
+  so@meta.data %>%
+  mutate(
+    qc = if_else(nCount_RNA >= min_ncount_rna & percent_neg <= max_percent_neg, "Keep", "Remove")
+  )
+
+table(so$qc, so$orig.ident)
+```
+
+Nearly 50% of the cells for HC.c will be filtered out, display which cells will
+be removed.
+
+```{r}
+ImageDimPlot(so, fov = "GSM7473684.HC.c", group.by = "qc")
+```
+
+The stromal compartment will be removed entirely and can be difficult for
+co-localisation analyses. Further, the epithelial compartment in the bottom left
+FOV is very patchy.
+
+## Exercise: Identifying your own filtering thresholds
+
+You have seen an example where stringent filtering omits key cells or
+compartments.
+
+Identify a suitable threshold for `min_ncount_rna` and `max_percent_neg` by
+iteratively:
+
+1. Changing the thresholds for `min_ncount_rna` and `max_percent_neg`
+2. Displaying the bivariate distribution of `nCount_RNA` and `percent_neg` per
+tissue sample
+3. Using `ImageDimPlot` to visualise which cells are removed
+
+```{r}
+min_ncount_rna <- 90 # 70
+max_percent_neg <- 2 # 4
+```
+
+```{r}
+ggplot(so@meta.data, aes(y=percent_neg, x=nCount_RNA)) +
+  geom_point(pch=3, alpha=0.1) +
+  geom_hline(yintercept = max_percent_neg, lty=3, colour = "red") +
+  geom_vline(xintercept = min_ncount_rna, lty=3, colour = "red") +
+  scale_x_log10() +
+  coord_cartesian(ylim = c(0, 21)) +
+  facet_wrap(~tissue_sample) +
+  theme_bw() +
+  ggtitle("Negative probes vs counts")
+```
+
+```{r}
+so@meta.data <- 
+  so@meta.data %>%
+  mutate(
+    qc = if_else(nCount_RNA >= min_ncount_rna & percent_neg <= max_percent_neg, "Keep", "Remove")
+  )
+
+table(so$qc, so$orig.ident)
+```
+
+```{r, eval=F}
+# Epithelial compartment less patchy, but still hard to retain the stromal cells
+# These are the trade-offs to consider
+ImageDimPlot(so, fov = "GSM7473684.HC.c", group.by = "qc")
+```
+
+```{r, eval=F}
+ImageDimPlot(so, fov = "GSM7473688.CD.a", group.by = "qc")
+```
+
+## Field of View QC (CosMX only; Advanced)
 
 Good to check library sizes across FOVs - red flags include FOVs with close to
 no cells.
@@ -125,70 +268,42 @@ so@meta.data %>%
   annotation_logticks(sides = "b")
 ```
 
-## Spatial
+TODO: As well as border effects. Run per sample.
 
-```{r}
-unique(so$orig.ident)
+```{r, eval=F}
+# For each cell, calculate the distance between the centroid to each FOV border
+so_borders <- so@meta.data %>%
+  group_by(tissue_sample, fov) %>%
+  mutate(
+    top = max(CenterY_local_px) - CenterY_local_px,
+    bottom = CenterY_local_px - min(CenterY_local_px),
+    left = CenterX_local_px - min(CenterX_local_px),
+    right = max(CenterX_local_px) - CenterX_local_px
+  ) %>%
+  select(top, bottom, left, right, nCount_RNA, tissue_sample) %>%
+  pivot_longer(cols = -c(nCount_RNA, tissue_sample), names_to = "fov_direction", values_to = "distance") 
+
+so_borders %>%
+  ggplot(aes(x = distance, y = nCount_RNA)) +
+  geom_point(size = 0.1, alpha = 0.4) +
+  facet_wrap(~fov_direction, ncol = 4) +
+  scale_y_log10() +
+  theme_light() +
+  geom_smooth(method = "loess", span = 0.2)
 ```
 
-```{r}
-ImageFeaturePlot(so, fov = "GSM7473684_HC_c", features = "nCount_RNA")
-```
+## Summary
 
-```{r}
-ImageFeaturePlot(so, fov = "GSM7473684_HC_c", features = "nCount_negprobes")
-```
+- QC is not prescriptive
+- Explore your data and ITERATE
+- Be permissive, especially if it's your first look at the data
+- There are more sources of technical variation in spatial, in comparison to older techs. While you don't need to filter in every step, it is useful to understand these sources of variation to interpret your biological analyses, and inform the subsequent rounds of QC. These differ across techs. For example, CosMX have FOVs which adds another dimension in comparison to Xenium
 
-## Filter negative counts per cell
+Notes: 
 
-Key metrics:
+You can also conduct QC in low dimensional steps following the
+normalisation and dimension reduction steps in this workshop. However, 
+we will proceed directly with the pre-processing steps.
 
-- `so$percent_neg`: The percentage of negative probes per cell
-- `so$mean_neg`: The average negative probes per cell
-
-```{r}
-so$percent_neg <- (so$nCount_negprobes / (so$nCount_RNA + so$nCount_negprobes)) * 100
-
-# Join layers to calculate average_neg
-so@assays$negprobes <- JoinLayers(so@assays$negprobes)
-so$mean_neg <- colMeans(so@assays$negprobes) # Only defined first sample
-```
-
-```{r}
-# Discuss difference with Xenium - xenium lower counts, lower background.
-max_pc_neg         <- 5
-
-ggplot(so@meta.data, aes(y=mean_neg, x=nCount_RNA)) +
-  geom_point(alpha=0.1) +
-  scale_x_log10() +
-  theme_bw() +
-  ggtitle("Negative probes vs counts")
-
-min_count_per_cell <- 1
-ggplot(so@meta.data, aes(x = nCount_RNA, y = mean_neg)) +
-  geom_hline(yintercept = max_pc_neg, lty=3, colour = "red") +
-  geom_vline(xintercept = min_count_per_cell, lty=3, colour = "red") +
-  geom_point(pch=3, alpha=0.1) +
-  scale_x_log10() +
-  theme_bw() +
-  ggtitle("Negative probes vs counts")
-```
-
-```{r}
-hc_idents <- unique(so$orig.ident)[1:3]
-cd_idents <- unique(so$orig.ident)[1:3]
-```
-
-```{r}
-ImageFeaturePlot(so, fov = hc_idents, features = c("percent_neg"))
-```
-
-```{r}
-ImageFeaturePlot(so, fov = cd_idents, features = c("percent_neg"))
-```
-
-Note: You can also conduct QC in low dimensional steps following the
-normalisation and dimension reduction steps in this workshop. QC is often
-iterative. First pass should be permissive with filtering.
-
-For the workshop we will proceed directly with the pre-processing steps.
+Also you can consider filtering each sample separately. Applying a single, strict threshold based on a high-quality sample might inappropriately filter out valid cells from a technically lower-quality sample.
+- TODO: fact check
