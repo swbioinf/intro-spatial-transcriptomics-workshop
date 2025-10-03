@@ -40,8 +40,11 @@ vignettes/*.pdf
 .Renviron
 
 # pkgdown site
-## why is this gitignored by default? I'm elecint to include it
-#docs/
+## why is this (docs/) gitignored by default? I'm elecint to include it
+## I think we should consider pushing to a separate gh-pages branch to separate
+## rendering from the main branch
+docs/
+IntroSpatialTranscriptomics*
 
 # translation temp files
 po/*~
