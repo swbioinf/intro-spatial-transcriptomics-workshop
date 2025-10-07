@@ -44,6 +44,7 @@ vignettes/*.pdf
 ## I think we should consider pushing to a separate gh-pages branch to separate
 ## rendering from the main branch
 docs/
+docs/*
 _book/
 _bookdown_files/
 libs/
