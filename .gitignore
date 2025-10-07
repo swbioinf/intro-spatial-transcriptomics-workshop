@@ -49,6 +49,8 @@ _bookdown_files/
 libs/
 **/*.bib
 **/*.html
+IntroSpatialTranscriptomics*
+IntroSpatialTranscriptomics*/
 # ignore all html files except:
 !**/mathjax_header.html
 
