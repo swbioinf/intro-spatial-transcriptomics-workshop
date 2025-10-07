@@ -138,11 +138,10 @@ so@meta.data %>%
 Log-normally distributed. CD_b, HC_B samples are less "noisy".
 
 ```{r}
-#so@meta.data %>%
-#  ggplot(aes(x = tissue_sample, y = mean_neg, colour = tissue_sample)) +
-#  geom_col() +
-#  theme_light() +
-#  annotation_logticks(sides = "b", colour = "lightgrey")
+so@meta.data %>%
+  ggplot(aes(x = tissue_sample, y = mean_neg, colour = tissue_sample)) +
+  geom_col() +
+  theme_light()
 ```
 
 ```{r}
@@ -217,8 +216,8 @@ tissue sample
 3. Using `ImageDimPlot` to visualise which cells are removed
 
 ```{r}
-min_ncount_rna <- 70
-max_percent_neg <- 4
+min_ncount_rna <- 90 # 70
+max_percent_neg <- 2 # 4
 ```
 
 ```{r}
@@ -243,14 +242,14 @@ so@meta.data <-
 table(so$qc, so$orig.ident)
 ```
 
-```{r, eval=F}
+```{r}
 # Epithelial compartment less patchy, but still hard to retain the stromal cells
 # These are the trade-offs to consider
 ImageDimPlot(so, fov = "GSM7473684.HC.c", group.by = "qc")
 ```
 
-```{r, eval=F}
-# A lot cells marked for removal and a bit patchy
+```{r}
+# A lot of cells marked for removal and a bit patchy
 ImageDimPlot(so, fov = "GSM7473688.CD.a", group.by = "qc")
 ```
 
