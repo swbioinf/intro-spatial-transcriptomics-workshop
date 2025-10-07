@@ -33,7 +33,7 @@ In real life, choosing a clustering resolution can be a cyclic process with cell
 The [clustree](https://doi.org/10.1093/gigascience/giy083) package can be a useful tool to evaluate different levels of clustering. There is an example of its use [here]( https://swbioinf.github.io/scRNAseqInR_Doco/clustering.html) in the context of single cell transcriptomics.
 
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, eval=FALSE}
 so <- FindClusters(so, resolution = 0.8)  
 ```
 

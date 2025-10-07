@@ -8,34 +8,48 @@ It may involve pulling together multiple lines of evidence to assign celltype la
 
 ## Cluster Markers
 
+Considering our clusters - lets find some more meaningful labels than 1-10! What genes are expresses specifically in each of these clusters?
 
-```{r message=FALSE}
+```{r message=FALSE, warning=FALSE}
 DimPlot(so, group.by='seurat_clusters')
 ```
 
 
+The 'FindAllMarkers' function runs a differential expression test to see what genes are expressed differently between each celltype and the rest of the experiment. The 'only.pos' parameter is useful to report only genes enriched (not absent) in each cluster. 
 
-```{r message=FALSE, warnings=FALSE}
+
+```{r message=FALSE, warning=FALSE}
+# Need to join the layers back again for this.
 so <- JoinLayers(so)
 marker_table <- FindAllMarkers(so, group.by='seurat_clusters', only.pos=TRUE)
 ```
 
+Now we have a list of 'marker' genes. They're not markers in the sense of canonical celltype markers - they're just defined from the data.
+
+* Look at those p-values! They're extremely significant because each cell is treated as a replicate (and samples are ignored). 
+* We can filter on fold-change (avg_log2FC) of expression to emphasise more interesting larger change (as even very small difference can be significant, but not useful for determining cell types). 
+
+The [human protein atlas](https://www.proteinatlas.org/) is a useful site to look up the single cell RNA expression of a given gene; e.g. [CD37](https://www.proteinatlas.org/search/CD37)
+
 
 ```{r}
+DT::datatable(marker_table)
+```
+A dot plot is a convenient way to summarise the top few distinct genes. It can let you read off some obvious celltypes and see similarities between clusters.
+
+```{r message=FALSE, warning=FALSE}    
+# Get top 3 genes per cluster, with log FC > 1
 marker_table_top <- marker_table %>%
     group_by(cluster) %>%
     dplyr::filter(avg_log2FC > 1, p_val_adj < 0.01) %>%
     slice_head(n = 3)
-```
 
-
-```{r message=FALSE, warnings=FALSE}    
 DotPlot(so, features = unique(marker_table_top$gene)) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
 
 
 <!-- Plot cluster specific genes on a heatmap on a subset of 5000 cells. -->
-<!-- ```{r message=FALSE, warnings=FALSE}     -->
+<!-- ```{r message=FALSE, warning=FALSE}     -->
 <!-- #DefaultLayer(so[['RNA']]) <- 'data' -->
 <!-- so.mini <- so[, sample(colnames(so), size =5000, replace=F)] -->
 <!-- DoHeatmap(so.mini, assay='RNA', features = marker_table_top$gene)  -->
@@ -43,11 +57,28 @@ DotPlot(so, features = unique(marker_table_top$gene)) + theme(axis.text.x = elem
 <!-- ``` -->
 
 
+You can get some more information form these marker lists by dropping them into a tool like [enrichr](https://maayanlab.cloud/Enrichr/enrich) and considering cell type enrichment.
+NB: enrichR also has a R package, and could be done programatically 
+
+```{r}
+top_marker_genes <- filter(marker_table, cluster == "1") %>% dplyr::filter(avg_log2FC > 1, p_val_adj < 0.01) %>% pull(gene) %>% head(20)
+print(noquote(top_marker_genes))
+```
+
+::: {.rmdnote}
+
+**ACTIVITY** Choose a cluster, pull out its top genes. Try them in [enrichR](https://maayanlab.cloud/Enrichr/enrich) > Cell Types. What is it?  Is there a similar cluster? Do you trust the results?
+
+:::
+
+
+
+
 ## Cell typing by reference
 
 There are a number of tools that classify cells into types on the basis of similarity with a reference dataset. SingleR is one such tool.
 
-```{r message=FALSE, warnings=FALSE}
+```{r message=FALSE, warning=FALSE}
 library(SingleR)
 ```
 
@@ -78,23 +109,44 @@ mv 82e3b450-6704-43de-8036-af1838daa7df.h5ad tabula_sapiens_large_intestine_82e3
 
 Its a .h5ad file, common from pythonic analyses. Luckily we can use the schard package to read it into R directly. But not to a seurat object. 
 
-```{r eval=FALSE}
+```{r message=FALSE, warning=FALSE}
 library(schard)
+ts_largeintestine_h5ad <- file.path("data/tabula_sapiens/tabula_sapiens_large_intestine_82e3b450-6704-43de-8036-af1838daa7df.h5ad")
 sce.ts_intestine = schard::h5ad2sce(ts_largeintestine_h5ad)
 ```
 
 Instead it builds a SingleCellExperiment object - a data format central to bioconductor packages (this is fine, SingleR is from bioconductor too!). SCE objects work quite similarly to seurat objects, but have different notation - e.g. _colData_ and _rowData_ access the cell and gene information respectively.
-```{r eval=FALSE}
-DT::data.table(head(colData(sce.ts_intestine)))
-DT::data.table(head(rowData(sce.ts_intestine)))
+```{r}
+DT::datatable(head(as.data.frame(colData(sce.ts_intestine))))
+DT::datatable(head(as.data.frame(rowData(sce.ts_intestine))))
 ```
 
 
-TODO: SHOW CODE FOR calling
-TODO: LOAD PRECALLED from cell_typing.R
+The gene names in that object are ensemble gene IDs - let change them to gene symbols to match our data.
+```{r}
+# Not needed, but first filter down to matched genes in our panel
+sce.ts_intestine.genename <- sce.ts_intestine[rowData(sce.ts_intestine)$feature_name %in% rownames(so),]
+
+# Are there any duplicates (we'd need to handle them, but there aren't)
+# takes the count of each feature, then checks that there aren't any >1
+stopifnot(sum(table(rowData(sce.ts_intestine.genename)$feature_name) != 1 ) == 0)
+
+# just rename the genes to the gene names
+rownames(sce.ts_intestine.genename) <-  rowData(sce.ts_intestine.genename)$feature_name
+
+# Pull out the normalised matrix.
+# Quirk of this coming from the python world, the normalised assay is called 'X'
+ref_norm_matrix <- assay(sce.ts_intestine.genename, 'X')
+```
 
 
-```{r eval=FALSE}
+The following code makes celltype predictions using the reference at the broad and specific annotation levels. It takes a few minutes to run - even with 8 cores. 
+
+```{r}
+library(BiocParallel) # allow parallelisation with MulticoreParam(). 
+
+norm_matrix <- GetAssayData(so, assay = 'RNA', layer = 'data')
+
 predictions_broad <- SingleR::SingleR(test = norm_matrix,
                                 ref   = ref_norm_matrix,
                                 labels = sce.ts_intestine.genename$broad_cell_class,
@@ -113,14 +165,14 @@ predictions_detailed <- SingleR::SingleR(test = norm_matrix,
 
 
 
-```{r}
-predictions_broad_file    <- file.path("data","predictions_with_ts_intestine_broad_cell_class.RDS")
-predictions_detailed_file <- file.path("data","predictions_with_ts_intestine_detailed_celltype.RDS")
-predictions_broad    <- readRDS(predictions_broad_file)
-predictions_detailed <- readRDS(predictions_detailed_file)
-```
+<!-- ```{r} -->
+<!-- predictions_broad_file    <- file.path("data","predictions_with_ts_intestine_broad_cell_class.RDS") -->
+<!-- predictions_detailed_file <- file.path("data","predictions_with_ts_intestine_detailed_celltype.RDS") -->
+<!-- predictions_broad    <- readRDS(predictions_broad_file) -->
+<!-- predictions_detailed <- readRDS(predictions_detailed_file) -->
+<!-- ``` -->
 
-The predictions look like this
+The predictions look like this;
 ```{r}
 predictions_broad
 ```
@@ -129,23 +181,21 @@ predictions_broad
 
 Pull them both into the annotation
 ```{r}
-# We can do this because the order of cell is the same
+# Check that the order of cells is the same
 stopifnot(all(rownames(predictions_broad) == colnames(so)))
+
+# Then pull in the celltypes from pruned labels, and the 'delta.next' score for each.
 so$singleR_pred_broad    <- predictions_broad$pruned.labels
 so$singleR_pred_detailed <- predictions_detailed$pruned.labels
+so$singleR_delta.next_broad    <- predictions_broad$delta.next
+so$singleR_delta.next_detailed <- predictions_detailed$delta.next
 ```
-
 
 And plot on the UMAP
 
-The clusters:
-```{r}
-DimPlot(so)
-```
-
 The broad predictions
 ```{r}
-DimPlot(so, group.by = 'singleR_pred_broad', label = TRUE)
+DimPlot(so, group.by = 'singleR_pred_broad', label = TRUE) 
 ```
 
 And the detailed predictions.  The detailed celltypes are more difficult to see - but some have clearly labelled.
@@ -153,27 +203,14 @@ And the detailed predictions.  The detailed celltypes are more difficult to see 
 DimPlot(so, group.by = 'singleR_pred_detailed', label = TRUE) + NoLegend()
 ```
 
-
-
-The delta next score gives you the distance between the called celltype, and the next most likely. A small difference could indicate uncertainty - from a difficult to classify cell, stray counts from a neighbouring cell , 
+The delta next score gives you the distance between the called celltype, and the next most likely. A small difference could indicate uncertainty - from a difficult to classify cell, stray counts from a neighbouring cell or cell types that are very similar (especially in the detailed classification).
 ```{r}
-so$singleR_delta.next_broad    <- predictions_broad$delta.next
-so$singleR_delta.next_detailed <- predictions_detailed$delta.next
-
 FeaturePlot(so, c('singleR_delta.next_broad','singleR_delta.next_detailed'))
-
 VlnPlot(so, features='singleR_delta.next_broad', group.by='singleR_pred_broad', pt.size = 0) + NoLegend()
-VlnPlot(so, features='singleR_delta.next_detailed', group.by='singleR_pred_detailed', pt.size = 0) + NoLegend()
 ```
 
-
-
-
-
-
 Its nice to line those classifications up with clusters.
-
-```{r}
+```{r message=FALSE, warning=FALSE}
 ## Celltype proportions
 celltype_summary_table<- so@meta.data %>% as_tibble() %>%
   group_by(seurat_clusters, singleR_pred_broad ) %>%
@@ -198,7 +235,7 @@ Here we can see that cluster 1 is epithelial cells.
 
 Plotting both whole sample, and a zoomed in region of just one of the FOVs (in the cosmx definition) within it.
 
-```{r  message=FALSE, warnings=FALSE}
+```{r  message=FALSE, warning=FALSE}
 so_sample <- so[, so$tissue_sample=="HC_a"]
 ImageDimPlot(so_sample,
              fov          = "GSM7473682.HC.a",
@@ -207,12 +244,11 @@ ImageDimPlot(so_sample,
              cols = 'polychrome', #See DiscretePalette()
              group.by = "seurat_clusters",
              boundaries   = "segmentation",
-             crop=TRUE,
-             nmols = 10000)
+             crop=TRUE)
 
 ```
 
-```{r message=FALSE, warnings=FALSE}
+```{r message=FALSE, warning=FALSE}
 so_fov    <- so_sample[, so_sample$fov==1]
 ImageDimPlot(so_fov,
              fov          = "GSM7473682.HC.a",
@@ -221,15 +257,14 @@ ImageDimPlot(so_fov,
              cols = 'polychrome', #See DiscretePalette()
              group.by = "seurat_clusters",
              boundaries   = "segmentation",
-             crop=TRUE,
-             nmols = 10000)
+             crop=TRUE)
 
 ```
 
 
 
-What about the two sets of predictions?
-```{r message=FALSE, warnings=FALSE}
+What about the broad predictions?
+```{r message=FALSE, warning=FALSE}
 ImageDimPlot(so_fov,
              fov          = "GSM7473682.HC.a",
              axes = TRUE,
@@ -242,9 +277,14 @@ ImageDimPlot(so_fov,
 ```
 
 
-## Recording celltype annotations.
 
+## Recording celltype annotations
 
+Note that there are many more tools and approaches for determining celltypes. Especially in the reference based tool space singleR is just one option; See [review](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-025-06044-0)
+
+It may be worthwhile to seek a method that uses image and positional data in conjunction with transcriptome - it is an active area of research, but for now, singleR was good enough. When seeking such methods, be aware that some methods developed for spot-based technologies (Visium), may not necessarily work or scale to in-situ single cell technologies. 
+
+For today, lets apply some celltype labels.
 
 ```{r}
 ## Apply some cluster names
@@ -252,17 +292,17 @@ so$cluster_code <- factor( paste0("c", so$seurat_clusters),   levels=paste0('c',
 Idents(so) <- so$cluster_code
 
 cluster_content <- list(
-  c0 = "B lymphocyte lineage", # JCHAIN/ MZB1 / DERL3 
-  c1 = "Stem cell", 
-  c2 = "Mixed",         
-  c3 = "Fibroblast",              
-  c4 = "Macrophage and Dendritic cell",  # See detailed predictions, and macrophages are important in this study.  
-  c5 = "Intestinal epithelial cell",
-  c6 = "Contractile cell",
-  c7 = "B lymphocyte lineage",  # CD37 / CIITA / IGHM 
-  c8 = "Endothelia",
-  c9 = "granulocyte",
-  c10 = "Mixed"
+  c0 = "Stem cell", # PIGR
+  c1 = "Plasma cell", #B lymphocyte lineage: JCHAIN/ MZB1 / DERL3  (typical for Plasma/Plasma/Plasma)
+  c2 = "Fibroblast",   
+  c3 = "Mixed",  
+  c4 = "Macrophage and Dendritic cell",  # See detailed predictions, and macrophages are important in this study.    
+  c5 = "T cell",
+  c6 = "Intestinal epithelial cell",  # PIGR 
+  c7 = "Contractile cell",        
+  c8 = "B cell",  # B lymphocyte lineage: CD37 / CIITA / IGHM  (B/B/Plasma)           
+  c9 = "Endothelia",
+  c10 = "Granulocyte"
 )
 
 # c1 => c1: Stem cell
@@ -277,15 +317,21 @@ DimPlot(so, group.by='cluster_labels', label = TRUE) + NoLegend()
 ```
 
 
-## Other methods
+
+```{r  message=FALSE, warning=FALSE}
+so_fov <- so[, so$tissue_sample=="HC_a" & so$fov==1]
+ImageDimPlot(so_fov,
+             fov          = "GSM7473682.HC.a",
+             axes = TRUE,
+             border.color = NA, border.size = 0.1,
+             cols = 'polychrome', 
+             group.by = "cluster_labels",
+             boundaries   = "segmentation",
+             crop=TRUE)
+
+```
 
 
-TODO: Discuss other approaches.
-
-E.g. one of:
-cell type based domain ID with hoodscanR,
-expression-based domain ID,
-looking at DEGs with enrichR 
 
 
 
@@ -295,9 +341,8 @@ looking at DEGs with enrichR
 
 ## Pull in real annotation
 
-The authors of this study have shared their actual celltypes. So in lieu of trying to figure this out - directly import their annotation
+The authors of this study have shared their actual celltypes. So we can simply directly import their annotation!
 
-The 'singleR2' set is very detailed!
 
 ```{r}
 annotation_file <- 'data/GSE234713_CosMx_annotation.csv.gz'
@@ -309,10 +354,13 @@ so$paper_celltype <- factor(anno_table[colnames(so),]$subset)
 so$paper_singleR2 <- factor(anno_table[colnames(so),]$SingleR2)
 ```
 
-From there can use celltype labels on visualisation:
 
-```{r message=FALSE, warnings=FALSE}
-so_fov    <- so[, so$tissue_sample=="HC_a" & so_sample$fov==1]
+
+How many cells per type in the broad set? Where are they on the tissue?
+
+```{r message=FALSE, warning=FALSE}
+table(so$paper_celltype)
+so_fov    <- so[, so$tissue_sample=="HC_a" & so$fov==1]
 ImageDimPlot(so_fov,
              fov          = "GSM7473682.HC.a",
              axes = TRUE,
@@ -320,23 +368,28 @@ ImageDimPlot(so_fov,
              group.by = "paper_celltype",
              boundaries   = "segmentation",
              crop=TRUE)
-
-
-ImageDimPlot(so_fov,
-             fov          = "GSM7473682.HC.a",
-             axes = TRUE,
-             border.color = NA, border.size = 0.1,
-             group.by = "paper_singleR2",
-             boundaries   = "segmentation",
-             crop=TRUE)
 ```
 
 
 
-## Fun with annotations
+The 'singleR2' set is very, very detailed! Too much for plotting on the tissue. The Macrophage subtypes were important in the paper, but we didn't see a simple macrophage cluster in our clusters. We can do a very quick heatmap to look at how the two classifications compare (this can work better when there are too many celltypes to display nicely with colours).  NB: This plot doesn't view well at small sizes - zoom in to see all the labels.
+
+```{r}
+table(so$paper_singleR2)
+```
+
+```{r eval=FALSE}
+heatmap(table(so$paper_singleR2, so$cluster_labels), Rowv = NA, Colv=NA, margins = c(15, 10)) # base R heatmap - makes margin bigger to fit names
+```
+
+![](images/cluster_labels_vs_detailedcelltypes.png)
 
 
-Now we can do some fun plots with our cell types - for instance to see if there's change in proportions between samples. You could test this formally with [propellar](https://github.com/phipsonlab/speckle)
+
+## Use the annotations!
+
+
+Now we can do some fun plots with our cell types - for instance to see if there's change in proportions between samples. You could test this formally with [propeller](https://github.com/phipsonlab/speckle)
 
 
 ```{r}

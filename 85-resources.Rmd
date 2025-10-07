@@ -22,6 +22,9 @@ Links to various useful resources.
 * [Biologists, stop putting UMAP plots in your papers](https://simplystatistics.org/posts/2024-12-23-biologists-stop-including-umap-plots-in-your-papers/): A discussion on how UMAPs can sometimes be misinterpreted
 
 
+* https://www.10xgenomics.com/analysis-guides
+
+
 
 
 Other references

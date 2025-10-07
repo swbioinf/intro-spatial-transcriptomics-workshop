@@ -5,7 +5,7 @@
 ## The scope of what was done with this data:
 
 Wrap up (10)
-We have preprocessed some data, now run tests/do analysis => spatial sampler resource.
+We have preprocessed some data, now run tests/do analysis 
 
 
 
@@ -22,17 +22,58 @@ Summarise what Garrido-Trigo et al _actually_ did with this dataset in their pap
 
 ## Other techniques.
 
-Q&A (whatever)
+
+**Segmentation**
+
+Good cell segmentation from images underpins downstream analysis. Different platforms offer inbuilt segmentation methods, and often require tweaking from the default with different tissues, antibodies or runs. 
+
+* On-machine segmentation: e.g. Xenium/Cosmx
+* Directly from images using specialised microscopy methods for segmentation. 
+* https://www.bioconductor.org/packages/release/bioc/html/MoleculeExperiment.html
 
 
-Extra:
-AboutSegmentation? Use defaults.
- 
-Questions to address
- 
-* How do we combine multiple samples
-* How to annotate multiple samples on one  slide (I wish I knew)
-* How do I do X 
+
+**Sample annotation**
+
+It's typical to have multiple samples on a single slide. We need to label each cell with its ID.
+
+* Define samples by their centroid x-y coordinates 
+* THERE'S GOT TO BE A BETTER WAY A little 'cicle' here interactive tool. 
+
+
+**Visualisation**
+
+* Napari
+* CellXGene (single cells)
+* iSEE (single cell)
+* Xenium explorer (Xenium only)
+* Atomx (cosmx only)
+
+
+**Niche analysis**
+
+Cell neighbour niche analysis is a major avenue of in situ spatial analysise. E.g. Defining 
+
+
+* Seuruat findNiches()
+* OSCA neighbourhood analyses: https://lmweber.org/OSTA/pages/img-neighborhood-analysis.html
+* hoodscanR : https://www.bioconductor.org/packages/release/bioc/vignettes/hoodscanR/inst/doc/Quick_start.html
+
+
+
+**'Spatial' pattern tests and cell free analyses**
+
+* Spatial tests, adapted form geospatial methods:  https://pachterlab.github.io/voyager/
+* Co-localisation and differntial co-localisation: https://lmweber.org/OSTA/pages/mult-diff-spatial-patterns.html
+* Molecule level data object (not a SingleCellExperiment): https://www.bioconductor.org/packages/release/bioc/html/MoleculeExperiment.html
+
+
+**Multiomics**
+
+* https://lmweber.org/OSTA/pages/crs-spatial-registration.html
+* https://satijalab.org/seurat/articles/multimodal_vignette (single cell)
+
+
 
 
 

@@ -2,8 +2,21 @@
 
 
 ```{r echo=FALSE, results='hide', warnings=FALSE}
+
+library(Seurat)
+library(SeuratObject)
+library(tidyverse)
+library(here)
+
+
+## Paths
+data_dir              <- file.path("data/")
+raw_data_dir          <- file.path("raw_data/")
+
 # Hidden: load up filtered dataset for testing.
-so <- readRDS("data/GSE234713_CosMx_IBD_seurat_02_filtered_subset.RDS" )
+#so <- readRDS("data/GSE234713_CosMx_IBD_seurat_02_filtered_subset.RDS" )
+so <- readRDS("data/GSE234713_CosMx_IBD_seurat_02_rna70_neg4.RDS" )
+
 ```
 
 
@@ -25,14 +38,14 @@ Why are these steps needed?
 ## Normalisation
 
 
-Start by 'splitting' the object so that each sample has its own assay again. 
+<!-- CHCEK IF FINAL OBJEWCT IS SPLIT BY NOW -- Start by 'splitting' the object so that each sample has its own assay again.  -->
 
-```{r  results='hide', warnings=FALSE}
-# Basic preprocessing
-# Split layers out again
-# https://satijalab.org/seurat/articles/seurat5_integration
-so <- split(so, f = so$orig.ident)
-```
+<!-- ```{r  results='hide', warnings=FALSE} -->
+<!-- # Basic preprocessing -->
+<!-- # Split layers out again -->
+<!-- # https://satijalab.org/seurat/articles/seurat5_integration -->
+<!-- #so <- split(so, f = so$orig.ident) -->
+<!-- ``` -->
 
 By default, we will use the 'LogNormalize' method in seurat - as described in the NormaliseData function help:
 
@@ -204,6 +217,7 @@ FeaturePlot(so, 'nCount_negprobes')
 
 But the overall % of negative probes is more random.
 ```{r message=FALSE, warning=FALSE}
+so$pc_neg <- so$nCount_negprobes / (so$nCount_negprobes + so$nCount_RNA) * 100
 FeaturePlot(so, 'pc_neg') 
 ```
 
