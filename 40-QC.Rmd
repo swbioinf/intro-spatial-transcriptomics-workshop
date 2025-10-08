@@ -216,8 +216,8 @@ tissue sample
 3. Using `ImageDimPlot` to visualise which cells are removed
 
 ```{r}
-min_ncount_rna <- 90 # 70
-max_percent_neg <- 2 # 4
+min_ncount_rna <- 70
+max_percent_neg <- 4
 ```
 
 ```{r}
