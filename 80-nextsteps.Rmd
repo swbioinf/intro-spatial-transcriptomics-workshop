@@ -1,27 +1,23 @@
-# Next steps
+# Next steps{#NextSteps}
+
+We've done a fairly streamlined preprocessing of a single cell spatial dataset. At this point in the analysis it would be time to drill into the biology and start doing some focussed analyses. What might be possible?
 
 
+## What did the authors find from this dataset?
 
-## The scope of what was done with this data:
+In their paper [Macrophage and neutrophil heterogeneity at single-cell spatial resolution in human inflammatory bowel disease](https://pubmed.ncbi.nlm.nih.gov/37495570/) Garrido-Trigo et al performed and extensitve analysis of their cosmx Data alongside single cell, bulk and microscopy data. 
 
-Wrap up (10)
-We have preprocessed some data, now run tests/do analysis 
+To summarise the kinds of things that are possible with single-cell spatial data - here is a list of some of the analysese from that paper that specifically use this spatial dataset;
 
-
-
-
-Summarise what Garrido-Trigo et al _actually_ did with this dataset in their paper;
-
-* Macrophage proximity tests
-* Integration with single cell data 
-* integration with other spatial omics
-* ...
-
-
+* Identified their detailed celltypes in their single cell data (over the whole transcriptome), which they used to classify celltypes in their spatial data.(page 2 - *Integration of single-cell RNA sequencing and spatial molecular imaging analysis provides a map of healthy and inflamed colon*)
+* Identified cell niches with different neighbourhoods, e.g lymphoid strucutres, lamina propria and lower crypt. They quantified an increase in inflammatory celltypes in some of those neighbourhoods, and characterised another neighbourhood seen only in the IBD samples. (page 2 - *Integration of single-cell RNA sequencing and spatial molecular imaging analysis provides a map of healthy and inflamed colon*)
+* They obvserved granuloma features in one patient. They examined the macrophage subtypes within them and the surrounding immune cell microenvironment. (Figure 4b, page 6 _CosMx Spatial Molecular Imaging analysis confirms the expansion of Inflammation-Dependent Alternative macrophages and reveals their tissue distribution in inflammatory bowel disease colon_)
+* Looked at differential abundance of celltypes across samples (page 2 - *Transcriptional analysis at single-cell and spatial resolution reveals different populations of resident and inflammatory macrophages in the colonic mucosa* )
+* Identified a change in myeloid cell localisation by quantifiing the distance o-f macrophage, MAST cells and Dendritic cells to the mucosal surface (page 2 - *Transcriptional analysis at single-cell and spatial resolution reveals different populations of resident and inflammatory macrophages in the colonic mucosa* )
+* Observed spatially localised expression of a gene (NRG1) within a subset of apically-located fibroblasts (page 4 - _Inflammation-dependent alternative macrophages express neuregulin 1_)
 
 
 ## Other techniques.
-
 
 **Segmentation**
 
@@ -29,49 +25,54 @@ Good cell segmentation from images underpins downstream analysis. Different plat
 
 * On-machine segmentation: e.g. Xenium/Cosmx
 * Directly from images using specialised microscopy methods for segmentation. 
-* https://www.bioconductor.org/packages/release/bioc/html/MoleculeExperiment.html
 
+**Sample and Regional Annotation**
 
+It's typical to have multiple samples on a single slide. We need to label each cell with its ID. Similarly you might want to outline a particular region.
 
-**Sample annotation**
-
-It's typical to have multiple samples on a single slide. We need to label each cell with its ID.
-
-* Define samples by their centroid x-y coordinates 
-* THERE'S GOT TO BE A BETTER WAY A little 'cicle' here interactive tool. 
-
+* Define samples by their centroid x-y coordinates (Painstaking, but it can be enough)
+* Vendor-based solutions; e.g. regional highlighing with [Xenium explorer](https://www.10xgenomics.com/support/software/xenium-explorer/latest/tutorials/xe-selecting-multiple-regions-of-interest)
+* Import masks from a full-fledged microscope analysis kit like Napari.
+* Do you know better approaches or tools? Please share.
 
 **Visualisation**
 
+There are many tools out there, each with strengths and limitations.
+
+* VRomics
+* Xenium explorer (Xenium only)
+* Atomx (cosmx only)
 * Napari
 * CellXGene (single cells)
 * iSEE (single cell)
-* Xenium explorer (Xenium only)
-* Atomx (cosmx only)
 
 
 **Niche analysis**
 
-Cell neighbour niche analysis is a major avenue of in situ spatial analysise. E.g. Defining 
-
+Cell neighbour niche analysis is a major avenue of in situ spatial analyses. E.g. tumour microenvrionments, tissue regions. 
 
 * Seuruat findNiches()
 * OSCA neighbourhood analyses: https://lmweber.org/OSTA/pages/img-neighborhood-analysis.html
 * hoodscanR : https://www.bioconductor.org/packages/release/bioc/vignettes/hoodscanR/inst/doc/Quick_start.html
-
-
+* Many more ...
 
 **'Spatial' pattern tests and cell free analyses**
+
+Huge area of research, here are some starting points;
 
 * Spatial tests, adapted form geospatial methods:  https://pachterlab.github.io/voyager/
 * Co-localisation and differntial co-localisation: https://lmweber.org/OSTA/pages/mult-diff-spatial-patterns.html
 * Molecule level data object (not a SingleCellExperiment): https://www.bioconductor.org/packages/release/bioc/html/MoleculeExperiment.html
+* Many more ...
 
 
 **Multiomics**
 
+Another huge area of research, here are some starting points. It very much depends on which multiomics you have.
+
 * https://lmweber.org/OSTA/pages/crs-spatial-registration.html
 * https://satijalab.org/seurat/articles/multimodal_vignette (single cell)
+* Many more ...
 
 
 

@@ -1,62 +1,60 @@
 # Spatially Restricted Genes {#SpatiallyRestrictedGenes}
 
-Link out directly??? https://swbioinf.github.io/spatialsnippets/e_spatiallyRestrictedGenes.html
-
 <!--
 Requires packages:
 * Rfast2
 * ape
 -->
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(Seurat)
 library(DT)
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE, echo=FALSE}
 #so <- readRDS("data/GSE234713_CosMx_IBD_seurat_01_preprocessed_subsampled.RDS" )
 ```
 
-
-
 What genes have a irregular expression across the tissue? These might be localised to a particular region and indicate some spatial activity.
-
 
 Considering a signle gene, we calculate 'spatial autocorrelation' with the MoransI test.
 
 
 
-
-
 ## Run MoransI once
 
-To run this quickly, going to arbitraily reduce the number of variable features to just 20. 
-
-For real line, would pick all VariableFeatures (or all genes).
+To run this quickly, going to arbitraily reduce the number of variable features to just 10. In real life, we might pick all our VariableFeatures.
 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 so <- FindVariableFeatures(so, nfeatures=10)
 ```
 
-```{r}
+
+First lets run it for a single sample by subsetting the object.
+
+```{r message=FALSE, warning=FALSE}
 the_sample <- 'CD_a'
 the_fov    <- 'GSM7473688.CD.a'
 so_sample  <- subset(so, tissue_sample == the_sample)
-  
-```
-```{r}
+```  
+
+
+There's a current bug ([see ticket](https://github.com/satijalab/seurat/issues/10099)) with the FindSpatiallyVariableFeatures function with this kind of data. We should be able to run it directly on the seurat object itself, but as a workaround, we will run it on the 'RNA' assay. 
+
+```{r message=FALSE, warning=FALSE}
 # If the Seurat method above crashes (segfault), a workaround is
 # funning FindSpatiallyVariableFeatures at the assay level
 so_sample_assay <- so_sample[['RNA']]
 tc <- GetTissueCoordinates(so_sample)
-rownames(tc)<- tc$cell
+rownames(tc)<- tc$cell # the innards of findSpatiallyVariableFeatures expect rownames, but they're not there. Add them.
+
 # When given an 'assay' FindSpatiallyVariableFeatures returns an assay. Put it back in the seurat object
 so_sample[['RNA']] <- FindSpatiallyVariableFeatures(
   so_sample_assay,
   layer = "scale.data",
-  spatial.location = tc,
+  spatial.location = tc, # now with rownnames
   features = VariableFeatures(so_sample)[1:10], # Just a random few variable genes for testing!
   selection.method = "moransi",
   nfeatures=10 # mark top 10 spatially variable
@@ -64,8 +62,9 @@ so_sample[['RNA']] <- FindSpatiallyVariableFeatures(
 ```
 
 
+The results end up in the gene level metadata. Pull them out, but only display the genes we ran. 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 #Put feature name as a column in the feature metadata
 so_sample[["RNA"]]@meta.data$feature <-rownames(so_sample[["RNA"]])
 gene_metadata <- so_sample[["RNA"]]@meta.data
@@ -80,8 +79,9 @@ DT::datatable(gene_metadata_morans, width = '100%')
 
 ```
 
+What to the top 3 gene look like on the tissue? How can we interpret this?
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 top_genes = gene_metadata_morans$feature[1:3]
 top_genes
 
@@ -96,21 +96,13 @@ ImageDimPlot(so_sample,
 
 
 
-
-
-
-
-
-
-
-
-
 ## Run MoransI on all samples
 
-Could it be that the expression pattern of a gene is disrupted?
+Could it be that the expression pattern of a gene is disrupted? Is there a difference between samples or between groups?
 
+Lets run the test on every sample. This is slow, and could be parallelised. 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 
 # Record moransI results for each sample, one by one.
 samples <- unique(so@meta.data$tissue_sample)
@@ -161,6 +153,12 @@ results_all <- bind_rows(results_list)
 ```
 
 
+Lets visualise our MoransI scores for each gene for each sample on a boxplot. Note that this isn't an established standard way of interpreting these scores, but it does give us a way to prioritise what to look at.
+
+
+MoransI scores are between -1 (anticorrelated) and 1 (preferctly correlated) - 0 is random. The baseline isn't 0 - probably because the observations are already limited to the tissue. But there's still clearly some genes with higher scores than others, even though the variation between samples is quite high.
+
+
 
 ```{r fig.width=10}
 # unique set of genes that were top 10 morans in any sample
@@ -176,7 +174,10 @@ ggplot(filter(results_all, feature %in% plot_genes), aes(x=feature, y=MoransI_ob
 
 ## Explore moransI results
 
-```{r}
+That doesn't mean much in isolation, so lets look at the actual distribution of some of those.
+
+
+```{r message=FALSE, warning=FALSE}
 so.CD_a <- subset( so, subset= tissue_sample == 'CD_a')
 so.HC_a <- subset( so, subset= tissue_sample == 'HC_a')
 
@@ -184,7 +185,7 @@ so.HC_a <- subset( so, subset= tissue_sample == 'HC_a')
 
 IGKC has high autocorrelation all over
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 p1 <- ImageDimPlot(so.CD_a, 
              molecules = 'IGKC', 
              group.by = 'tissue_sample', cols = c("grey30"), # Make all cells grey.
@@ -198,8 +199,8 @@ p1 + p2
 
 
 
-A highly variable gene, with a low(er) spatial autocorrelation
-```{r}
+Contrast that with a CHGA - still a highly variable gene, with a low(er) spatial autocorrelation
+```{r message=FALSE, warning=FALSE}
 p1 <- ImageDimPlot(so.CD_a, 
              molecules = 'CHGA', 
              group.by = 'tissue_sample', cols = c("grey30"), # Make all cells grey.
@@ -211,7 +212,10 @@ p2 <- ImageDimPlot(so.HC_a,
 p1 + p2 
 ```
 
-```{r}
+
+CCL21 has a combination of high and low scores. Why?
+
+```{r message=FALSE, warning=FALSE}
 p1 <- ImageDimPlot(so.CD_a, 
              molecules = 'CCL21', 
              group.by = 'tissue_sample', cols = c("grey30"), # Make all cells grey.
@@ -224,8 +228,8 @@ p1 + p2
 ```
 
 
-Whats going on there? There's a big clump of CCL21
-```{r}
+There's a big clump of CCL21 at the bottom of HC_a, lets figure out which FOV that is and zoom in further.
+```{r message=FALSE, warning=FALSE}
 ImageDimPlot(so.HC_a, group.by = 'fov')
 
 ImageDimPlot(subset(so.HC_a, fov==4), 
@@ -233,9 +237,10 @@ ImageDimPlot(subset(so.HC_a, fov==4),
              group.by = 'cluster_labels', alpha=0.3,# Show clusters, but faded 
              boundaries = "segmentation",  border.color = NA, axes = T, crop=TRUE) 
 ```
-Lots of those around the stromal cells. 
 
-```{r}
+
+Now we can practically bring back the cluster labels.
+```{r message=FALSE, warning=FALSE}
 ImageDimPlot(subset(so.HC_a, fov==4),
              molecules = c('CCL21','CD8A','MS4A1'), 
              group.by = 'cluster_labels', alpha=0.3,# Show clusters, but faded 
@@ -245,11 +250,11 @@ ImageDimPlot(subset(so.HC_a, fov==4),
 
 
 
-## Co-occurance tests? (Potential addition)
+<!-- ## Co-occurance tests? (Potential addition) -->
 
-Try to test foc co-occurance of CCL21 and cluuster (or MS4A1)
+<!-- Try to test foc co-occurance of CCL21 and cluuster (or MS4A1) -->
 
-Easiest way might be a conversion to SFE then use voyager as per the bivariat stats workflow: https://pachterlab.github.io/voyager/articles/bivariate.html
+<!-- Easiest way might be a conversion to SFE then use voyager as per the bivariat stats workflow: https://pachterlab.github.io/voyager/articles/bivariate.html -->
 
 
 
