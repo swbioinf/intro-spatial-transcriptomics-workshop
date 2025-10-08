@@ -6,7 +6,7 @@
 - Explain why spatial transcriptomics is used to study immune cell organisation
 in IBD  
 - Describe how the data set is structured with healthy and disease cohorts
-- Evaluate how replicates and blaance sampling improve the reliability of
+- Evaluate how replicates and balanced sampling improves the reliability of
 spatial transcriptomic studies
 
 ## Background
@@ -25,9 +25,11 @@ annotated data available, along with the corresponding analysis
 
 The study provides a clear biological contrast between health and disease
 states. This disease cohort consists of donors with active inflammatory bowel
-disease (IBD), a chronic inflammatory condition of the gastrointestinal tract,
+disease (IBD), a chronic inflammatory condition of the gastrointestinal (GI) tract,
 where **immune cell organisation within the tissue plays a central role in
 disease pathogenesis.**
+
+**Inflammatory bowel disease (IBD) is an umbrella term** that includes two main GI tract disorders with different characteristics: **Crohn's disease (CD)** and **ulcerative colitis (UC)**.
 
 Spatial transcriptomic technologies enable gene expression to be measured at
 subcellular resolution while preserving the tissue architecture, allowing
@@ -35,8 +37,6 @@ researchers to uncover spatial patterns and cell-cell interactions that would be
 lost in conventional bulk or single-cell RNA-seq data. 
 
 ## The experimental design and cohorts
-
-**Inflammatory bowel disease (IBD) is an umbrella term** that includes two main inflammatory disorders of the gastrointenstinal tract: **Chrohn's disease (CD)** and **ulcerative colitis (UC)**.
 
 ```{r echo=F,fig.align='center',out.width='90%'}
 knitr::include_graphics(
