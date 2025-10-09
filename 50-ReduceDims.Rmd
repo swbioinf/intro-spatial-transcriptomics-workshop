@@ -1,7 +1,11 @@
 # Reduce dimensionality - UMAPs{#ReducedDimensionality}
 
 
-```{r echo=FALSE, results='hide', warnings=FALSE}
+
+
+
+```{r echo=FALSE, results='hide', warnings=FALSE, eval=FALSE}
+# This is here for testing, shoudl be off in final build
 
 library(Seurat)
 library(SeuratObject)
@@ -14,15 +18,12 @@ data_dir              <- file.path("data/")
 raw_data_dir          <- file.path("raw_data/")
 
 # Hidden: load up filtered dataset for testing.
-#so <- readRDS("data/GSE234713_CosMx_IBD_seurat_02_filtered_subset.RDS" )
 so <- readRDS("data/GSE234713_CosMx_IBD_seurat_02_rna70_neg4.RDS" )
 
 ```
 
 
-
-There are a few steps of number-crunching before we get to generating a nice UMAP representation of our data.
-
+Before we dive into generating UMAP plots to visualise our spatial data we need to undertake a series of preprocessing steps. These steps are essential for transforming raw, high-dimensional data into a form that can be meaningfully interpreted. 
 
 Why are these steps needed?
 
@@ -33,6 +34,11 @@ Why are these steps needed?
 5. **Run non-linear dimensional reduction (UMAP)**: Finally, make the UMAP plot that arranges our cells in  a logical and easy to visualise way. Note the tSNE algorithm (which makes tSNE plots) is an older alternative method to UMAP.
 
 ![](images/genes2umap.png){width=100%}
+
+
+
+The difference between normalisation and scaling?
+![](images/normandscale.png)
 
 
 ## Normalisation
@@ -110,7 +116,7 @@ so
 
 ## PCA
 
-Now to run a PCA (Principal Component Analysis).
+Our single-cell (spatial) RNA data is highly dimensional - even with only the 200 highly variable genes (which might be more than 200 in other experiments!).  Dimension reduction with PCA is recommended for summarising data based on the most amount of variation (global differences). We will produce 'principal component' values to summarise expression in fewer dimension, and use these values in downstream analyses. 
 
 ```{R message=FALSE}
 so <- RunPCA(so, features = VariableFeatures(so))
@@ -208,7 +214,7 @@ DimPlot(so, group.by='condition')
 DimPlot(so, group.by='tissue_sample', split.by='condition')
 ```
 
-Here we can see that the negative probe counts line up with our total counts. And that higher counts are concentrated in certain regions of the UMAP.
+The metadata contains the number of total counts per cell (nCount_RNA) and total negative probe counts per cell (nCount_negprobes). Here we can see that the negative probe counts line up with our total counts. And that higher counts are concentrated in certain regions of the UMAP.
 
 ```{r message=FALSE, warning=FALSE}
 FeaturePlot(so, 'nCount_RNA') 
@@ -222,9 +228,12 @@ FeaturePlot(so, 'pc_neg')
 ```
 
 
-Likewise, it can also be helpful to plot a few genes at this point. We can provide a list. 
+Likewise, it can also be helpful/fun to plot a few genes at this point. 
+
+We can provide a list of things we might think will be interesting or identify some cell types we expect to see. Here we show PIGR intestinal epithelial marker, CD74 and IGHA1 for their immune roles and NRG1 because it was discussed in the paper.
+
 ```{r}
-FeaturePlot(so, c('CD74','PIGR','IGHA1','VWF'), ncol=2 )
+FeaturePlot(so, c('CD74','PIGR','IGHA1','NRG1'), ncol=2 )
 ```
 
 

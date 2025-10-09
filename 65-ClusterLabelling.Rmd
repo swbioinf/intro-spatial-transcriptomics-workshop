@@ -276,6 +276,25 @@ ImageDimPlot(so_fov,
 
 ```
 
+## Using the images data
+
+A big advantage of these spatial methods is that you will generally also have H&E or immunofluorescence(IF)  (with cell/membrane stains or a full panel) images (and sometimes both),  because now you can see the cell. 
+
+In imaging data, the ground truth for cell phenotype labels is the morphology of the cell. Even in H&Es, a pathologist can tell the difference between the different white blood cells (lymphocytes, basophils, eosinophils, neutrophils, macrophages etc.). With immunofluoresence, you lose some of this morphology but you gain the additional info of staining patterns - it is a huge advantage to learn how your protein stains are supposed to look and to tell the difference between real signal and noise or non-specific staining. Asking a pathologist who specialises in the tissue you are researching is a huge help when it comes to checking your work! 
+
+Of course, the limitations of morphology is that you can’t really tell if it’s a CD4 T cell or CD8 T cell for example, but you should also be able to recognise that if your protein CD4 signal is exclusively in the nucleus, your tissue has problems (fixation? degradation?) and this is not actually a CD4 T cell even if the measured value of CD4 is very high. 
+
+Even if we don't use that directly in the celltype labelling, we can validate our results. We might be fairly confident on some celltypes, however if there’s one that’s giving mixed signals, it can be very helpful to inspect. Sometimes, you notice it’s a mixed cluster, or else two cell populations that are very mixed together and the signals are getting confused. This can help tease the two populations apart. You may find that its clearer to work by by plotting the cell phenotype assignments on the images than on a UMAP.
+
+
+For an introduction to looking at such images; here are some [introductory notes](https://unclineberger.org/unclcn/wp-content/uploads/sites/871/2023/08/2023Basic-Cell-Histology-Lecture_onlinePath.pdf).  For protein stains, it can be helpful to compare the staining of your cells to the ones in [protein atlas](https://www.proteinatlas.org/) (its not just for RNA!) for the same tissue (although not all of their stains are perfect either).
+You might also need to align your coordinates with [image registration (bioconductor foccused resource)](https://lmweber.org/OSTA/pages/crs-spatial-registration.html).
+
+
+We won't cover using image data like this today's workshop;
+
+* This is an older dataset, and we do not have these images. 
+* There is currently a lack of support of storing the images in seurat with single cell spatial technologies (it is possible for spot-based visium). But other tools exist e.g. for cosmx, you might pull celltype annotations into napari [see guide](https://nanostring-biostats.github.io/CosMx-Analysis-Scratch-Space/posts/napari-cosmx-basics/using-napari-cosmx.html)
 
 
 ## Recording celltype annotations
@@ -330,10 +349,6 @@ ImageDimPlot(so_fov,
              crop=TRUE)
 
 ```
-
-
-
-
 
 
 
@@ -416,3 +431,20 @@ ggplot(celltype_summary_table, aes(x=tissue_sample, y=n_cells, fill=cluster_labe
 
 
 
+
+## What about that missing celltype in sample CD_b?
+
+Remember CD_b was missing an area on the UMAP? Corresponding to two clusters? Those were epithelial celltypes, and when we plot it - there's no epithelia! This data was subsampled from the full dataset.
+
+```{r  message=FALSE, warning=FALSE}
+so_CD_b <- so[, so$tissue_sample=="CD_b"]
+ImageDimPlot(so_CD_b,
+             fov          = "GSM7473689.CD.b",
+             axes = TRUE,
+             border.color = NA, border.size = 0.1,
+             cols = 'polychrome', 
+             group.by = "cluster_labels",
+             boundaries   = "segmentation",
+             crop=TRUE)
+
+```

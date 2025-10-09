@@ -21,7 +21,8 @@ Additionally, batch effects can occur at different variables. This experiment ha
 
 
 ```{r}
-DimPlot(so, group.by='tissue_sample')
+p.uncorrected <- DimPlot(so, group.by='tissue_sample')
+p.uncorrected
 ```
 
 This becomes more obvious if we split the plot by sample as well;
@@ -71,6 +72,8 @@ Looking in the summary of the seurat object we see 3x dimensional reductions:
 * **harmony** : The harmony output, values like the PCA, but adjusted for batch correction.
 * **umap** : Our new umap which was based on harmony. This overwrote the old UMAP.
 
+Other downstream analyses may use batch corrected data also e.g. clustering. As a rule of thumb, methods that use PCA ( as a multi-gene-summary ) would use the adjusted harmony scores instead, e.g clustering. The counts and normalised assays remain unchanged - so methods that use those directly (e.g. differential expression, plotting) will need to handle batch correction in their own way (e.g. modelling batch).
+
 ```{r}
 so
 ```
@@ -79,8 +82,16 @@ so
 When plotting the new UMAP, the samples are move overlayed. Its a better visualisation, and means our clusters will not be biased to samples.
 
 ```{r}
-DimPlot(so, group.by='orig.ident')
+p.corrected <- DimPlot(so, group.by='tissue_sample')
+p.uncorrected + p.corrected
 ```
+
+Though, there is still a per-sample difference.
 ```{r}
 DimPlot(so, group.by='tissue_sample', split.by = 'tissue_sample', ncol = 3)
 ```
+
+
+
+
+
