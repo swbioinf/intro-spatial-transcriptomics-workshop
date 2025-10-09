@@ -1,6 +1,14 @@
 # Quality control and filtering
 
-```{r setup, include=FALSE}
+## Learning objectives
+
+## Overview
+
+* Basic QC plots + filtering (20min)
+* (Negative probes if using cosmx)
+* Identify low quality cells
+
+```{r}
 knitr::opts_chunk$set(
   echo = TRUE,
   warning = FALSE
@@ -12,40 +20,37 @@ library(tidyverse)
 library(here)
 ```
 
-## Overview
-
-* Basic QC plots + filtering (20min)
-* (Negative probes if using cosmx)
-* Identify low quality cells
-
 Read in subsampled seurat object
 
 ## Identifying potential technical artefacts
 
 ```{r}
-so_path  <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
+# Read in the subsampled data for this lesson
+so_path <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
 so <- readRDS(so_path)
 ```
 
 Library size (total transcripts) and cell areas are good indicators of technical
 artefacts introduced during data generation steps. 
 
-Possible artefacts:
-- low quality cells
-- cell segmentation challenges (combining two cells, not aligned with real cell
-boundaries, leading to high area and low RNA count)
+Possible artefacts can include:
 
-Understanding these can help with biological interpretation downstream,
-for example, discerning whether differences in cells are due to e.g. cell type
-differences, or technical artefacts.
+- Low quality cells  
+- Cell segmentation challenges (combining two cells, not aligned with real cell
+boundaries, leading to high cell area and low RNA count)  
+
+Understanding how these are prevalent in your data can help with biological
+interpretation downstream. For example, discerning whether differences in cells
+are due to e.g. cell type differences, or technical artefacts.
+
+### Library size (transcript counts)
 
 ```{r warning=F}
-# Total counts per cell
-ggplot(so@meta.data, aes(x=nCount_RNA, col=orig.ident)) +
+ggplot(so@meta.data, aes(x = nCount_RNA, col = tissue_sample)) +
   geom_density() +
   scale_x_log10() +
   theme_bw() +
-  annotation_logticks(sides = "b") +
+  annotation_logticks(sides = "b", colour = "lightgrey") +
   ggtitle("Transcript counts per cell")
 ```
 
@@ -53,6 +58,8 @@ The transcripts per cell all display a log-normal distribution with shifting med
 
 Indicates no largely low-quality cells, and a good example of library size 
 effects that should be normalised downstream, prior to analyses.
+
+### Cell surface area
 
 ```{r warning=F}
 # Total counts per cell
@@ -67,6 +74,8 @@ ggplot(so@meta.data, aes(x=Area, col=orig.ident)) +
 Areas also follow log-normal distributions with medians ranging between 3,000 -
 4,000px^2. Sample/FOV `CD.c` has slightly smaller cell area with a median
 of ~2,000px^2.
+
+## Bivariate QC
 
 Useful to view bivariate metrics - the larger the cell, the more transcripts, in
 general.
@@ -96,6 +105,14 @@ so@meta.data %>%
 ```
 
 The more transcripts detected `nCount_RNA`, the more mapped genes there should be.
+
+::: {.callout-note title="Cell size variability"}
+Cautious of samples with highly variable varying sizes. Total transcript
+counts and cell areas can vary substantially. Applying "standard" QC or
+filtering thresholds uniformly across all cells may remove valid cells.
+
+![](images/hatton2023_fig3.jpg){width=90%}
+:::
 
 Point out where bad quality cells would reside
 
@@ -305,16 +322,23 @@ so_borders %>%
 
 ## Summary
 
-- QC is not prescriptive
-- Explore your data and ITERATE
-- Be permissive, especially if it's your first look at the data
-- There are more sources of technical variation in spatial, in comparison to older techs. While you don't need to filter in every step, it is useful to understand these sources of variation to interpret your biological analyses, and inform the subsequent rounds of QC. These differ across techs. For example, CosMX have FOVs which adds another dimension in comparison to Xenium
+Quality control (QC) in spatial transcriptomics is a highly iterative and
+context-dependent process. It requires continual exploration of your data rather
+than following a prescriptive set of rules. When examining and filtering your
+data for the first time, we recommend setting permissive threshold so
+meaningful cells are not removed. After a preliminary look at the data, QC steps
+can be revisted.
 
-Notes: 
+In comparison to older transcriptomics technologies, spatial technologies introduce
+new sources of technical variation that can make interpretation of your results
+tricky, and even obscure true, biological signals in the data. While you do not
+need to filter in every step, it is useful to understand these potential sources
+of bias, and inform subsequent rounds of QC.
 
-You can also conduct QC in low dimensional steps following the
-normalisation and dimension reduction steps in this workshop. However, 
-we will proceed directly with the pre-processing steps.
+Sources of technical variation are also platform dependent and should be
+accounted for. For example, CosMx contains FOVs which adds another dimension,
+compared to Xenium.
 
-Also you can consider filtering each sample separately. Applying a single, strict threshold based on a high-quality sample might inappropriately filter out valid cells from a technically lower-quality sample.
-- TODO: fact check
+Quality control is not a step you conduct once during a pre-processing pipeline.
+Throughout the following steps in the workshop, you will continue to conduct QC
+steps.

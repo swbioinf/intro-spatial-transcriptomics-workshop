@@ -2,7 +2,6 @@
 
 ## Learning objectives
 
-- Recall the main types of inflammatory bowel disease (IBD)
 - Explain why spatial transcriptomics is used to study immune cell organisation
 in IBD  
 - Describe how the data set is structured with healthy and disease cohorts
@@ -20,12 +19,12 @@ at single-cell spatial resolution in human inflammatory bowel disease_
 
 This data set was chosen because the authors have made their raw and
 annotated data available, along with the corresponding analysis
-[code](https://github.com/HelenaLC/CosMx-SMI-IBD)) and a browsable
+[code](https://github.com/HelenaLC/CosMx-SMI-IBD) and a browsable
 [data interface](https://servidor2-ciberehd.upc.es/external/garrido/app/).
 
 The study provides a clear biological contrast between health and disease
-states. This disease cohort consists of donors with active inflammatory bowel
-disease (IBD), a chronic inflammatory condition of the gastrointestinal (GI) tract,
+states. This disease cohort consists of donors with active **inflammatory bowel
+disease (IBD)**, a chronic inflammatory condition of the gastrointestinal (GI) tract,
 where **immune cell organisation within the tissue plays a central role in
 disease pathogenesis.**
 
@@ -54,8 +53,8 @@ The study included 9 CosMx slides of colonic biopsies, from a total of 9 donors:
 | Ulcerative colitis     | UC          | 3                 |
 | **Crohn's disease**    | CD          | 3                 |
 
-The study includes three biological replicates per condition (HC, UC, CD). This
-provides enough variation to capture differences between individuals while
+The study includes **three biological replicates per condition** (HC, UC, CD).
+This **provides enough variation to capture differences between individuals** while
 maintaining manageable data size for hands-on analysis.
 
 In this workshop, we will focus on the **healthy control (HC)**
