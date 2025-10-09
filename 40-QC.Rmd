@@ -2,6 +2,13 @@
 
 ## Learning objectives
 
+- Recall common quality control (QC) metrics used in spatial transcriptomics, such as total transcript counts, detected genes, cell area, and negative probe percentage  
+-	Recall sources of technical artefacts (e.g. segmentation errors, low RNA capture, or border effects) to consider during QC  
+- Describe the role of negative control probes in quantifying background noise in imaging-based technologies like CosMx  
+- Generate and interpret QC visualisations (e.g. density plots, bivariate scatterplots, and FOV summaries) to identify low-quality cells  
+-	Evaluate how filtering thresholds affect biological interpretation, distinguishing between true low-quality cells and biologically small or lowly expressed cell types   
+- Justify appropriate sample-specific filtering thresholds for metrics such as minimum transcript counts and maximum negative probe percentage  
+
 ## Overview
 
 * Basic QC plots + filtering (20min)
@@ -20,15 +27,15 @@ library(tidyverse)
 library(here)
 ```
 
-Read in subsampled seurat object
-
-## Identifying potential technical artefacts
+Read in subsampled seurat object.
 
 ```{r}
 # Read in the subsampled data for this lesson
 so_path <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
 so <- readRDS(so_path)
 ```
+
+## Identifying potential technical artefacts
 
 Library size (total transcripts) and cell areas are good indicators of technical
 artefacts introduced during data generation steps. 
@@ -42,6 +49,8 @@ boundaries, leading to high cell area and low RNA count)
 Understanding how these are prevalent in your data can help with biological
 interpretation downstream. For example, discerning whether differences in cells
 are due to e.g. cell type differences, or technical artefacts.
+
+We will first view the library size and cell area distributions on their own.
 
 ### Library size (transcript counts)
 
@@ -63,12 +72,12 @@ effects that should be normalised downstream, prior to analyses.
 
 ```{r warning=F}
 # Total counts per cell
-ggplot(so@meta.data, aes(x=Area, col=orig.ident)) +
+ggplot(so@meta.data, aes(x=Area, col=tissue_sample)) +
   geom_density() +
   scale_x_log10() +
   theme_bw() +
   annotation_logticks(sides = "b") +
-  ggtitle("Area (px) per cell")
+  ggtitle("Area (px^2) per cell")
 ```
 
 Areas also follow log-normal distributions with medians ranging between 3,000 -
@@ -77,23 +86,12 @@ of ~2,000px^2.
 
 ## Bivariate QC
 
-Useful to view bivariate metrics - the larger the cell, the more transcripts, in
-general.
+The next plot compares total transcript counts (nCount_RNA) with the number of
+detected genes (nFeature_RNA) for each sample. The strong positive relationship
+indicates that most captured transcripts are successfully mapped to known genes,
+reflecting good data quality and sound probe hybridisation.
 
-```{r, warning=F}
-ggplot(so@meta.data, aes(x=Area, y=nCount_RNA, colour=tissue_sample)) +
-  geom_point(size = 0.1, alpha = 0.4) +
-  scale_x_log10() +
-  scale_y_log10() +
-  annotation_logticks(sides = "bl") +
-  facet_wrap(~orig.ident) +
-  annotation_logticks(colour = "lightgrey") +
-  theme_light()
-```
-
-Another good check for low-quality cells is to view the bivariate distribution
-of transcript counts per cell vs. how many of these have been mapped successfully
-to a gene.
+Only a small subset of cells deviates from this trend - typically those with low total counts. This suggests low-quality cells in the tissue sample, rather than widespread technical artefacts.
 
 ```{r}
 so@meta.data %>%
@@ -104,17 +102,39 @@ so@meta.data %>%
   theme(legend.position = "none")
 ```
 
-The more transcripts detected `nCount_RNA`, the more mapped genes there should be.
+:::{.rmdimportant}
 
-::: {.callout-note title="Cell size variability"}
+**Accounting for variation in cell sizes**
+
 Cautious of samples with highly variable varying sizes. Total transcript
 counts and cell areas can vary substantially. Applying "standard" QC or
 filtering thresholds uniformly across all cells may remove valid cells.
 
-![](images/hatton2023_fig3.jpg){width=90%}
+![](images/hatton2023_fig3.jpg){width=90%}  
+
+_Fig 3. from Hatton et al. (2023): Distribution of cell mass (g) across different cell types._
 :::
 
-Point out where bad quality cells would reside
+
+The following plot shows the relationship between the total transcript counts
+(nCount_RNA) and cell area across samples. In all tissue samples (Seurat FOVs),
+larger cells generally contain more transcripts, forming a positive log-log
+correlation.
+
+However, some samples (`HC.a`, `HC.c`, `CD.a`, `CD.c`) display greater
+variability and a subset of small, high-transcript cells, which may indicate 
+segmentation artefacts or biological differences such as the presence of smaller immune cells.
+
+```{r, warning=F}
+ggplot(so@meta.data, aes(x=Area, y=nCount_RNA, colour=tissue_sample)) +
+  geom_point(size = 0.1, alpha = 0.4) +
+  scale_x_log10() +
+  scale_y_log10() +
+  annotation_logticks(sides = "bl") +
+  facet_wrap(~tissue_sample) +
+  annotation_logticks(colour = "lightgrey") +
+  theme_light()
+```
 
 ## Filtering low-quality cells
 
@@ -143,6 +163,23 @@ so@assays$negprobes <- JoinLayers(so@assays$negprobes)
 so$mean_neg <- colMeans(so@assays$negprobes) # Only defined first sample
 ```
 
+The bar plot shows that some samples (CD_b, CD_c, and HC_b) have higher
+average negative probe counts, suggesting variable levels of noise across
+slides.
+
+```{r}
+so@meta.data %>%
+  ggplot(aes(x = tissue_sample, y = mean_neg, colour = tissue_sample)) +
+  geom_col() +
+  theme_light()
+```
+
+However, displaying summary metrics alone, such as the average may not
+capture the variation in the data, or may be skewed. The density plot illustrates that most cells
+across all samples have low levels of background signal, as indicated by the small proportion of negative
+probes (medians across all samples < 2%). While overall data quality
+appears high, minor shifts suggest minimal between-sample variation.
+
 ```{r}
 so@meta.data %>%
   ggplot(aes(x = percent_neg, colour = tissue_sample)) +
@@ -150,15 +187,6 @@ so@meta.data %>%
   scale_x_log10() +
   theme_light() +
   annotation_logticks(sides = "b", colour = "lightgrey")
-```
-
-Log-normally distributed. CD_b, HC_B samples are less "noisy".
-
-```{r}
-so@meta.data %>%
-  ggplot(aes(x = tissue_sample, y = mean_neg, colour = tissue_sample)) +
-  geom_col() +
-  theme_light()
 ```
 
 ```{r}
@@ -219,7 +247,11 @@ The stromal compartment will be removed entirely and can be difficult for
 co-localisation analyses. Further, the epithelial compartment in the bottom left
 FOV is very patchy.
 
-## Exercise: Identifying your own filtering thresholds
+:::{.rmdnote}
+
+## ACTIVITY: Identifying your own filtering thresholds
+
+TODO: Hide this block, summarise into tips/hints
 
 You have seen an example where stringent filtering omits key cells or
 compartments.
@@ -269,8 +301,16 @@ ImageDimPlot(so, fov = "GSM7473684.HC.c", group.by = "qc")
 # A lot of cells marked for removal and a bit patchy
 ImageDimPlot(so, fov = "GSM7473688.CD.a", group.by = "qc")
 ```
+:::
 
 ### Applying the filter
+
+For the purposes of the workshop, we will all use the same threshold.
+
+```{r}
+min_ncount_rna <- 70
+max_percent_neg <- 4
+```
 
 ```{r}
 so_filtered <- subset(so, qc == "Keep")
