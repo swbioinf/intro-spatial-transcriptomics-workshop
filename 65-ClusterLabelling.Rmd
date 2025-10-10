@@ -387,7 +387,7 @@ ImageDimPlot(so_fov,
 
 
 
-The 'singleR2' set is very, very detailed! Too much for plotting on the tissue. The Macrophage subtypes were important in the paper, but we didn't see a simple macrophage cluster in our clusters. We can do a very quick heatmap to look at how the two classifications compare (this can work better when there are too many celltypes to display nicely with colours).  NB: This plot doesn't view well at small sizes - zoom in to see all the labels.
+The 'singleR2' set is very, very detailed!  Too much for plotting on the tissue. (NB: They determined their celltypes on their single cell data, which they then used as a reference). The Macrophage subtypes were important in the paper, but we didn't see a simple macrophage cluster in our clusters. We can do a very quick heatmap to look at how the two classifications compare (this can work better when there are too many celltypes to display nicely with colours).  NB: This plot doesn't view well at small sizes - zoom in to see all the labels.
 
 ```{r}
 table(so$paper_singleR2)

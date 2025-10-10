@@ -1,28 +1,6 @@
 # Reduce dimensionality - UMAPs{#ReducedDimensionality}
 
 
-
-
-
-```{r echo=FALSE, results='hide', warnings=FALSE, eval=FALSE}
-# This is here for testing, shoudl be off in final build
-
-library(Seurat)
-library(SeuratObject)
-library(tidyverse)
-library(here)
-
-
-## Paths
-data_dir              <- file.path("data/")
-raw_data_dir          <- file.path("raw_data/")
-
-# Hidden: load up filtered dataset for testing.
-so <- readRDS("data/GSE234713_CosMx_IBD_seurat_02_rna70_neg4.RDS" )
-
-```
-
-
 Before we dive into generating UMAP plots to visualise our spatial data we need to undertake a series of preprocessing steps. These steps are essential for transforming raw, high-dimensional data into a form that can be meaningfully interpreted. 
 
 Why are these steps needed?
@@ -38,7 +16,22 @@ Why are these steps needed?
 
 
 The difference between normalisation and scaling?
-![](images/normandscale.png)
+![](images/normandscale.png){width=100%}
+## Reload data
+
+To get started, lets launch a fresh R session, and load the libraries and data we need.
+
+
+```{r echo=FALSE, results='hide', warnings=FALSE}
+library(Seurat)
+library(tidyverse)
+library(here)
+
+# Reload the filtered Seurat object from yesterday
+so    <- here("data", "GSE234713_CosMx_IBD_seurat_02_rna70_neg4.RDS")
+```
+
+
 
 
 ## Normalisation

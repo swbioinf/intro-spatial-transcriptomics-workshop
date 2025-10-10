@@ -26,7 +26,7 @@ so <- FindClusters(so, resolution = 0.8 ) # the default resolution
 ```
 
 
-```{r message=FALSE}
+```{r  message=FALSE, warning=FALSE}
 DimPlot(so, group.by='RNA_snn_res.0.2')
 DimPlot(so, group.by='RNA_snn_res.0.8')
 DimPlot(so, group.by='RNA_snn_res.1')
@@ -37,11 +37,10 @@ DimPlot(so, group.by='RNA_snn_res.1')
 
 The [clustree](https://doi.org/10.1093/gigascience/giy083) package can be a useful tool to evaluate different levels of clustering. There is an example of its use [here]( https://swbioinf.github.io/scRNAseqInR_Doco/clustering.html) in the context of single cell transcriptomics.
 
-```{r}
+```{r  message=FALSE, warning=FALSE}
 library(clustree)
 clustree(so)
 ```
-
 
 
 ::: {.rmdnote}

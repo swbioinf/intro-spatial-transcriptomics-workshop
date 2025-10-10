@@ -49,7 +49,7 @@ This can be one of the most computationally intensive steps of the analysis. It 
 
 
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 # Run harmony 
 so <- IntegrateLayers(so, method = HarmonyIntegration, orig.reduction = "pca", new.reduction = "harmony")
 # Make a new UMAP, using the harmony values.
