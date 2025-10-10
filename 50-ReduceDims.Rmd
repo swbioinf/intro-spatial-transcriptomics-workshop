@@ -19,16 +19,15 @@ The difference between normalisation and scaling?
 ![](images/normandscale.png){width=100%}
 ## Reload data
 
-To get started, lets launch a fresh R session, and load the libraries and data we need.
-
+To get started, lets launch a fresh R session, and load the libraries we need and the Seurat object form yesterday.
 
 ```{r echo=FALSE, results='hide', warnings=FALSE}
 library(Seurat)
 library(tidyverse)
 library(here)
 
-# Reload the filtered Seurat object from yesterday
-so    <- here("data", "GSE234713_CosMx_IBD_seurat_02_rna70_neg4.RDS")
+filtered_seurat_object_file <- here("data", "GSE234713_CosMx_IBD_seurat_02_rna70_neg4.RDS")
+so    <- readRDS(filtered_seurat_object_file) 
 ```
 
 
