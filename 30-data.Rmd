@@ -5,8 +5,14 @@
 ## Overview
 
 ```{r include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE
+)
+```
 
+```{r}
 library(Seurat)
 library(SeuratObject)
 library(tidyverse)
@@ -86,7 +92,7 @@ summarised into count matrices at the single-cell level**. The main file,
 
 **A note on cell segmentation**
 
-Cell segmentation is the computational step in sequencing-based ST that
+Cell segmentation is the computational step in imaging-based ST that
 identifies the boundaries of individual cells so that RNA molecules can be 
 correctly assigned to each one. 
 
@@ -117,7 +123,6 @@ transcripts (`SLIDE_tx_file.csv.gz`), and segmented cell boundaries
 | `SLIDE_metadata_file.csv.gz`      | Cell-level QC metadata                    |
 | `SLIDE_tx_file.csv.gz`            | Location of individual transcripts        |
 
-
 :::{.rmdimportant}
 
 **Xenium data**
@@ -131,60 +136,83 @@ but again, software tools take the directory as a whole.
 
 ## Importing the flat files into R
 
-When you load the processed, flat files into R
+:::{.rmdwarning}
 
-### Note on `Seurat::LoadNanostring()`
+**A note on `Seurat::LoadNanostring()`**
 
-Load the libraries required for this step.
-
-To load the data, we can use the `Seurat::LoadNanostring()` function. However,
-this default method drops most of the metadata in the Seurat object. For example,
-what field of view (FoV) each cell a member of is missing. 
+To load the flat files into R, we can use the `Seurat::LoadNanostring()` function.
+However, this default method **drops most of the metadata in the Seurat object**.
+For example, what field of view (FoV) each cell a member of is missing. 
 
 We provide an alternate function. In time, this should be fixed within Seurat.
-See comments [here](https://github.com/satijalab/seurat/discussions/9261)
+See comments [here](https://github.com/satijalab/seurat/discussions/9261). This
+is an example code snippet using the replacement function:
 
 ```{r eval=F}
+# Import the custom LoadNanostring() function
 source(here("scripts/LoadNanostring_edited_function.R"))
-example_path <- here("raw_data", "GSM7473682_HC_a")
-example_so <- LoadNanostring(example_path, assay='RNA', fov="GSM7473682_HC_a")
+
+# Define the path to the flat files. Note that the input is the whole directory.
+# The function deals with reading and assigning the metadata correctly to the
+# cells and gene counts
+example_path <- here("raw_data", "GSM7473682_HC_a/")
+example_so <- LoadNanostring(example_path, assay='RNA', fov="GSM7473682.HC.a")
 ```
 
-```{r eval=F}
-example_so
-```
+:::
 
-```console
-An object of class Seurat 
-999 features across 42045 samples within 1 assay 
-Active assay: RNA (999 features, 0 variable features)
- 1 layer present: counts
- 1 spatial field of view present: GSM7473682_HC_a
-```
-
-## Loading all samples from raw data
+## Loading the subsampled workshop data
 
 We use a subsampled data for this workshop, for three healthy control samples (HC)
 and three Crohn's disease samples (CD).
 
-The first four field of views are used.
+The first four field of views for each sample are used.
 
-```{r, eval=F}
-# How was this created?
+```{r eval=F}
+# Code to subset the data
 seurat_file_00_raw <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw.RDS")
 so_raw_full <- readRDS(seurat_file_00_raw)
 so_raw_subset <- so_raw_full[, so_raw_full$group %in% c("CD", "HC") & so_raw_full@meta.data$fov <= 4]
 saveRDS(so_raw_subset, here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS"))
 ```
 
-## Loading the workshop data
-
-TODO: Add image for all FOVs, and outline the ones we are using
-
 ```{r}
+# Load the prepared data
 so_path <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
 so <- readRDS(so_path)
 ```
+
+## Visualising our spatial data
+
+```{r}
+hc_idents <- unique(so$orig.ident)[1:3]
+cd_idents <- unique(so$orig.ident)[4:6]
+```
+
+```{r}
+for (i in hc_idents) {
+  p <- ImageDimPlot(so, fov = i, group.by = "fov_name", axes = T)
+  print(p)
+}
+```
+
+```{r}
+for (i in cd_idents) {
+  p <- ImageDimPlot(so, fov = i, group.by = "fov_name", axes = T)
+  print(p)
+}
+```
+
+:::{.rmdimportant}
+
+**Xenium does not have FOVs**
+
+Xenium uses a wide-field fluorescence microscope for automated image
+acquisition across a larger, continuous imaging area. This approach allows
+Xenium to map gene expression over the entire tissue region selected by the
+user, rather than stitching together multiple small, distinct FOV images.
+
+:::
 
 ### Understanding the `SeuratObject`
 
@@ -202,6 +230,7 @@ Other frameworks such as `scverse`, and data classes like `anndata` and
 needs above. Differences in compatibility with other tools.
 
 Flexibility across single-cell transcriptomics.
+
 :::
 
 Display the Seurat object.
@@ -213,14 +242,14 @@ so
 **999 features across 68624 samples with 2 assays**
 
 - 980 genes + 19 negprobes
-- 68k number of segmented cells analysed
-- two different types of measurements, detailed below
+- 68.6k number of segmented cells analysed
+- Two different types of measurements, detailed below
 
 **Active assay: RNA (980 features, 0 variable features):**
 
 - RNA assay: Primary gene expression measurement data (counts)
 - 980 transcripts measured
-- no variable features as feature selection has not been conducted yet
+- No variable features as feature selection has not been conducted yet
 
 **6 layers present: counts.GSM7473682.HC.a, counts.GSM7473683.HC.b, 
 counts.GSM7473684.HC.c, counts.GSM7473688.CD.a, counts.GSM7473689.CD.b, 
@@ -247,37 +276,28 @@ six integrated samples.
 
 :::{.rmdimportant}
 
-**CosMX sample names**
+**CosMx FOVs and sample names**
 
 Note that the field of view names are delimited by `.`. At the time of writing,
 underscores will cause some functions to fail silently. For more information,
 see [this issue](https://github.com/satijalab/seurat/issues/10103)
 
-Xenium does not have FoVs.
-
-- TODO: expand  
-
 :::
 
-Display the metadata
+### Exploring the metadata
+
+Along with the transcript counts per-cell, metadata tracks other central
+information such as its experimental details. This is important so we know which
+groups to compare downstream (HC vs. UC). This study has one sample per slide,
+but there are typically more. Examples of metadata include:
+
+- The spatial coordinates of your cells and genes
+- Segmented cell boundaries
+- Which tissue sample and FOV data belongs to
 
 ```{r}
 head(so@meta.data)
 ```
-
-| Column         | Definition                                 |
-| -------------- | ------------------------------------------ |
-| Row name       | The sample and cell                        |
-| `orig.ident`   | Sample                                     |
-| `nCount RNA`   | The number of sequenced transcripts        |
-| `nFeature_RNA` | The number of transcripts mapped to a gene |
-
-Each sample should be annotated with its experimental details. This is important
-so we know which groups to compare downstream, i.e. case vs. control comparison.
-This particular study has one sample per slide (easy!), but there are typically
-more. 
-
-TODO: Explain input data, what it represents, how it will be used for analysis.
 
 TODO: Define terms like centroids, segments, fov
 
@@ -314,50 +334,9 @@ View the `tissue_sample` metadata to prepare for the next step. This represents
 table(so$tissue_sample)
 ```
 
-## Visualising our spatial data
-
-Visualise clusters in a spatial context
-
-```{r}
-table(so$orig.ident)
-```
-
-```{r, fig.height=8}
-hc_idents <- unique(so$orig.ident)[1:3]
-cd_idents <- unique(so$orig.ident)[1:3]
-ImageDimPlot(so, fov = hc_idents, group.by = "fov_name", axes = T)
-```
-
-```{r, fig.height=8}
-hc_idents <- unique(so$orig.ident)[1:3]
-ImageDimPlot(so, fov = hc_idents, group.by = "fov_name", axes = T)
-```
-
-```{r, fig.height=8}
-cd_idents <- unique(so$orig.ident)[4:6]
-ImageDimPlot(so, fov = cd_idents, group.by = "fov_name", axes = T)
-```
-
-By an individual gene.
-
-Do not need fov_name this time
-
-```{r, eval=F}
-ImageFeaturePlot(so, fov = "GSM7473682.HC.a", features = "S100A6")
-```
-```console
-Warning: No layers found matching search pattern provided
-Warning in FetchData.Assay5(object = object[[DefaultAssay(object = object)]],  :
-  data layer is not found and counts layer is used
-```
-
-Cannot use `ImageFeaturePlot` yet, without normalisation, dim red etc.
-
 ## Count data (`assays`)
 
-Where are my counts?
-
-TODO: Excalidraw flowchart of assays
+![](images/30_data/count_assays.png)
 
 ```{r}
 so@assays
