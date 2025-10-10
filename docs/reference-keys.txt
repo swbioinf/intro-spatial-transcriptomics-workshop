@@ -49,9 +49,11 @@ ClusterLabelling
 cluster-markers
 cell-typing-by-reference
 spatial-examination-of-plots
+using-the-images-data
 recording-celltype-annotations
 pull-in-real-annotation
 use-the-annotations
+what-about-that-missing-celltype-in-sample-cd_b
 SpatiallyRestrictedGenes
 run-moransi-once
 run-moransi-on-all-samples

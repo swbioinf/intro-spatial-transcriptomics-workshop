@@ -80,14 +80,14 @@
 <h2>
 <span class="header-section-number">14.1</span> What did the authors find from this dataset?<a class="anchor" aria-label="anchor" href="#what-did-the-authors-find-from-this-dataset"><i class="fas fa-link"></i></a>
 </h2>
-<p>In their paper <a href="https://pubmed.ncbi.nlm.nih.gov/37495570/">Macrophage and neutrophil heterogeneity at single-cell spatial resolution in human inflammatory bowel disease</a> Garrido-Trigo et al performed and extensitve analysis of their cosmx Data alongside single cell, bulk and microscopy data.</p>
-<p>To summarise the kinds of things that are possible with single-cell spatial data - here is a list of some of the analysese from that paper that specifically use this spatial dataset;</p>
+<p>In their paper <a href="https://pubmed.ncbi.nlm.nih.gov/37495570/">Macrophage and neutrophil heterogeneity at single-cell spatial resolution in human inflammatory bowel disease</a> Garrido-Trigo et al performed and extensive analysis of their cosmx Data alongside single cell, bulk and microscopy data.</p>
+<p>To summarise the kinds of things that are possible with single-cell spatial data - here is a list of some of the analyses from that paper that specifically use this spatial dataset;</p>
 <ul>
 <li>Identified their detailed celltypes in their single cell data (over the whole transcriptome), which they used to classify celltypes in their spatial data.(page 2 - <em>Integration of single-cell RNA sequencing and spatial molecular imaging analysis provides a map of healthy and inflamed colon</em>)</li>
-<li>Identified cell niches with different neighbourhoods, e.g lymphoid strucutres, lamina propria and lower crypt. They quantified an increase in inflammatory celltypes in some of those neighbourhoods, and characterised another neighbourhood seen only in the IBD samples. (page 2 - <em>Integration of single-cell RNA sequencing and spatial molecular imaging analysis provides a map of healthy and inflamed colon</em>)</li>
-<li>They obvserved granuloma features in one patient. They examined the macrophage subtypes within them and the surrounding immune cell microenvironment. (Figure 4b, page 6 <em>CosMx Spatial Molecular Imaging analysis confirms the expansion of Inflammation-Dependent Alternative macrophages and reveals their tissue distribution in inflammatory bowel disease colon</em>)</li>
+<li>Identified cell niches with different neighbourhoods, e.g lymphoid structures, lamina propria and lower crypt. They quantified an increase in inflammatory celltypes in some of those neighbourhoods, and characterised another neighbourhood seen only in the IBD samples. (page 2 - <em>Integration of single-cell RNA sequencing and spatial molecular imaging analysis provides a map of healthy and inflamed colon</em>)</li>
+<li>They observed granuloma features in one patient. They examined the macrophage subtypes within them and the surrounding immune cell microenvironment. (Figure 4b, page 6 <em>CosMx Spatial Molecular Imaging analysis confirms the expansion of Inflammation-Dependent Alternative macrophages and reveals their tissue distribution in inflammatory bowel disease colon</em>)</li>
 <li>Looked at differential abundance of celltypes across samples (page 2 - <em>Transcriptional analysis at single-cell and spatial resolution reveals different populations of resident and inflammatory macrophages in the colonic mucosa</em> )</li>
-<li>Identified a change in myeloid cell localisation by quantifiing the distance o-f macrophage, MAST cells and Dendritic cells to the mucosal surface (page 2 - <em>Transcriptional analysis at single-cell and spatial resolution reveals different populations of resident and inflammatory macrophages in the colonic mucosa</em> )</li>
+<li>Identified a change in myeloid cell localisation by quantifying the distance of macrophage, MAST cells and Dendritic cells to the mucosal surface (page 2 - <em>Transcriptional analysis at single-cell and spatial resolution reveals different populations of resident and inflammatory macrophages in the colonic mucosa</em> )</li>
 <li>Observed spatially localised expression of a gene (NRG1) within a subset of apically-located fibroblasts (page 4 - <em>Inflammation-dependent alternative macrophages express neuregulin 1</em>)</li>
 </ul>
 </div>
@@ -98,16 +98,27 @@
 <p><strong>Segmentation</strong></p>
 <p>Good cell segmentation from images underpins downstream analysis. Different platforms offer inbuilt segmentation methods, and often require tweaking from the default with different tissues, antibodies or runs.</p>
 <ul>
-<li>On-machine segmentation: e.g. Xenium/Cosmx</li>
-<li>Directly from images using specialised microscopy methods for segmentation.</li>
+<li>On-machine segmentation: e.g. Xenium/CosMx</li>
+<li>Directly from images using specialised microscopy methods for segmentation. e.g. CellPose</li>
+</ul>
+<p><strong>Image analysis</strong></p>
+<ul>
+<li>
+<a href="https://cellprofiler.org/" class="uri">https://cellprofiler.org/</a> : This is what is often used in traditional imaging for various tasks, e.g. cell morphology quantifications.</li>
+</ul>
+<p><strong>Image registration </strong></p>
+<p>Especially for multiomics analysis, being able to align images of the same tissue from different sources is essential. E.g. H&amp;E, immunofluorescence, proteomics e.t.c</p>
+<ul>
+<li>
+<a href="https://lmweber.org/OSTA/pages/crs-spatial-registration.html" class="uri">https://lmweber.org/OSTA/pages/crs-spatial-registration.html</a> : Image registration, for aligning images from different sources. E.g. H&amp;E, immunofluorescence, proteomics e.t.c</li>
 </ul>
 <p><strong>Sample and Regional Annotation</strong></p>
 <p>It’s typical to have multiple samples on a single slide. We need to label each cell with its ID. Similarly you might want to outline a particular region.</p>
 <ul>
 <li>Define samples by their centroid x-y coordinates (Painstaking, but it can be enough)</li>
-<li>Vendor-based solutions; e.g. regional highlighing with <a href="https://www.10xgenomics.com/support/software/xenium-explorer/latest/tutorials/xe-selecting-multiple-regions-of-interest">Xenium explorer</a>
+<li>Vendor-based solutions; e.g. regional highlighting with <a href="https://www.10xgenomics.com/support/software/xenium-explorer/latest/tutorials/xe-selecting-multiple-regions-of-interest">Xenium explorer</a>
 </li>
-<li>Import masks from a full-fledged microscope analysis kit like Napari.</li>
+<li>Import masks from annotated images</li>
 <li>Do you know better approaches or tools? Please share.</li>
 </ul>
 <p><strong>Visualisation</strong></p>
@@ -115,18 +126,21 @@
 <ul>
 <li>VRomics</li>
 <li>Xenium explorer (Xenium only)</li>
-<li>Atomx (cosmx only)</li>
-<li>Napari</li>
+<li>AtoMx (cosmx only)</li>
+<li>Napari <a href="https://nanostring-biostats.github.io/CosMx-Analysis-Scratch-Space/posts/napari-cosmx-basics/using-napari-cosmx.html">cosmx guide</a>
+</li>
 <li>CellXGene (single cells)</li>
 <li>iSEE (single cell)</li>
 </ul>
 <p><strong>Niche analysis</strong></p>
-<p>Cell neighbour niche analysis is a major avenue of in situ spatial analyses. E.g. tumour microenvrionments, tissue regions.</p>
+<p>Cell neighbour niche analysis is a major avenue of in situ spatial analyses. E.g. tumour microenvrionments, tissue regions. The actual definition of what a ‘niche’ is could be considered flexible - it depends on what you are trying to achieve.</p>
 <ul>
-<li>Seuruat findNiches()</li>
-<li>OSCA neighbourhood analyses: <a href="https://lmweber.org/OSTA/pages/img-neighborhood-analysis.html" class="uri">https://lmweber.org/OSTA/pages/img-neighborhood-analysis.html</a>
+<li>Seurat findNiches()</li>
+<li>OSCA neighbourhood analyses: <a href="https://lmweber.org/OSTA/pages/img-neighbourhood-analysis.html" class="uri">https://lmweber.org/OSTA/pages/img-neighbourhood-analysis.html</a>
 </li>
 <li>hoodscanR : <a href="https://www.bioconductor.org/packages/release/bioc/vignettes/hoodscanR/inst/doc/Quick_start.html" class="uri">https://www.bioconductor.org/packages/release/bioc/vignettes/hoodscanR/inst/doc/Quick_start.html</a>
+</li>
+<li>GraphST : <a href="https://www.nature.com/articles/s41467-023-36796-3" class="uri">https://www.nature.com/articles/s41467-023-36796-3</a>
 </li>
 <li>Many more …</li>
 </ul>
@@ -135,7 +149,7 @@
 <ul>
 <li>Spatial tests, adapted form geospatial methods: <a href="https://pachterlab.github.io/voyager/" class="uri">https://pachterlab.github.io/voyager/</a>
 </li>
-<li>Co-localisation and differntial co-localisation: <a href="https://lmweber.org/OSTA/pages/mult-diff-spatial-patterns.html" class="uri">https://lmweber.org/OSTA/pages/mult-diff-spatial-patterns.html</a>
+<li>Co-localisation and differential co-localisation: <a href="https://lmweber.org/OSTA/pages/mult-diff-spatial-patterns.html" class="uri">https://lmweber.org/OSTA/pages/mult-diff-spatial-patterns.html</a>
 </li>
 <li>Molecule level data object (not a SingleCellExperiment): <a href="https://www.bioconductor.org/packages/release/bioc/html/MoleculeExperiment.html" class="uri">https://www.bioconductor.org/packages/release/bioc/html/MoleculeExperiment.html</a>
 </li>
@@ -144,9 +158,10 @@
 <p><strong>Multiomics</strong></p>
 <p>Another huge area of research, here are some starting points. It very much depends on which multiomics you have.</p>
 <ul>
-<li><a href="https://lmweber.org/OSTA/pages/crs-spatial-registration.html" class="uri">https://lmweber.org/OSTA/pages/crs-spatial-registration.html</a></li>
 <li>
 <a href="https://satijalab.org/seurat/articles/multimodal_vignette" class="uri">https://satijalab.org/seurat/articles/multimodal_vignette</a> (single cell)</li>
+<li>
+<a href="https://lmweber.org/OSTA/pages/crs-spatial-registration.html" class="uri">https://lmweber.org/OSTA/pages/crs-spatial-registration.html</a> : Image registration, for aligning images from different sources. E.g. H&amp;E, immunofluorescence, proteomics e.t.c</li>
 <li>Many more …</li>
 </ul>
 </div>
@@ -176,7 +191,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-10-08.</p>
+    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-10-10.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
