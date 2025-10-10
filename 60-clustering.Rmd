@@ -1,5 +1,7 @@
 # Clustering{#clustering}
 
+For an analysis, we will want to be able to examine different cell types or cell states in our data. Sadly the cells don't come labelled, and 'celltypes' aren't firm classifications anyway! 
+But we can group together cells with similar expression profiles into 'clusters', which we can analyse.
 
 
 ## Generate Clusters
@@ -16,30 +18,97 @@ so <- FindNeighbors(so, reduction = "harmony", dims = 1:15)
 
 
 Now clustering can be as simple as running 'FindClusters'. 
-```{r message=FALSE}
-so <- FindClusters(so)  
+```{r message=FALSE, warning=FALSE}
+# Resolution generally between 0.1 and 1
+so <- FindClusters(so, resolution = 0.2 )  # A low resolution, fewer clusters
+so <- FindClusters(so, resolution = 1.0 )  # high res for more
+so <- FindClusters(so, resolution = 0.8 ) # the default resolution  
 ```
 
-```{r message=FALSE}
-DimPlot(so, group.by='seurat_clusters')
+
+```{r  message=FALSE, warning=FALSE}
+DimPlot(so, group.by='RNA_snn_res.0.2')
+DimPlot(so, group.by='RNA_snn_res.0.8')
+DimPlot(so, group.by='RNA_snn_res.1')
 ```
 
 
-For the rest of the workshop, we'll use stick with that resolution of 0.8 - which was actually the default.
+
+
+The [clustree](https://doi.org/10.1093/gigascience/giy083) package can be a useful tool to evaluate different levels of clustering. There is an example of its use [here]( https://swbioinf.github.io/scRNAseqInR_Doco/clustering.html) in the context of single cell transcriptomics.
+
+```{r  message=FALSE, warning=FALSE}
+library(clustree)
+clustree(so)
+```
+
+
+::: {.rmdnote}
+
+**ACTIVITY** What clustering resolution should we choose?
+
+This is hard, because its not our experiment!
+
+* What information would you want to decide? Perhaps consider your own work.
+* E.g. Would looking at a known celltype marker with _FeaturePlot()_ help? E.g. PIGR is expressed in the intestinal epithelial 
+
+Put a question or plot in the google doc.
+
+<!--
+Points to lead discussion:
+
+* What's your want to thing about celltypes of interest in your study - T cell subtypes? o you really want epithelial subtypes. 
+
+* Will one clustering level serve all? You can subtype or have multiple resolutions
+* We don't even have celltype information yet! We can plot a few markers for a rough idea. 
+* This is cyclic!
+* You're the domain expert, you make the call...
+
+-->
+:::
 
 
 In real life, choosing a clustering resolution can be a cyclic process with cell type labelling. The 'correct' level of clustering is one that lets you answer the biological questions you are interested in. To broad and you'll have heterogeneity in your clusters, or too specific and and you'll have somewhat arbitrary clusters with too few cells to test anything. You may need to use different levels of clustering for different analyses, or choose to make sub-clusters in one particular celltype of interest.
 
-The [clustree](https://doi.org/10.1093/gigascience/giy083) package can be a useful tool to evaluate different levels of clustering. There is an example of its use [here]( https://swbioinf.github.io/scRNAseqInR_Doco/clustering.html) in the context of single cell transcriptomics.
 
+For the rest of the workshop, we'll use stick with that resolution of 0.8 - which was actually the default. Because we ran that one last, it is stored in 'seurat_clusters'
 
 ```{r message=FALSE, warning=FALSE, eval=FALSE}
-so <- FindClusters(so, resolution = 0.8)  
+so <- FindClusters(so, resolution = 0.8)  # Rerun if you've been trying other resolutions
 ```
 
 ```{r}
 DimPlot(so, group.by='seurat_clusters')
 ```
+
+
+And check that our clusters are balanced across samples
+
+```{r}
+
+## Celltype proportions
+celltype_summary_table<- so@meta.data %>% as_tibble() %>%
+  group_by(condition, tissue_sample, seurat_clusters ) %>%
+  summarise(n_cells = n())
+
+
+
+ggplot(celltype_summary_table, aes(x=tissue_sample, y=n_cells, fill=seurat_clusters)) +
+  geom_bar(position="fill", stat="identity") +
+  theme_bw() +
+  coord_flip() +
+  theme(legend.position = "bottom") +
+  scale_y_continuous(expand = c(0,0)) +
+  ggtitle( "Celltype composition") +
+  facet_wrap(~condition, ncol = 1, scales = 'free_y')
+
+
+```
+
+
+
+
+
 
 
 

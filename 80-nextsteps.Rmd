@@ -5,15 +5,15 @@ We've done a fairly streamlined preprocessing of a single cell spatial dataset. 
 
 ## What did the authors find from this dataset?
 
-In their paper [Macrophage and neutrophil heterogeneity at single-cell spatial resolution in human inflammatory bowel disease](https://pubmed.ncbi.nlm.nih.gov/37495570/) Garrido-Trigo et al performed and extensitve analysis of their cosmx Data alongside single cell, bulk and microscopy data. 
+In their paper [Macrophage and neutrophil heterogeneity at single-cell spatial resolution in human inflammatory bowel disease](https://pubmed.ncbi.nlm.nih.gov/37495570/) Garrido-Trigo et al performed and extensive analysis of their cosmx Data alongside single cell, bulk and microscopy data. 
 
-To summarise the kinds of things that are possible with single-cell spatial data - here is a list of some of the analysese from that paper that specifically use this spatial dataset;
+To summarise the kinds of things that are possible with single-cell spatial data - here is a list of some of the analyses from that paper that specifically use this spatial dataset;
 
 * Identified their detailed celltypes in their single cell data (over the whole transcriptome), which they used to classify celltypes in their spatial data.(page 2 - *Integration of single-cell RNA sequencing and spatial molecular imaging analysis provides a map of healthy and inflamed colon*)
-* Identified cell niches with different neighbourhoods, e.g lymphoid strucutres, lamina propria and lower crypt. They quantified an increase in inflammatory celltypes in some of those neighbourhoods, and characterised another neighbourhood seen only in the IBD samples. (page 2 - *Integration of single-cell RNA sequencing and spatial molecular imaging analysis provides a map of healthy and inflamed colon*)
-* They obvserved granuloma features in one patient. They examined the macrophage subtypes within them and the surrounding immune cell microenvironment. (Figure 4b, page 6 _CosMx Spatial Molecular Imaging analysis confirms the expansion of Inflammation-Dependent Alternative macrophages and reveals their tissue distribution in inflammatory bowel disease colon_)
+* Identified cell niches with different neighbourhoods, e.g lymphoid structures, lamina propria and lower crypt. They quantified an increase in inflammatory celltypes in some of those neighbourhoods, and characterised another neighbourhood seen only in the IBD samples. (page 2 - *Integration of single-cell RNA sequencing and spatial molecular imaging analysis provides a map of healthy and inflamed colon*)
+* They observed granuloma features in one patient. They examined the macrophage subtypes within them and the surrounding immune cell microenvironment. (Figure 4b, page 6 _CosMx Spatial Molecular Imaging analysis confirms the expansion of Inflammation-Dependent Alternative macrophages and reveals their tissue distribution in inflammatory bowel disease colon_)
 * Looked at differential abundance of celltypes across samples (page 2 - *Transcriptional analysis at single-cell and spatial resolution reveals different populations of resident and inflammatory macrophages in the colonic mucosa* )
-* Identified a change in myeloid cell localisation by quantifiing the distance o-f macrophage, MAST cells and Dendritic cells to the mucosal surface (page 2 - *Transcriptional analysis at single-cell and spatial resolution reveals different populations of resident and inflammatory macrophages in the colonic mucosa* )
+* Identified a change in myeloid cell localisation by quantifying the distance of macrophage, MAST cells and Dendritic cells to the mucosal surface (page 2 - *Transcriptional analysis at single-cell and spatial resolution reveals different populations of resident and inflammatory macrophages in the colonic mucosa* )
 * Observed spatially localised expression of a gene (NRG1) within a subset of apically-located fibroblasts (page 4 - _Inflammation-dependent alternative macrophages express neuregulin 1_)
 
 
@@ -23,16 +23,28 @@ To summarise the kinds of things that are possible with single-cell spatial data
 
 Good cell segmentation from images underpins downstream analysis. Different platforms offer inbuilt segmentation methods, and often require tweaking from the default with different tissues, antibodies or runs. 
 
-* On-machine segmentation: e.g. Xenium/Cosmx
-* Directly from images using specialised microscopy methods for segmentation. 
+* On-machine segmentation: e.g. Xenium/CosMx
+* Directly from images using specialised microscopy methods for segmentation. e.g. CellPose
+
+**Image analysis**
+
+* https://cellprofiler.org/ : This is what is often used in traditional imaging for various tasks, e.g. cell morphology quantifications.
+
+
+**Image registration **
+
+Especially for multiomics analysis, being able to align images of the same tissue from different sources is essential. E.g. H&E, immunofluorescence, proteomics e.t.c
+
+* https://lmweber.org/OSTA/pages/crs-spatial-registration.html : Image registration, for aligning images from different sources. E.g. H&E, immunofluorescence, proteomics e.t.c
+
 
 **Sample and Regional Annotation**
 
 It's typical to have multiple samples on a single slide. We need to label each cell with its ID. Similarly you might want to outline a particular region.
 
 * Define samples by their centroid x-y coordinates (Painstaking, but it can be enough)
-* Vendor-based solutions; e.g. regional highlighing with [Xenium explorer](https://www.10xgenomics.com/support/software/xenium-explorer/latest/tutorials/xe-selecting-multiple-regions-of-interest)
-* Import masks from a full-fledged microscope analysis kit like Napari.
+* Vendor-based solutions; e.g. regional highlighting with [Xenium explorer](https://www.10xgenomics.com/support/software/xenium-explorer/latest/tutorials/xe-selecting-multiple-regions-of-interest)
+* Import masks from annotated images
 * Do you know better approaches or tools? Please share.
 
 **Visualisation**
@@ -41,19 +53,20 @@ There are many tools out there, each with strengths and limitations.
 
 * VRomics
 * Xenium explorer (Xenium only)
-* Atomx (cosmx only)
-* Napari
+* AtoMx (cosmx only)
+* Napari [cosmx guide](https://nanostring-biostats.github.io/CosMx-Analysis-Scratch-Space/posts/napari-cosmx-basics/using-napari-cosmx.html)
 * CellXGene (single cells)
 * iSEE (single cell)
 
 
 **Niche analysis**
 
-Cell neighbour niche analysis is a major avenue of in situ spatial analyses. E.g. tumour microenvrionments, tissue regions. 
+Cell neighbour niche analysis is a major avenue of in situ spatial analyses. E.g. tumour microenvrionments, tissue regions. The actual definition of what a 'niche' is could be considered flexible - it depends on what you are trying to achieve. 
 
-* Seuruat findNiches()
-* OSCA neighbourhood analyses: https://lmweber.org/OSTA/pages/img-neighborhood-analysis.html
+* Seurat findNiches()
+* OSCA neighbourhood analyses: https://lmweber.org/OSTA/pages/img-neighbourhood-analysis.html
 * hoodscanR : https://www.bioconductor.org/packages/release/bioc/vignettes/hoodscanR/inst/doc/Quick_start.html
+* GraphST : https://www.nature.com/articles/s41467-023-36796-3 
 * Many more ...
 
 **'Spatial' pattern tests and cell free analyses**
@@ -61,7 +74,7 @@ Cell neighbour niche analysis is a major avenue of in situ spatial analyses. E.g
 Huge area of research, here are some starting points;
 
 * Spatial tests, adapted form geospatial methods:  https://pachterlab.github.io/voyager/
-* Co-localisation and differntial co-localisation: https://lmweber.org/OSTA/pages/mult-diff-spatial-patterns.html
+* Co-localisation and differential co-localisation: https://lmweber.org/OSTA/pages/mult-diff-spatial-patterns.html
 * Molecule level data object (not a SingleCellExperiment): https://www.bioconductor.org/packages/release/bioc/html/MoleculeExperiment.html
 * Many more ...
 
@@ -70,11 +83,9 @@ Huge area of research, here are some starting points;
 
 Another huge area of research, here are some starting points. It very much depends on which multiomics you have.
 
-* https://lmweber.org/OSTA/pages/crs-spatial-registration.html
 * https://satijalab.org/seurat/articles/multimodal_vignette (single cell)
+* https://lmweber.org/OSTA/pages/crs-spatial-registration.html : Image registration, for aligning images from different sources. E.g. H&E, immunofluorescence, proteomics e.t.c
 * Many more ...
-
-
 
 
 
