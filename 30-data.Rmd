@@ -182,6 +182,33 @@ so_path <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
 so <- readRDS(so_path)
 ```
 
+:::{.rmdimportant}
+
+**Analysing large data sets with Sketch-based integration**
+
+When analysing your own data, it is often necessary to work with the entire
+data set rather than an arbitrary subsample, as simple subsampling can omit
+important biological information or spatial regions. However, processing very
+large data sets can be computationally demanding.
+
+![](images/30_data/geosketch.png)
+
+Sketch-based analysis offers a practical solution by selecting a representative
+subset of cells that preserves the overall structure and diversity of the full
+data set. Instead of arbitrarily subsetting by fields of view (FoVs), this
+approach uses geometric sketching to capture both common and rare cell
+populations. You can **perform initial preprocessing steps on this smaller subset
+and then extend the results back to the complete dataset for downstream analyses.**
+
+For more details, see Seurat’s sketch-based analysis vignette[^1]$^,$[^3] and the
+GeoSketch method description[^2] for a Python alternative.
+
+[^1]: https://satijalab.org/seurat/articles/seurat5_sketch_analysis
+[^2]: https://cb.csail.mit.edu/geosketch/
+[^3]: https://satijalab.org/seurat/articles/parsebio_sketch_integration
+
+:::
+
 ## Visualising our spatial data
 
 ```{r}
