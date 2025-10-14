@@ -1,6 +1,6 @@
 # Quality control and filtering
 
-![](images/workflows/02_qc.png)
+![](images/workflows/02_qc.png){width=100%}
 
 ## Learning objectives
 

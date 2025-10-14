@@ -1,6 +1,7 @@
 # Spatially Restricted Genes {#SpatiallyRestrictedGenes}
 
-![](images/workflows/07_analysis.png)
+![](images/workflows/07_analysis.png){width=100%}
+
 <!--
 Requires packages:
 * Rfast2

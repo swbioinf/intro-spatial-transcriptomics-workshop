@@ -1,6 +1,6 @@
 # Clustering Labeling{#ClusterLabelling}
 
-![](images/workflows/06_annotation.png)
+![](images/workflows/06_annotation.png){width=100%}
 
 Classifying cells into meaningful celltypes (or cell states) is a time consuming, but extremely important, part of a spatial analysis.
 

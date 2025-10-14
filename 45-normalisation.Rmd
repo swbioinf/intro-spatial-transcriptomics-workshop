@@ -1,6 +1,6 @@
 # Normalisation and scaling
 
-![](images/workflows/03_normalisation.png)
+![](images/workflows/03_normalisation.png){width=100%}
 
 ## Learning objectives
 

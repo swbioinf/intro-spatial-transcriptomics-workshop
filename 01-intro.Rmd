@@ -27,4 +27,4 @@ Link to intro slides.
 
 ## Workflow
 
-![](images/workflows/00_full.png)
+![](images/workflows/00_full.png){width=100%}
