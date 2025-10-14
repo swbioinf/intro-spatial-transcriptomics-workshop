@@ -1,5 +1,7 @@
 # Understanding our spatial data
 
+![](images/workflows/01_counts.png)
+
 ## Learning objectives
 
 ## Overview

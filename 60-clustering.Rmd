@@ -1,5 +1,7 @@
 # Clustering{#clustering}
 
+![](images/workflows/05_clustering.png)
+
 For an analysis, we will want to be able to examine different cell types or cell states in our data. Sadly the cells don't come labelled, and 'celltypes' aren't firm classifications anyway! 
 But we can group together cells with similar expression profiles into 'clusters', which we can analyse.
 
