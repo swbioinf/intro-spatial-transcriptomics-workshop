@@ -1,5 +1,7 @@
 # Quality control and filtering
 
+![](images/workflows/02_qc.png)
+
 ## Learning objectives
 
 - Recall common quality control (QC) metrics used in spatial transcriptomics, such as total transcript counts, detected genes, cell area, and negative probe percentage  
