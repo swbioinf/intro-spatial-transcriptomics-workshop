@@ -1,5 +1,6 @@
 # Reduce dimensionality - UMAPs{#ReducedDimensionality}
 
+![](images/workflows/04_dimred.png){width=100%}
 
 Before we dive into generating UMAP plots to visualise our spatial data we need to undertake a series of preprocessing steps. These steps are essential for transforming raw, high-dimensional data into a form that can be meaningfully interpreted. 
 

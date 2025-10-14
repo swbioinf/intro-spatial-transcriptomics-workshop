@@ -1,5 +1,0 @@
-# Basic visualisation
-
-
-* Plot tissue (10min)
-* Plot gene expression (10min)
