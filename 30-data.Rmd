@@ -211,6 +211,12 @@ GeoSketch method description[^2] for a Python alternative.
 
 ## Visualising our spatial data
 
+TODO: add note on plotting H&E image - unavailable with this data.
+
+- Need to import into stutility, which is not compatible with v5 Seurat
+- https://satijalab.org/seurat/articles/spatial_vignette
+
+
 ```{r}
 hc_idents <- unique(so$orig.ident)[1:3]
 cd_idents <- unique(so$orig.ident)[4:6]
@@ -398,4 +404,12 @@ rownames(so@assays$negprobes)
 so@assays$negprobes[1:5, 1:5]
 ```
 
-In the next lesson, 
+## Loading in multiple samples
+
+TODO: Example of loading in multiple samples
+
+TODO: Explanation on splitting and merging layers 
+
+## Summary
+
+TODO
