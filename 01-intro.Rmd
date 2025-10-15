@@ -11,8 +11,6 @@ Link to intro slides.
 * Workshop style - interactive
 
 
-
-
 **Schedule**
 
 | Day   | Topic                    |
@@ -27,3 +25,6 @@ Link to intro slides.
 |       | Differential expression  |
 
 
+## Workflow
+
+![](images/workflows/00_full.png){width=100%}
