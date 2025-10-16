@@ -1,0 +1,262 @@
+# Quality control and filtering
+
+## Learning objectives
+
+## Overview
+
+```{r}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE
+)
+
+# load libraries for this step
+# load libraries for this step
+
+library(Seurat)
+library(tidyverse)
+library(here)
+```
+
+```{r}
+# Read in the subsampled data for this lesson
+# Read in the subsampled data for this lesson
+
+so_path <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
+so <- readRDS(so_path)
+```
+
+## Identifying potential technical artefacts
+
+### Library size (transcript counts)
+
+```{r warning=F}
+ggplot(so@meta.data, aes(x = nCount_RNA, col = tissue_sample)) +
+  geom_density() +
+  scale_x_log10() +
+  theme_bw() +
+  annotation_logticks(sides = "b", colour = "lightgrey") +
+  ggtitle("Transcript counts per cell")
+```
+
+### Cell surface area
+
+```{r warning=F}
+# Total counts per cell
+# Total counts per cell
+
+ggplot(so@meta.data, aes(x=Area, col=tissue_sample)) +
+  geom_density() +
+  scale_x_log10() +
+  theme_bw() +
+  annotation_logticks(sides = "b") +
+  ggtitle("Area (px^2) per cell")
+```
+
+## Bivariate QC
+
+```{r}
+so@meta.data %>%
+  ggplot(aes(x = nCount_RNA, y = nFeature_RNA, colour = tissue_sample)) +
+  geom_point(alpha = 0.4, size = 0.1) +
+  facet_wrap(~tissue_sample) +
+  theme_light() +
+  theme(legend.position = "none")
+```
+
+```{r, warning=F}
+ggplot(so@meta.data, aes(x=Area, y=nCount_RNA, colour=tissue_sample)) +
+  geom_point(size = 0.1, alpha = 0.4) +
+  scale_x_log10() +
+  scale_y_log10() +
+  annotation_logticks(sides = "bl") +
+  facet_wrap(~tissue_sample) +
+  annotation_logticks(colour = "lightgrey") +
+  theme_light()
+```
+
+## Filtering low-quality cells
+
+### Negative probes as an indicator of noise  
+
+```{r}
+so$percent_neg <- (so$nCount_negprobes / (so$nCount_RNA + so$nCount_negprobes)) * 100
+
+# Join layers to calculate average_neg
+# Join layers to calculate average_neg
+
+so@assays$negprobes <- JoinLayers(so@assays$negprobes)
+so$mean_neg <- colMeans(so@assays$negprobes) # Only defined first sample
+```
+
+```{r}
+so@meta.data %>%
+  ggplot(aes(x = tissue_sample, y = mean_neg, colour = tissue_sample)) +
+  geom_col() +
+  theme_light()
+```
+
+```{r}
+so@meta.data %>%
+  ggplot(aes(x = percent_neg, colour = tissue_sample)) +
+  geom_density() +
+  scale_x_log10() +
+  theme_light() +
+  annotation_logticks(sides = "b", colour = "lightgrey")
+```
+
+```{r}
+# Discuss difference with Xenium - xenium lower counts, lower background.
+# Discuss difference with Xenium - xenium lower counts, lower background.
+
+ggplot(so@meta.data, aes(y=mean_neg, x=nCount_RNA)) +
+  geom_point(pch=3, alpha=0.1) +
+  scale_x_log10() +
+  theme_bw() +
+  ggtitle("Negative probes vs counts")
+
+ggplot(so@meta.data, aes(y=percent_neg, x=nCount_RNA)) +
+  geom_point(pch=3, alpha=0.1) +
+  scale_x_log10() +
+  coord_cartesian(ylim = c(0, 10)) +
+  facet_wrap(~tissue_sample) +
+  theme_bw() +
+  ggtitle("Negative probes vs counts")
+```
+
+```{r}
+min_ncount_rna <- 90
+max_percent_neg <- 2
+```
+
+```{r}
+ggplot(so@meta.data, aes(y=percent_neg, x=nCount_RNA)) +
+  geom_point(pch=3, alpha=0.1) +
+  geom_hline(yintercept = max_percent_neg, lty=3, colour = "red") +
+  geom_vline(xintercept = min_ncount_rna, lty=3, colour = "red") +
+  scale_x_log10() +
+  coord_cartesian(ylim = c(0, 21)) +
+  facet_wrap(~tissue_sample) +
+  theme_bw() +
+  ggtitle("Negative probes vs counts")
+```
+
+### Identifying filtering thresholds
+
+```{r}
+# Apply a filter
+# Apply a filter
+
+so@meta.data <- 
+  so@meta.data %>%
+  mutate(
+    qc = if_else(nCount_RNA >= min_ncount_rna & percent_neg <= max_percent_neg, "Keep", "Remove")
+  )
+
+table(so$qc, so$orig.ident)
+```
+
+```{r}
+ImageDimPlot(so, fov = "GSM7473684.HC.c", group.by = "qc")
+```
+
+## ACTIVITY: Identifying your own filtering thresholds
+
+```{r}
+min_ncount_rna <- 70
+max_percent_neg <- 4
+```
+
+```{r}
+ggplot(so@meta.data, aes(y=percent_neg, x=nCount_RNA)) +
+  geom_point(pch=3, alpha=0.1) +
+  geom_hline(yintercept = max_percent_neg, lty=3, colour = "red") +
+  geom_vline(xintercept = min_ncount_rna, lty=3, colour = "red") +
+  scale_x_log10() +
+  coord_cartesian(ylim = c(0, 21)) +
+  facet_wrap(~tissue_sample) +
+  theme_bw() +
+  ggtitle("Negative probes vs counts")
+```
+
+```{r}
+so@meta.data <- 
+  so@meta.data %>%
+  mutate(
+    qc = if_else(nCount_RNA >= min_ncount_rna & percent_neg <= max_percent_neg, "Keep", "Remove")
+  )
+
+table(so$qc, so$orig.ident)
+```
+
+```{r}
+# Epithelial compartment less patchy, but still hard to retain the stromal cells
+# Epithelial compartment less patchy, but still hard to retain the stromal cells
+
+# These are the trade-offs to consider
+# These are the trade-offs to consider
+
+ImageDimPlot(so, fov = "GSM7473684.HC.c", group.by = "qc")
+```
+
+```{r}
+# A lot of cells marked for removal and a bit patchy
+# A lot of cells marked for removal and a bit patchy
+
+ImageDimPlot(so, fov = "GSM7473688.CD.a", group.by = "qc")
+```
+
+### Applying the filter
+
+```{r}
+min_ncount_rna <- 70
+max_percent_neg <- 4
+```
+
+```{r}
+so_filtered <- subset(so, qc == "Keep")
+table(so_filtered$orig.ident)
+```
+
+```{r eval=F}
+saveRDS(so_filtered, file = here("data", "GSE234713_CosMx_IBD_seurat_02_rna70_neg4.RDS"))
+```
+
+## Field of View QC (CosMX only; Advanced)
+
+```{r}
+so@meta.data %>%
+  unite(col = unique_fov_names, orig.ident, fov, remove = F) %>%
+  ggplot(aes(x = nCount_RNA, col = orig.ident, group = unique_fov_names)) +
+  geom_density() +
+  scale_x_log10() +
+  theme_light() +
+  annotation_logticks(sides = "b")
+```
+
+```{r, eval=F}
+# For each cell, calculate the distance between the centroid to each FOV border
+# For each cell, calculate the distance between the centroid to each FOV border
+
+so_borders <- so@meta.data %>%
+  group_by(tissue_sample, fov) %>%
+  mutate(
+    top = max(CenterY_local_px) - CenterY_local_px,
+    bottom = CenterY_local_px - min(CenterY_local_px),
+    left = CenterX_local_px - min(CenterX_local_px),
+    right = max(CenterX_local_px) - CenterX_local_px
+  ) %>%
+  select(top, bottom, left, right, nCount_RNA, tissue_sample) %>%
+  pivot_longer(cols = -c(nCount_RNA, tissue_sample), names_to = "fov_direction", values_to = "distance") 
+
+so_borders %>%
+  ggplot(aes(x = distance, y = nCount_RNA)) +
+  geom_point(size = 0.1, alpha = 0.4) +
+  facet_wrap(~fov_direction, ncol = 4) +
+  scale_y_log10() +
+  theme_light() +
+  geom_smooth(method = "loess", span = 0.2)
+```
+
+## Summary
+

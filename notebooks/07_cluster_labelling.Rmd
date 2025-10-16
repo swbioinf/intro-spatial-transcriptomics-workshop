@@ -1,0 +1,325 @@
+# Clustering Labeling{#ClusterLabelling}
+
+## Cluster Markers
+
+```{r message=FALSE, warning=FALSE}
+DimPlot(so, group.by='seurat_clusters')
+```
+
+```{r message=FALSE, warning=FALSE}
+# Need to join the layers back again for this.
+# Need to join the layers back again for this.
+
+so <- JoinLayers(so)
+marker_table <- FindAllMarkers(so, group.by='seurat_clusters', only.pos=TRUE)
+```
+
+```{r}
+DT::datatable(marker_table)
+```
+
+```{r message=FALSE, warning=FALSE}    
+# Get top 3 genes per cluster, with log FC > 1
+# Get top 3 genes per cluster, with log FC > 1
+
+marker_table_top <- marker_table %>%
+    group_by(cluster) %>%
+    dplyr::filter(avg_log2FC > 1, p_val_adj < 0.01) %>%
+    slice_head(n = 3)
+
+DotPlot(so, features = unique(marker_table_top$gene)) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+```{r}
+top_marker_genes <- filter(marker_table, cluster == "1") %>% dplyr::filter(avg_log2FC > 1, p_val_adj < 0.01) %>% pull(gene) %>% head(20)
+print(noquote(top_marker_genes))
+```
+
+## Cell typing by reference
+
+```{r message=FALSE, warning=FALSE}
+library(SingleR)
+```
+
+```{sh eval=FALSE}
+# Do not run, but these were the linux shell commands to get and rename the data
+# Do not run, but these were the linux shell commands to get and rename the data
+
+wget https://datasets.cellxgene.cziscience.com/82e3b450-6704-43de-8036-af1838daa7df.h5ad
+mv 82e3b450-6704-43de-8036-af1838daa7df.h5ad tabula_sapiens_large_intestine_82e3b450-6704-43de-8036-af1838daa7df.h5ad
+```
+
+```{r message=FALSE, warning=FALSE}
+library(schard)
+ts_largeintestine_h5ad <- file.path("data/tabula_sapiens/tabula_sapiens_large_intestine_82e3b450-6704-43de-8036-af1838daa7df.h5ad")
+sce.ts_intestine = schard::h5ad2sce(ts_largeintestine_h5ad)
+```
+
+```{r}
+DT::datatable(head(as.data.frame(colData(sce.ts_intestine))))
+DT::datatable(head(as.data.frame(rowData(sce.ts_intestine))))
+```
+
+```{r}
+# Not needed, but first filter down to matched genes in our panel
+# Not needed, but first filter down to matched genes in our panel
+
+sce.ts_intestine.genename <- sce.ts_intestine[rowData(sce.ts_intestine)$feature_name %in% rownames(so),]
+
+# Are there any duplicates (we'd need to handle them, but there aren't)
+# Are there any duplicates (we'd need to handle them, but there aren't)
+
+# takes the count of each feature, then checks that there aren't any >1
+# takes the count of each feature, then checks that there aren't any >1
+
+stopifnot(sum(table(rowData(sce.ts_intestine.genename)$feature_name) != 1 ) == 0)
+
+# just rename the genes to the gene names
+# just rename the genes to the gene names
+
+rownames(sce.ts_intestine.genename) <-  rowData(sce.ts_intestine.genename)$feature_name
+
+# Pull out the normalised matrix.
+# Pull out the normalised matrix.
+
+# Quirk of this coming from the python world, the normalised assay is called 'X'
+# Quirk of this coming from the python world, the normalised assay is called 'X'
+
+ref_norm_matrix <- assay(sce.ts_intestine.genename, 'X')
+```
+
+```{r}
+library(BiocParallel) # allow parallelisation with MulticoreParam(). 
+
+norm_matrix <- GetAssayData(so, assay = 'RNA', layer = 'data')
+
+predictions_broad <- SingleR::SingleR(test = norm_matrix,
+                                ref   = ref_norm_matrix,
+                                labels = sce.ts_intestine.genename$broad_cell_class,
+                                aggr.ref = TRUE, # builds a pseudobulk reference , speedier processing
+                                BPPARAM = MulticoreParam(workers=8)
+                                )
+
+predictions_detailed <- SingleR::SingleR(test = norm_matrix,
+                                ref   = ref_norm_matrix,
+                                labels = sce.ts_intestine.genename$cell_type,
+                                aggr.ref = TRUE, # builds a pseudobulk reference , speedier processing
+                                BPPARAM = MulticoreParam(workers=8)
+)
+```
+
+```{r}
+predictions_broad
+```
+
+```{r}
+# Check that the order of cells is the same
+# Check that the order of cells is the same
+
+stopifnot(all(rownames(predictions_broad) == colnames(so)))
+
+# Then pull in the celltypes from pruned labels, and the 'delta.next' score for each.
+# Then pull in the celltypes from pruned labels, and the 'delta.next' score for each.
+
+so$singleR_pred_broad    <- predictions_broad$pruned.labels
+so$singleR_pred_detailed <- predictions_detailed$pruned.labels
+so$singleR_delta.next_broad    <- predictions_broad$delta.next
+so$singleR_delta.next_detailed <- predictions_detailed$delta.next
+```
+
+```{r}
+DimPlot(so, group.by = 'singleR_pred_broad', label = TRUE) 
+```
+
+```{r}
+DimPlot(so, group.by = 'singleR_pred_detailed', label = TRUE) + NoLegend()
+```
+
+```{r}
+FeaturePlot(so, c('singleR_delta.next_broad','singleR_delta.next_detailed'))
+VlnPlot(so, features='singleR_delta.next_broad', group.by='singleR_pred_broad', pt.size = 0) + NoLegend()
+```
+
+```{r message=FALSE, warning=FALSE}
+## Celltype proportions
+## Celltype proportions
+
+celltype_summary_table<- so@meta.data %>% as_tibble() %>%
+  group_by(seurat_clusters, singleR_pred_broad ) %>%
+  summarise(n_cells = n())
+
+
+ggplot(celltype_summary_table, aes(x=seurat_clusters, y=n_cells, fill=singleR_pred_broad)) +
+  geom_bar(position="fill", stat="identity") +
+  theme_bw() +
+  coord_flip() +
+  theme(legend.position = "bottom") +
+  scale_y_continuous(expand = c(0,0)) +
+  ggtitle( "Celltyping vs clustering") 
+  
+
+```
+
+## Spatial examination of plots
+
+```{r  message=FALSE, warning=FALSE}
+so_sample <- so[, so$tissue_sample=="HC_a"]
+ImageDimPlot(so_sample,
+             fov          = "GSM7473682.HC.a",
+             axes = TRUE,
+             border.color = NA, border.size = 0.1,
+             cols = 'polychrome', #See DiscretePalette()
+             group.by = "seurat_clusters",
+             boundaries   = "segmentation",
+             crop=TRUE)
+
+```
+
+```{r message=FALSE, warning=FALSE}
+so_fov    <- so_sample[, so_sample$fov==1]
+ImageDimPlot(so_fov,
+             fov          = "GSM7473682.HC.a",
+             axes = TRUE,
+             border.color = NA, border.size = 0.1,
+             cols = 'polychrome', #See DiscretePalette()
+             group.by = "seurat_clusters",
+             boundaries   = "segmentation",
+             crop=TRUE)
+
+```
+
+```{r message=FALSE, warning=FALSE}
+ImageDimPlot(so_fov,
+             fov          = "GSM7473682.HC.a",
+             axes = TRUE,
+             border.color = NA, border.size = 0.1,
+             group.by =  'singleR_pred_broad',
+             boundaries   = "segmentation",
+             cols = 'polychrome', #See DiscretePalette()
+             crop=TRUE)
+
+```
+
+## Using the images data
+
+## Recording celltype annotations
+
+```{r}
+## Apply some cluster names
+## Apply some cluster names
+
+so$cluster_code <- factor( paste0("c", so$seurat_clusters),   levels=paste0('c', levels(so$seurat_clusters)))
+Idents(so) <- so$cluster_code
+
+cluster_content <- list(
+  c0 = "Stem cell", # PIGR
+  c1 = "Plasma cell", #B lymphocyte lineage: JCHAIN/ MZB1 / DERL3  (typical for Plasma/Plasma/Plasma)
+  c2 = "Fibroblast",   
+  c3 = "Mixed",  
+  c4 = "Macrophage and Dendritic cell",  # See detailed predictions, and macrophages are important in this study.    
+  c5 = "T cell",
+  c6 = "Intestinal epithelial cell",  # PIGR 
+  c7 = "Contractile cell",        
+  c8 = "B cell",  # B lymphocyte lineage: CD37 / CIITA / IGHM  (B/B/Plasma)           
+  c9 = "Endothelia",
+  c10 = "Granulocyte"
+)
+
+# c1 => c1: Stem cell
+# c1 => c1: Stem cell
+
+so$cluster_labels <- factor (
+  paste0(names(cluster_content[as.character(so$cluster_code)]), ": ", cluster_content[as.character(so$cluster_code)]) ,
+  levels = paste0( names(cluster_content), ": ", cluster_content)
+)
+```
+
+```{r message=FALSE}
+DimPlot(so, group.by='cluster_labels', label = TRUE) + NoLegend()
+```
+
+```{r  message=FALSE, warning=FALSE}
+so_fov <- so[, so$tissue_sample=="HC_a" & so$fov==1]
+ImageDimPlot(so_fov,
+             fov          = "GSM7473682.HC.a",
+             axes = TRUE,
+             border.color = NA, border.size = 0.1,
+             cols = 'polychrome', 
+             group.by = "cluster_labels",
+             boundaries   = "segmentation",
+             crop=TRUE)
+
+```
+
+## Pull in real annotation
+
+```{r}
+annotation_file <- 'data/GSE234713_CosMx_annotation.csv.gz'
+anno_table <- read_csv(annotation_file, show_col_types = F)
+anno_table <- as.data.frame(anno_table)
+rownames(anno_table) <- anno_table$id
+
+so$paper_celltype <- factor(anno_table[colnames(so),]$subset)
+so$paper_singleR2 <- factor(anno_table[colnames(so),]$SingleR2)
+```
+
+```{r message=FALSE, warning=FALSE}
+table(so$paper_celltype)
+so_fov    <- so[, so$tissue_sample=="HC_a" & so$fov==1]
+ImageDimPlot(so_fov,
+             fov          = "GSM7473682.HC.a",
+             axes = TRUE,
+             border.color = NA, border.size = 0.1,
+             group.by = "paper_celltype",
+             boundaries   = "segmentation",
+             crop=TRUE)
+```
+
+```{r}
+table(so$paper_singleR2)
+```
+
+```{r eval=FALSE}
+heatmap(table(so$paper_singleR2, so$cluster_labels), Rowv = NA, Colv=NA, margins = c(15, 10)) # base R heatmap - makes margin bigger to fit names
+```
+
+## Use the annotations!
+
+```{r}
+
+## Celltype proportions
+## Celltype proportions
+
+celltype_summary_table<- so@meta.data %>% as_tibble() %>%
+  group_by(condition, tissue_sample, cluster_labels ) %>%
+  summarise(n_cells = n())
+
+
+
+ggplot(celltype_summary_table, aes(x=tissue_sample, y=n_cells, fill=cluster_labels)) +
+  geom_bar(position="fill", stat="identity") +
+  theme_bw() +
+  coord_flip() +
+  theme(legend.position = "bottom") +
+  scale_y_continuous(expand = c(0,0)) +
+  ggtitle( "Celltype composition") +
+  facet_wrap(~condition, ncol = 1, scales = 'free_y')
+
+
+```
+
+## What about that missing celltype in sample CD_b?
+
+```{r  message=FALSE, warning=FALSE}
+so_CD_b <- so[, so$tissue_sample=="CD_b"]
+ImageDimPlot(so_CD_b,
+             fov          = "GSM7473689.CD.b",
+             axes = TRUE,
+             border.color = NA, border.size = 0.1,
+             cols = 'polychrome', 
+             group.by = "cluster_labels",
+             boundaries   = "segmentation",
+             crop=TRUE)
+
+```
+
