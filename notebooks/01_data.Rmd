@@ -1,0 +1,131 @@
+# Understanding our spatial data
+
+## Learning objectives
+
+## Overview
+
+```{r include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+```{r}
+library(Seurat)
+library(SeuratObject)
+library(tidyverse)
+library(here)
+```
+
+## The raw data
+
+### Raw files
+
+### Flat files
+
+## Importing the flat files into R
+
+```{r eval=F}
+# Import the custom LoadNanostring() function
+source(here("scripts/LoadNanostring_edited_function.R"))
+
+# Define the path to the flat files. Note that the input is the whole directory.
+# The function deals with reading and assigning the metadata correctly to the
+# cells and gene counts
+example_path <- here("raw_data", "GSM7473682_HC_a/")
+example_so <- LoadNanostring(example_path, assay='RNA', fov="GSM7473682.HC.a")
+```
+
+## Loading the subsampled workshop data
+
+```{r eval=F}
+# Code to subset the data
+seurat_file_00_raw <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw.RDS")
+so_raw_full <- readRDS(seurat_file_00_raw)
+so_raw_subset <- so_raw_full[, so_raw_full$group %in% c("CD", "HC") & so_raw_full@meta.data$fov <= 4]
+saveRDS(so_raw_subset, here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS"))
+```
+
+```{r}
+# Load the prepared data
+so_path <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
+so <- readRDS(so_path)
+```
+
+## Visualising our spatial data
+
+```{r}
+hc_idents <- unique(so$orig.ident)[1:3]
+cd_idents <- unique(so$orig.ident)[4:6]
+```
+
+```{r}
+for (i in hc_idents) {
+  p <- ImageDimPlot(so, fov = i, group.by = "fov_name", axes = T)
+  print(p)
+}
+```
+
+```{r}
+for (i in cd_idents) {
+  p <- ImageDimPlot(so, fov = i, group.by = "fov_name", axes = T)
+  print(p)
+}
+```
+
+### Understanding the `SeuratObject`
+
+```{r}
+so
+```
+
+### Exploring the metadata
+
+```{r}
+head(so@meta.data)
+```
+
+```{r}
+names(so@meta.data)
+```
+
+```{r}
+skimr::skim(so@meta.data)
+```
+
+```{r}
+table(so$tissue_sample)
+```
+
+## Count data (`assays`)
+
+```{r}
+so@assays
+```
+
+### Gene expression count matrices
+
+```{r}
+so@assays$RNA$counts.GSM7473682.HC.a[1:5,1:5]
+```
+
+### Negative probes
+
+```{r}
+so@assays$negprobes
+```
+
+```{r}
+rownames(so@assays$negprobes)
+```
+
+```{r}
+so@assays$negprobes[1:5, 1:5]
+```
+
+## Loading in multiple samples
+
+## Summary
+

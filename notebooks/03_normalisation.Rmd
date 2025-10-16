@@ -1,0 +1,52 @@
+# Normalisation and scaling
+
+## Learning objectives
+
+## Overview
+
+## Selecing a normalisation approach
+
+```{r echo=FALSE, results='hide', warnings=FALSE}
+library(Seurat)
+library(tidyverse)
+library(here)
+
+so <- readRDS(here("data", "GSE234713_CosMx_IBD_seurat_02_rna70_neg4.RDS"))
+```
+
+```{r}
+so@assays$RNA
+```
+
+```{r message=FALSE}
+so <- NormalizeData(so, assay = "RNA", normalization.method = "LogNormalize")
+```
+
+```{r}
+so@assays$RNA
+```
+
+## Identifying highly variable genes (HVG)
+
+```{r message=FALSE}
+so <- FindVariableFeatures(so, nfeatures = 200)
+```
+
+```{r}
+VariableFeaturePlot(so)
+```
+
+```{r}
+head(VariableFeatures(so))
+```
+
+## Scale data
+
+```{r message=FALSE}
+so <- ScaleData(so) # Just 200 variable features
+```
+
+```{r}
+so
+```
+
