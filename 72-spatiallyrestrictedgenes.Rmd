@@ -259,7 +259,7 @@ ImageDimPlot(so.HC_a.4,
 ```
 
 
-That seems to be because of a group of T cells expressing CCL21's. Lets plot them.
+That seems to be because of a group of T cells expressing CCL21's. We can highlight those alongside our transcripts.
 ```{r message=FALSE, warning=FALSE}
 so.HC_a.4$isT <- ifelse(so.HC_a.4$cluster_labels == "c5: T cell", "T cell", "Other")
 ImageDimPlot(so.HC_a.4, 
@@ -268,6 +268,14 @@ ImageDimPlot(so.HC_a.4,
              cols = c("T cell"="blue", 'Other'='grey80'),
              boundaries = "segmentation",  border.color = NA, axes = T, crop=TRUE) 
 ```
+
+
+
+If we look at Garrido-Trigo et al's paper - they highlight these kind of lymphoid niches, full of T, B and plasma cells. They go on to look at macrophage subtypes within these regions across different conditions.
+
+![](images/GTFig2g_niche.png){width=100%}
+
+In our case, these could be more formally defined by a niche-neighbourhood analysis; which at the most basic level, classifies each cell into a 'niche' depending on what type of cells are in its immediate vicinity. We could then analyse our data at the 'niche' level.
 
 
 

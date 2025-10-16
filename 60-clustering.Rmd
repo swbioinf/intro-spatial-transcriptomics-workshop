@@ -111,6 +111,13 @@ ggplot(celltype_summary_table, aes(x=tissue_sample, y=n_cells, fill=seurat_clust
 
 
 
+:::{.rmdimportant}
+
+**Spatially aware clustering methods**
+
+Here we are using method based purely on each cells transcriptome. You may perfer to investigate the use of a spatially-aware clustering tool such as [semanticST](https://arxiv.org/abs/2506.11491) or others (a rapidly progressing feild).
+
+:::
 
 
 

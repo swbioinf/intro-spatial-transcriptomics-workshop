@@ -1,34 +1,43 @@
 # Resources{#resources}
 
-
-
 Links to various useful resources.
 
-* [Single cell best practicies](https://www.sc-best-practices.org/) : Comprehensive resource on single cell analysis
+
+**General guides & Vignettes**
+
+
+* [Single cell best practices](https://www.sc-best-practices.org/) : Comprehensive resource on single cell analysis
 * [OSCA - (Orchestrating Single Cell Analayis with bioconductor )](https://bioconductor.org/books/release/OSCA/) :  A detailed resource on single cell analyses using the bioconductor ecosystem of packages - still applicable to certain spatial analyses.
 * [OSTA (Orchestrating Spatial Transcriptomics Analysis with Bioconductor](https://lmweber.org/OSTA/) : A detailed resource on how to perform spatial analyses using the bioconductor ecosystem of packages. Even if using Seurat, this is a useful resource for detailed explanations of analysis tasks.
+* [Spatial Sampler](https://swbioinf.github.io/spatialsnippets/index.html) : Worked examples and code snippets to run various statistical tests on single cell spatial data.
+* [10X analysis guides](https://www.10xgenomics.com/analysis-guides)
+* [Basic cell histology](https://unclineberger.org/unclcn/wp-content/uploads/sites/871/2023/08/2023Basic-Cell-Histology-Lecture_onlinePath.pdf)
+* [Introduction to imaging-based spatial transcriptomics analysis](https://github.com/bhuvad/CosMxSpatialAnalysisWorkshop/tree/main ): Workshop walking through a spatial analysis of cosmx data.
 
-* [Voyager Documentaion](https://pachterlab.github.io/voyager/): A bioconductor package for spatial analyses, centred around [SpatialFeatureExperiment](https://bioconductor.org/packages/devel/bioc/html/SpatialFeatureExperiment.html) objects
+
+
+**Analysis ecosytems **
+
+* [Seurat](https://satijalab.org/seurat/): Seurat package. Originally for single cell transcriptomics, it now supports some analyses in spatial technologies. 
+* [Bioconductor](https://www.bioconductor.org/): The bioconductor repository is much broader than just spatial, but various toolks centre around the [SpatialExperiment](https://www.bioconductor.org/packages/release/bioc/html/SpatialExperiment.html) and [SpatialFeatureExperiment](https://bioconductor.org/packages/devel/bioc/html/SpatialFeatureExperiment.html) (derived from [SingleCellExperiment](https://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html) objects). The [OSTA](https://lmweber.org/OSTA/) book is a good overview about whats possible. With the [Voyager Documentaion](https://pachterlab.github.io/voyager/) covering SpatialFeatureExperiment methods.
 * [SCverse](https://scverse.org/): An ecosystem for analysing single cell and spatial single cell data with python.
+* [Giotto Suite](https://giottosuite.com/): Another R based ecosystem for spatial analyses.
+* [Cell Profiler](https://cellprofiler.org/) : One toolkit often used in traditional imaging for various tasks, e.g. cell morphology quantifications.
 
 
+**Specific analyses / tools**
 
 * [Seurat spatial vignette (imaging-based )](https://satijalab.org/seurat/articles/seurat5_spatial_vignette_2) : How to load and plot spatial data with seurat - covers different technologies.
-* [Spatial Sampler](https://swbioinf.github.io/spatialsnippets/index.html) : Worked examples and code snippets to run various statistical tests on single cell spatial data.
-* [Understanding UMAP](https://pair-code.github.io/understanding-umap/) : Exploring out UMAP works, and what affects it.
+* [Seurat visum HD vignette][https://satijalab.org/seurat/articles/visiumhd_analysis_vignette] : Analysis of spot-based visium HD data.
+* [Seurat cheat-sheet](https://satijalab.org/seurat/articles/essential_commands.html) : Essential utility commands for seurat analysis, e.g merging seurat objects from different samples, subsetting, managing feilds of view, assays and layer data.
+* ['Introduction to scRNA-seq integration' vignette](https://satijalab.org/seurat/articles/integration_introduction): To merge data from different experiments (including scRNAseq)
+* [Seurat sketch based analysis](https://satijalab.org/seurat/articles/seurat5_sketch_analysis) : For very large datasets.
+
+
+* [Clustree](https://doi.org/10.1093/gigascience/giy083) : A useful toolkit for choosing cluster resolutions.
 * [Propeller for testing celltype proportion changes](https://github.com/phipsonlab/speckle): The speckle package has tools to test for changes in celltype proportions between groups 
-* ['Introduction to scRNA-seq integration' vignette](https://satijalab.org/seurat/articles/integration_introduction). 
-* [clustree](https://doi.org/10.1093/gigascience/giy083) : A useful toolkit for choosing cluster resolutions.
-* [Biologists, stop putting UMAP plots in your papers](https://simplystatistics.org/posts/2024-12-23-biologists-stop-including-umap-plots-in-your-papers/): A discussion on how UMAPs can sometimes be misinterpreted
-
-
-* https://www.10xgenomics.com/analysis-guides
+* [Statial package](https://bioconductor.org/packages/release/bioc/html/Statial.html)  and [Kontextual paper](https://www.sciencedirect.com/science/article/pii/S2667237525002115): Toolkit for quanitifying spatial differences between 
 
 
 
-* [Basic cell histology](https://unclineberger.org/unclcn/wp-content/uploads/sites/871/2023/08/2023Basic-Cell-Histology-Lecture_onlinePath.pdf)
 
-Other references
-
-* [Korsunsky et al 2019](https://www.nature.com/articles/s41592-019-0619-0): Harmony paper
-* [Antonsson and Melsted (2025)](https://genome.cshlp.org/content/35/8/1832.full) : Review on batch correction methods in single cell data
