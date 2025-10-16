@@ -29,19 +29,11 @@ library(here)
 
 ```{r eval=F}
 # Import the custom LoadNanostring() function
-# Import the custom LoadNanostring() function
-
 source(here("scripts/LoadNanostring_edited_function.R"))
 
 # Define the path to the flat files. Note that the input is the whole directory.
-# Define the path to the flat files. Note that the input is the whole directory.
-
 # The function deals with reading and assigning the metadata correctly to the
-# The function deals with reading and assigning the metadata correctly to the
-
 # cells and gene counts
-# cells and gene counts
-
 example_path <- here("raw_data", "GSM7473682_HC_a/")
 example_so <- LoadNanostring(example_path, assay='RNA', fov="GSM7473682.HC.a")
 ```
@@ -50,8 +42,6 @@ example_so <- LoadNanostring(example_path, assay='RNA', fov="GSM7473682.HC.a")
 
 ```{r eval=F}
 # Code to subset the data
-# Code to subset the data
-
 seurat_file_00_raw <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw.RDS")
 so_raw_full <- readRDS(seurat_file_00_raw)
 so_raw_subset <- so_raw_full[, so_raw_full$group %in% c("CD", "HC") & so_raw_full@meta.data$fov <= 4]
@@ -60,8 +50,6 @@ saveRDS(so_raw_subset, here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsample
 
 ```{r}
 # Load the prepared data
-# Load the prepared data
-
 so_path <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
 so <- readRDS(so_path)
 ```

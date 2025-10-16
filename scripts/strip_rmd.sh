@@ -6,18 +6,18 @@ out="notebooks/${input_file}"
 mkdir -p notebooks
 
 sed -n '
-	# Print headers
-	/^#/ {
+	# Print code chunks, do not incldue comments again later
+	/^```/,/```$/ {
 		p
-		a\
+		/```$/a
 
+		b
 	}
 
-	# Print code chunks
-	/^```/,/```$/p
-
-	/```$/ {
-		a\
+	# Print headers, excluding comments above
+	/^#/ {
+		p
+		a
 
 	}
 ' "$1" > ${out}

@@ -72,14 +72,8 @@ so <- RunUMAP(so, dims=1:num_dims)
 
 ```{r}
 # you can specify reduction='umap' explicitly
-# you can specify reduction='umap' explicitly
-
 # DimPlot(so, group.by='tissue_sample', reduction = 'umap') 
-# DimPlot(so, group.by='tissue_sample', reduction = 'umap') 
-
 # But by default, if a umap exists in the object, Dimplot will plot it.
-# But by default, if a umap exists in the object, Dimplot will plot it.
-
 DimPlot(so, group.by='tissue_sample') 
 ```
 

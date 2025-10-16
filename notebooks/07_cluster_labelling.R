@@ -8,8 +8,6 @@ DimPlot(so, group.by='seurat_clusters')
 
 ```{r message=FALSE, warning=FALSE}
 # Need to join the layers back again for this.
-# Need to join the layers back again for this.
-
 so <- JoinLayers(so)
 marker_table <- FindAllMarkers(so, group.by='seurat_clusters', only.pos=TRUE)
 ```
@@ -20,8 +18,6 @@ DT::datatable(marker_table)
 
 ```{r message=FALSE, warning=FALSE}    
 # Get top 3 genes per cluster, with log FC > 1
-# Get top 3 genes per cluster, with log FC > 1
-
 marker_table_top <- marker_table %>%
     group_by(cluster) %>%
     dplyr::filter(avg_log2FC > 1, p_val_adj < 0.01) %>%
@@ -43,8 +39,6 @@ library(SingleR)
 
 ```{sh eval=FALSE}
 # Do not run, but these were the linux shell commands to get and rename the data
-# Do not run, but these were the linux shell commands to get and rename the data
-
 wget https://datasets.cellxgene.cziscience.com/82e3b450-6704-43de-8036-af1838daa7df.h5ad
 mv 82e3b450-6704-43de-8036-af1838daa7df.h5ad tabula_sapiens_large_intestine_82e3b450-6704-43de-8036-af1838daa7df.h5ad
 ```
@@ -62,29 +56,17 @@ DT::datatable(head(as.data.frame(rowData(sce.ts_intestine))))
 
 ```{r}
 # Not needed, but first filter down to matched genes in our panel
-# Not needed, but first filter down to matched genes in our panel
-
 sce.ts_intestine.genename <- sce.ts_intestine[rowData(sce.ts_intestine)$feature_name %in% rownames(so),]
 
 # Are there any duplicates (we'd need to handle them, but there aren't)
-# Are there any duplicates (we'd need to handle them, but there aren't)
-
 # takes the count of each feature, then checks that there aren't any >1
-# takes the count of each feature, then checks that there aren't any >1
-
 stopifnot(sum(table(rowData(sce.ts_intestine.genename)$feature_name) != 1 ) == 0)
 
 # just rename the genes to the gene names
-# just rename the genes to the gene names
-
 rownames(sce.ts_intestine.genename) <-  rowData(sce.ts_intestine.genename)$feature_name
 
 # Pull out the normalised matrix.
-# Pull out the normalised matrix.
-
 # Quirk of this coming from the python world, the normalised assay is called 'X'
-# Quirk of this coming from the python world, the normalised assay is called 'X'
-
 ref_norm_matrix <- assay(sce.ts_intestine.genename, 'X')
 ```
 
@@ -114,13 +96,9 @@ predictions_broad
 
 ```{r}
 # Check that the order of cells is the same
-# Check that the order of cells is the same
-
 stopifnot(all(rownames(predictions_broad) == colnames(so)))
 
 # Then pull in the celltypes from pruned labels, and the 'delta.next' score for each.
-# Then pull in the celltypes from pruned labels, and the 'delta.next' score for each.
-
 so$singleR_pred_broad    <- predictions_broad$pruned.labels
 so$singleR_pred_detailed <- predictions_detailed$pruned.labels
 so$singleR_delta.next_broad    <- predictions_broad$delta.next
@@ -142,8 +120,6 @@ VlnPlot(so, features='singleR_delta.next_broad', group.by='singleR_pred_broad', 
 
 ```{r message=FALSE, warning=FALSE}
 ## Celltype proportions
-## Celltype proportions
-
 celltype_summary_table<- so@meta.data %>% as_tibble() %>%
   group_by(seurat_clusters, singleR_pred_broad ) %>%
   summarise(n_cells = n())
@@ -206,8 +182,6 @@ ImageDimPlot(so_fov,
 
 ```{r}
 ## Apply some cluster names
-## Apply some cluster names
-
 so$cluster_code <- factor( paste0("c", so$seurat_clusters),   levels=paste0('c', levels(so$seurat_clusters)))
 Idents(so) <- so$cluster_code
 
@@ -226,8 +200,6 @@ cluster_content <- list(
 )
 
 # c1 => c1: Stem cell
-# c1 => c1: Stem cell
-
 so$cluster_labels <- factor (
   paste0(names(cluster_content[as.character(so$cluster_code)]), ": ", cluster_content[as.character(so$cluster_code)]) ,
   levels = paste0( names(cluster_content), ": ", cluster_content)
@@ -288,8 +260,6 @@ heatmap(table(so$paper_singleR2, so$cluster_labels), Rowv = NA, Colv=NA, margins
 ```{r}
 
 ## Celltype proportions
-## Celltype proportions
-
 celltype_summary_table<- so@meta.data %>% as_tibble() %>%
   group_by(condition, tissue_sample, cluster_labels ) %>%
   summarise(n_cells = n())

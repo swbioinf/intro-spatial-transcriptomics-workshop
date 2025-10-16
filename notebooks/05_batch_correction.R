@@ -15,12 +15,8 @@ DimPlot(so, group.by='tissue_sample', split.by = 'tissue_sample', ncol = 3)
 
 ```{r warning=FALSE, message=FALSE}
 # Run harmony 
-# Run harmony 
-
 so <- IntegrateLayers(so, method = HarmonyIntegration, orig.reduction = "pca", new.reduction = "harmony")
 # Make a new UMAP, using the harmony values.
-# Make a new UMAP, using the harmony values.
-
 so <- RunUMAP(so, dims=1:num_dims, reduction = 'harmony')
 DimPlot(so, group.by='tissue_sample')
 ```

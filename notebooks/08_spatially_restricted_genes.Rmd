@@ -8,8 +8,6 @@ library(DT)
 
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
 #so <- readRDS("data/GSE234713_CosMx_IBD_seurat_01_preprocessed_subsampled.RDS" )
-#so <- readRDS("data/GSE234713_CosMx_IBD_seurat_01_preprocessed_subsampled.RDS" )
-
 ```
 
 ## Run MoransI once
@@ -29,18 +27,12 @@ There's a current bug ([see ticket](https://github.com/satijalab/seurat/issues/1
 
 ```{r message=FALSE, warning=FALSE}
 # If the Seurat method above crashes (segfault), a workaround is
-# If the Seurat method above crashes (segfault), a workaround is
-
 # running FindSpatiallyVariableFeatures at the assay level
-# running FindSpatiallyVariableFeatures at the assay level
-
 so_sample_assay <- so_sample[['RNA']]
 tc <- GetTissueCoordinates(so_sample)
 rownames(tc)<- tc$cell # the innards of findSpatiallyVariableFeatures expect rownames, but they're not there. Add them.
 
 # When given an 'assay' FindSpatiallyVariableFeatures returns an assay. Put it back in the seurat object
-# When given an 'assay' FindSpatiallyVariableFeatures returns an assay. Put it back in the seurat object
-
 so_sample[['RNA']] <- FindSpatiallyVariableFeatures(
   so_sample_assay,
   layer = "scale.data",
@@ -53,8 +45,6 @@ so_sample[['RNA']] <- FindSpatiallyVariableFeatures(
 
 ```{r message=FALSE, warning=FALSE}
 #Put feature name as a column in the feature metadata
-#Put feature name as a column in the feature metadata
-
 so_sample[["RNA"]]@meta.data$feature <-rownames(so_sample[["RNA"]])
 gene_metadata <- so_sample[["RNA"]]@meta.data
 
@@ -94,8 +84,6 @@ ImageDimPlot(so_sample,
 ```{r message=FALSE, warning=FALSE}
 
 # Record moransI results for each sample, one by one.
-# Record moransI results for each sample, one by one.
-
 samples <- unique(so@meta.data$tissue_sample)
 results_list <- list()
 for (the_sample in samples) {
@@ -137,22 +125,16 @@ for (the_sample in samples) {
 }
 
 # Collect output result 
-# Collect output result 
-
 results_all <- bind_rows(results_list)
 
 
 # Add group by deleting pulling out the sample name with everything after _ deleted.
-# Add group by deleting pulling out the sample name with everything after _ deleted.
-
 results_all$group <- gsub("_.*","", results_all$sample)
 
 ```
 
 ```{r fig.width=10}
 # unique set of genes that were top 10 morans in any sample
-# unique set of genes that were top 10 morans in any sample
-
 plot_genes <- filter(results_all, moransi.spatially.variable.rank <= 10) %>% pull(feature) %>% unique()
 ggplot(filter(results_all, feature %in% plot_genes), aes(x=feature, y=MoransI_observed)) +
   geom_boxplot() +

@@ -11,8 +11,6 @@ knitr::opts_chunk$set(
 )
 
 # load libraries for this step
-# load libraries for this step
-
 library(Seurat)
 library(tidyverse)
 library(here)
@@ -20,8 +18,6 @@ library(here)
 
 ```{r}
 # Read in the subsampled data for this lesson
-# Read in the subsampled data for this lesson
-
 so_path <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
 so <- readRDS(so_path)
 ```
@@ -43,8 +39,6 @@ ggplot(so@meta.data, aes(x = nCount_RNA, col = tissue_sample)) +
 
 ```{r warning=F}
 # Total counts per cell
-# Total counts per cell
-
 ggplot(so@meta.data, aes(x=Area, col=tissue_sample)) +
   geom_density() +
   scale_x_log10() +
@@ -83,8 +77,6 @@ ggplot(so@meta.data, aes(x=Area, y=nCount_RNA, colour=tissue_sample)) +
 so$percent_neg <- (so$nCount_negprobes / (so$nCount_RNA + so$nCount_negprobes)) * 100
 
 # Join layers to calculate average_neg
-# Join layers to calculate average_neg
-
 so@assays$negprobes <- JoinLayers(so@assays$negprobes)
 so$mean_neg <- colMeans(so@assays$negprobes) # Only defined first sample
 ```
@@ -107,8 +99,6 @@ so@meta.data %>%
 
 ```{r}
 # Discuss difference with Xenium - xenium lower counts, lower background.
-# Discuss difference with Xenium - xenium lower counts, lower background.
-
 ggplot(so@meta.data, aes(y=mean_neg, x=nCount_RNA)) +
   geom_point(pch=3, alpha=0.1) +
   scale_x_log10() +
@@ -145,8 +135,6 @@ ggplot(so@meta.data, aes(y=percent_neg, x=nCount_RNA)) +
 
 ```{r}
 # Apply a filter
-# Apply a filter
-
 so@meta.data <- 
   so@meta.data %>%
   mutate(
@@ -191,18 +179,12 @@ table(so$qc, so$orig.ident)
 
 ```{r}
 # Epithelial compartment less patchy, but still hard to retain the stromal cells
-# Epithelial compartment less patchy, but still hard to retain the stromal cells
-
 # These are the trade-offs to consider
-# These are the trade-offs to consider
-
 ImageDimPlot(so, fov = "GSM7473684.HC.c", group.by = "qc")
 ```
 
 ```{r}
 # A lot of cells marked for removal and a bit patchy
-# A lot of cells marked for removal and a bit patchy
-
 ImageDimPlot(so, fov = "GSM7473688.CD.a", group.by = "qc")
 ```
 
@@ -236,8 +218,6 @@ so@meta.data %>%
 
 ```{r, eval=F}
 # For each cell, calculate the distance between the centroid to each FOV border
-# For each cell, calculate the distance between the centroid to each FOV border
-
 so_borders <- so@meta.data %>%
   group_by(tissue_sample, fov) %>%
   mutate(

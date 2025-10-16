@@ -8,8 +8,6 @@ so <- FindNeighbors(so, reduction = "harmony", dims = 1:15)
 
 ```{r message=FALSE, warning=FALSE}
 # Resolution generally between 0.1 and 1
-# Resolution generally between 0.1 and 1
-
 so <- FindClusters(so, resolution = 0.2 )  # A low resolution, fewer clusters
 so <- FindClusters(so, resolution = 1.0 )  # high res for more
 so <- FindClusters(so, resolution = 0.8 ) # the default resolution  
@@ -37,8 +35,6 @@ DimPlot(so, group.by='seurat_clusters')
 ```{r}
 
 ## Celltype proportions
-## Celltype proportions
-
 celltype_summary_table<- so@meta.data %>% as_tibble() %>%
   group_by(condition, tissue_sample, seurat_clusters ) %>%
   summarise(n_cells = n())
