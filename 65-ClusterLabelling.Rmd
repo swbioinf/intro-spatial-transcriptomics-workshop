@@ -71,6 +71,8 @@ print(noquote(top_marker_genes))
 
 **ACTIVITY** Choose a cluster, pull out its top genes. Try them in [enrichR](https://maayanlab.cloud/Enrichr/enrich) > Cell Types. What is it?  Is there a similar cluster? Do you trust the results?
 
+TODO: Probably retire this one?
+
 :::
 
 
@@ -92,11 +94,34 @@ A typical reference would be from a public single cell datasets from a matched c
 Alternatively, there are some databases of single cell datasets - see [Human Cell Atlas](https://data.humancellatlas.org/) or [CELLxGENE datasets](https://cellxgene.cziscience.com/datasets). These databases also let you browse the data online - which is an excellent resource for the design or cell annotation stages; you can look up gene expression in a particular celltype to see if it matches what you are seeing.
 
 
-
 The tabula sapiens project ([paper](https://www.science.org/doi/10.1126/science.abl4896)) as built a single cell atlas from a good number of human tissues. Its data is browse-able and hosted in the [cellXgene tabular sapiens collection](https://cellxgene.cziscience.com/collections/e5f58829-1a66-40b5-a624-9046778e74f5)
 
 
 These are colon tissue samples, and there is a large intestine set listed (which includes colon samples). Conveniently, we can browse the data online to check if it will be suitable: via a [cellXgene interface](https://cellxgene.cziscience.com/e/7357cee7-9f7f-4ab0-8cec-90de8f047e38.cxg/)
+
+
+::: {.rmdnote}
+
+**ACTIVITY** Finding reference data
+
+Open up [the cellXgene interface for the large inestine set](https://cellxgene.cziscience.com/e/7357cee7-9f7f-4ab0-8cec-90de8f047e38.cxg/). Have a dig around and consider the following.
+
+1) Is there a feild with a celltype annotation that we would like to use for this data - which one? 
+2) Can we see any potential issues with it? E.g. batch effect? 
+3) If we know PIGR as a intestinal epithelia marker - do the labels make sense?
+
+:::
+
+<!--
+
+* Discussion re specific vs broad. Some of the specific groups have very few cells!
+* Batch effect
+* One smartseq run. It doesn't really matter for what we are doing though. 
+* PIGR expression  - yep, more or less makes sense. (stem cellsare beneath the epithelia, and we'll see that later.)
+* just because its labelleld one way, doesn't mean you have to agree with their annotations!
+
+-->
+
 
 Broad cell class looks pretty good. There's colon included. Some individual level effect in the UMAP (stem cells limited to 1-2 samples). It'll work, and there's an easy link to download the data.
 
@@ -163,7 +188,6 @@ predictions_detailed <- SingleR::SingleR(test = norm_matrix,
                                 BPPARAM = MulticoreParam(workers=8)
 )
 ```
-
 
 
 
@@ -313,7 +337,7 @@ so$cluster_code <- factor( paste0("c", so$seurat_clusters),   levels=paste0('c',
 Idents(so) <- so$cluster_code
 
 cluster_content <- list(
-  c0 = "Stem cell", # PIGR
+  c0 = "Stem cell", 
   c1 = "Plasma cell", #B lymphocyte lineage: JCHAIN/ MZB1 / DERL3  (typical for Plasma/Plasma/Plasma)
   c2 = "Fibroblast",   
   c3 = "Mixed",  
@@ -400,6 +424,14 @@ heatmap(table(so$paper_singleR2, so$cluster_labels), Rowv = NA, Colv=NA, margins
 ```
 
 ![](images/cluster_labels_vs_detailedcelltypes.png)
+
+## Save the data
+
+Here would be a natural place to save our annotated data object for downstream analysis;
+
+```{r eval=F}
+saveRDS(so, file = here("data", "GSE234713_CosMx_IBD_seurat_04_celltypes.RDS"))
+```
 
 
 

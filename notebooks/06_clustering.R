@@ -1,0 +1,55 @@
+# Clustering{#clustering}
+
+## Generate Clusters
+
+```{r message=FALSE}
+so <- FindNeighbors(so, reduction = "harmony", dims = 1:15)
+```
+
+```{r message=FALSE, warning=FALSE}
+# Resolution generally between 0.1 and 1
+so <- FindClusters(so, resolution = 0.2 )  # A low resolution, fewer clusters
+so <- FindClusters(so, resolution = 1.0 )  # high res for more
+so <- FindClusters(so, resolution = 0.8 ) # the default resolution  
+```
+
+```{r  message=FALSE, warning=FALSE}
+DimPlot(so, group.by='RNA_snn_res.0.2')
+DimPlot(so, group.by='RNA_snn_res.0.8')
+DimPlot(so, group.by='RNA_snn_res.1')
+```
+
+```{r  message=FALSE, warning=FALSE}
+library(clustree)
+clustree(so)
+```
+
+```{r message=FALSE, warning=FALSE, eval=FALSE}
+so <- FindClusters(so, resolution = 0.8)  # Rerun if you've been trying other resolutions
+```
+
+```{r}
+DimPlot(so, group.by='seurat_clusters')
+```
+
+```{r}
+
+## Celltype proportions
+celltype_summary_table<- so@meta.data %>% as_tibble() %>%
+  group_by(condition, tissue_sample, seurat_clusters ) %>%
+  summarise(n_cells = n())
+
+
+
+ggplot(celltype_summary_table, aes(x=tissue_sample, y=n_cells, fill=seurat_clusters)) +
+  geom_bar(position="fill", stat="identity") +
+  theme_bw() +
+  coord_flip() +
+  theme(legend.position = "bottom") +
+  scale_y_continuous(expand = c(0,0)) +
+  ggtitle( "Celltype composition") +
+  facet_wrap(~condition, ncol = 1, scales = 'free_y')
+
+
+```
+
