@@ -41,14 +41,11 @@ summary-1
 normalisation-and-scaling
 learning-objectives-3
 overview-3
-reload-data
-normalisation
-find-highly-variable-genes.
+selecing-a-normalisation-approach
+identifying-highly-variable-genes-hvg
 scale-data
 ReducedDimensionality
-normalisation-1
-find-highly-variable-genes.-1
-scale-data-1
+reload-data
 pca
 umap
 using-umap-to-visualise-your-data
@@ -64,6 +61,7 @@ spatial-examination-of-plots
 using-the-images-data
 recording-celltype-annotations
 pull-in-real-annotation
+save-the-data
 use-the-annotations
 what-about-that-missing-celltype-in-sample-cd_b
 SpatiallyRestrictedGenes
@@ -73,4 +71,7 @@ explore-moransi-results
 NextSteps
 what-did-the-authors-find-from-this-dataset
 other-techniques.
+imaging-related
+downtream-annotation-and-analyses
+visualisation
 resources
