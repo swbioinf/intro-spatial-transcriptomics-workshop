@@ -175,3 +175,40 @@ git add --all
 git commit -m "Update site"
 git push gh-pages
 ```
+
+## Converting content to working .Rmd files
+
+Remove all text from an .Rmd file.
+
+Example, for a single file.
+
+```bash
+scripts/strip_rmd.sh 45-normalisation.Rmd
+```
+```console
+45-normalisation.Rmd → notebooks/45-normalisation.Rmd
+```
+
+For all .Rmd in the repo.
+
+```bash
+for i in *.Rmd; do scripts/strip_rmd.sh $i; done
+```
+```console
+01-intro.Rmd → notebooks/01-intro.Rmd
+05-background.Rmd → notebooks/05-background.Rmd
+20-study.Rmd → notebooks/20-study.Rmd
+22-example_output.Rmd → notebooks/22-example_output.Rmd
+30-data.Rmd → notebooks/30-data.Rmd
+40-QC.Rmd → notebooks/40-QC.Rmd
+45-normalisation.Rmd → notebooks/45-normalisation.Rmd
+50-ReduceDims.Rmd → notebooks/50-ReduceDims.Rmd
+55-BatchCorrection.Rmd → notebooks/55-BatchCorrection.Rmd
+60-clustering.Rmd → notebooks/60-clustering.Rmd
+65-ClusterLabelling.Rmd → notebooks/65-ClusterLabelling.Rmd
+72-spatiallyrestrictedgenes.Rmd → notebooks/72-spatiallyrestrictedgenes.Rmd
+80-nextsteps.Rmd → notebooks/80-nextsteps.Rmd
+85-resources.Rmd → notebooks/85-resources.Rmd
+90-references.Rmd → notebooks/90-references.Rmd
+index.Rmd → notebooks/index.Rmd
+```
