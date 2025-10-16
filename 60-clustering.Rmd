@@ -56,6 +56,8 @@ This is hard, because its not our experiment!
 
 Put a question or plot in the google doc.
 
+:::
+
 <!--
 Points to lead discussion:
 
@@ -67,7 +69,6 @@ Points to lead discussion:
 * You're the domain expert, you make the call...
 
 -->
-:::
 
 
 In real life, choosing a clustering resolution can be a cyclic process with cell type labelling. The 'correct' level of clustering is one that lets you answer the biological questions you are interested in. To broad and you'll have heterogeneity in your clusters, or too specific and and you'll have somewhat arbitrary clusters with too few cells to test anything. You may need to use different levels of clustering for different analyses, or choose to make sub-clusters in one particular celltype of interest.

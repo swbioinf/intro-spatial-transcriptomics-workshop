@@ -161,3 +161,13 @@ Note the presence of the single 'scale.data' layer.
 ```{r}
 so
 ```
+
+
+Save the object
+
+```{r eval=F}
+saveRDS(so, file = here("data", "GSE234713_CosMx_IBD_seurat_03_normalised.RDS"))
+```
+
+
+

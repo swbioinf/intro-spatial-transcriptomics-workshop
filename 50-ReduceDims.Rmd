@@ -25,8 +25,9 @@ library(Seurat)
 library(tidyverse)
 library(here)
 
-filtered_seurat_object_file <- here("data", "GSE234713_CosMx_IBD_seurat_02_rna70_neg4.RDS")
-so    <- readRDS(filtered_seurat_object_file) 
+
+normalised_seurat_object_file <- here("data", "GSE234713_CosMx_IBD_seurat_03_normalised.RDS")
+so    <- readRDS(normalised_seurat_object_file) 
 ```
 
 
