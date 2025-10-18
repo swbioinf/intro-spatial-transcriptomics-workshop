@@ -1,5 +1,16 @@
 # Spatially Restricted Genes {#SpatiallyRestrictedGenes}
 
+
+## Goals
+
+* Find genes that have a particularly non-random distribution (high autocorrelation) across the tissue
+* Investigate what might be the reason behind the high autocorrlation of one of those genes.
+
+
+
+## Overview
+
+
 ![](images/workflows/07_analysis.png){width=100%}
 
 <!--
@@ -21,7 +32,6 @@ library(DT)
 What genes have a spatially restricted expression across the tissue? These might be localised to a particular region and indicate some spatial activity.
 
 We can calculate 'spatial autocorrelation' with the MoransI test to find them. 
-
 
 
 ## Run MoransI once
@@ -261,11 +271,12 @@ ImageDimPlot(so.HC_a.4,
 
 That seems to be because of a group of T cells expressing CCL21's. We can highlight those alongside our transcripts.
 ```{r message=FALSE, warning=FALSE}
-so.HC_a.4$isT <- ifelse(so.HC_a.4$cluster_labels == "c5: T cell", "T cell", "Other")
+# Show only B and T cells
+so.HC_a.4$isBT <- ifelse(so.HC_a.4$cluster_labels %in% c("c5: T cell", "c8: B cell"), so.HC_a.4$cluster_labels, "Other")
 ImageDimPlot(so.HC_a.4, 
              molecules  = 'CCL21', 
-             group.by   = 'isT', alpha=0.3,# Show clusters, but faded 
-             cols = c("T cell"="blue", 'Other'='grey80'),
+             group.by   = 'isBT', alpha=0.3,# Show clusters, but faded 
+             cols = c("c5: T cell"='royalblue', "c8: B cell"='aquamarine', 'Other'='grey80'),
              boundaries = "segmentation",  border.color = NA, axes = T, crop=TRUE) 
 ```
 
