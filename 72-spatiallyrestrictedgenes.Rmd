@@ -26,7 +26,7 @@ library(DT)
 ```
 
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
-#so <- readRDS("data/GSE234713_CosMx_IBD_seurat_01_preprocessed_subsampled.RDS" )
+so <- readRDS("data/GSE234713_CosMx_IBD_seurat_04_celltypes.RDS" )
 ```
 
 What genes have a spatially restricted expression across the tissue? These might be localised to a particular region and indicate some spatial activity.
@@ -122,11 +122,13 @@ ImageDimPlot(so_sample,
 
 Could it be that the expression pattern of a gene is disrupted? Is there a difference between samples or between groups?
 
-Lets run the test on every sample. This is slow, For 15 genes on our 6 small subsetted samples it takes 2-3minutes. 
+Lets run the test on every sample. This is slow - do not run on the workshop machines, instead load the precomputed results.
 
 For real life, it could be parallelised and/or run overnight.
 
 ```{r message=FALSE, warning=FALSE}
+
+## Do Not Run ##
 
 # Record moransI results for each sample, one by one.
 samples <- unique(so@meta.data$tissue_sample)
@@ -176,6 +178,13 @@ results_all <- bind_rows(results_list)
 # Add group by deleting pulling out the sample name with everything after _ deleted.
 results_all$group <- gsub("_.*","", results_all$sample)
 
+morans_results_file <- file.path("data", "morans_results.RDS")
+saveRDS(results_all, morans_results_file)
+```
+
+Load preprepared results file
+```{r}
+results_all <- readRDS(morans_results_file)
 ```
 
 

@@ -104,15 +104,6 @@ The tabula sapiens project ([paper](https://www.science.org/doi/10.1126/science.
 These are colon tissue samples, and there is a large intestine set listed (which includes colon samples). Conveniently, we can browse the data online to check if it will be suitable: via a [cellXgene interface](https://cellxgene.cziscience.com/e/7357cee7-9f7f-4ab0-8cec-90de8f047e38.cxg/)
 
 
-<!--
-
-* Discussion re specific vs broad. Some of the specific groups have very few cells!
-* Batch effect
-* One smartseq run. It doesn't really matter for what we are doing though. 
-* PIGR expression  - yep, more or less makes sense. (stem cellsare beneath the epithelia, and we'll see that later.)
-* just because its labelleld one way, doesn't mean you have to agree with their annotations!
-
--->
 
 
 Broad cell class looks pretty good. There's colon included. Some individual level effect in the UMAP (stem cells limited to 1-2 samples). It'll work, and there's an easy link to download the data.
@@ -130,31 +121,20 @@ Its a .h5ad file, common from pythonic analyses. Luckily we can use the schard p
 
 
 This code will load, subset and convert the raw data. We will not run it here. 
-```{r eval=FALSE, message=FALSE, warning=FALSE}
-# Do not run.
+```{r message=FALSE, warning=FALSE}
+
+## Do not run ##
+
 library(schard)
 
 ts_largeintestine_h5ad <- file.path("data/tabula_sapiens/tabula_sapiens_large_intestine_82e3b450-6704-43de-8036-af1838daa7df.h5ad")
 sce.ts_intestine = schard::h5ad2sce(ts_largeintestine_h5ad)
-
-
-# Subset to 20% of the dataset to make it run better in workshop.
-# Would use the whole dataset in a real analysis.
-ncells <- ncol(sce.ts_intestine)
-sce.ts_intestine.mini <- sce.ts_intestine[,sample(ncells, round(ncells*0.2))]
-
-ts_largeintestine_sce_file <- file.path("data/tabula_sapiens/tabula_sapiens_large_intestine_mini")
-saveHDF5SummarizedExperiment(sce.ts_intestine.mini, ts_largeintestine_sce_file)
 ```
 
-```{r}
-library(HDF5Array)
-ts_largeintestine_sce_file <- file.path("data/tabula_sapiens/tabula_sapiens_large_intestine_mini")
-sce.ts_intestine <- loadHDF5SummarizedExperiment(ts_largeintestine_sce_file)
-```
 
 Instead it builds a SingleCellExperiment object - a data format central to bioconductor packages (this is fine, SingleR is from bioconductor too!). SCE objects work quite similarly to seurat objects, but have different notation - e.g. _colData_ and _rowData_ access the cell and gene information respectively.
 ```{r}
+## Do not run ##
 DT::datatable(head(as.data.frame(colData(sce.ts_intestine))))
 DT::datatable(head(as.data.frame(rowData(sce.ts_intestine))))
 ```
@@ -162,6 +142,8 @@ DT::datatable(head(as.data.frame(rowData(sce.ts_intestine))))
 
 The gene names in that object are ensemble gene IDs - let change them to gene symbols to match our data.
 ```{r}
+## Do not run ##
+
 # Not needed, but first filter down to matched genes in our panel
 sce.ts_intestine.genename <- sce.ts_intestine[rowData(sce.ts_intestine)$feature_name %in% rownames(so),]
 
@@ -181,6 +163,8 @@ ref_norm_matrix <- assay(sce.ts_intestine.genename, 'X')
 The following code makes celltype predictions using the reference at the broad and specific annotation levels. It takes a few minutes to run - even with 8 cores. 
 
 ```{r}
+## Do not run ##
+
 library(BiocParallel) # allow parallelisation with MulticoreParam(). 
 
 norm_matrix <- GetAssayData(so, assay = 'RNA', layer = 'data')
@@ -198,16 +182,23 @@ predictions_detailed <- SingleR::SingleR(test = norm_matrix,
                                 aggr.ref = TRUE, # builds a pseudobulk reference , speedier processing
                                 BPPARAM = MulticoreParam(workers=8)
 )
+
+# Save results to disk, for reloading during workshop
+predictions_broad_file <- file.path("data","predictions_with_ts_intestine_broad_cell_class.RDS")
+predictions_detailed_file <- file.path("data","predictions_with_ts_intestine_detailed_celltype.RDS")
+saveRDS(predictions_broad, predictions_broad_file)
+saveRDS(predictions_detailed, predictions_detailed_file)
+
 ```
 
+Load the previously saved results. 
 
-
-<!-- ```{r} -->
-<!-- predictions_broad_file    <- file.path("data","predictions_with_ts_intestine_broad_cell_class.RDS") -->
-<!-- predictions_detailed_file <- file.path("data","predictions_with_ts_intestine_detailed_celltype.RDS") -->
-<!-- predictions_broad    <- readRDS(predictions_broad_file) -->
-<!-- predictions_detailed <- readRDS(predictions_detailed_file) -->
-<!-- ``` -->
+```{r}
+predictions_broad_file    <- file.path("data","predictions_with_ts_intestine_broad_cell_class.RDS")
+predictions_detailed_file <- file.path("data","predictions_with_ts_intestine_detailed_celltype.RDS")
+predictions_broad    <- readRDS(predictions_broad_file)
+predictions_detailed <- readRDS(predictions_detailed_file)
+```
 
 The predictions look like this;
 ```{r}
