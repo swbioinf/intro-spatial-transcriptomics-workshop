@@ -1,5 +1,18 @@
 # Clustering Labeling{#ClusterLabelling}
 
+## Goals
+
+* Evaluate what type of cell might be in each cluster using multiple lines of evidence:
+   + Genes that are expressed specifically in the cluster
+   + Find a public dataset of colon samples, and use a 'cell typing' tool to classify cells according to its categories
+   + Location of clusters within tissue
+   + Discuss value of histology images 
+* Make an informed choice on a celltype label for each cluster, and it for downstream analysis.
+
+
+## Overview
+
+
 ![](images/workflows/06_annotation.png){width=100%}
 
 Classifying cells into meaningful celltypes (or cell states) is a time consuming, but extremely important, part of a spatial analysis.
@@ -59,22 +72,13 @@ DotPlot(so, features = unique(marker_table_top$gene)) + theme(axis.text.x = elem
 <!-- ``` -->
 
 
-You can get some more information form these marker lists by dropping them into a tool like [enrichr](https://maayanlab.cloud/Enrichr/enrich) and considering cell type enrichment.
+You can get some more information form these marker lists by dropping them into a tool like [enrichr](https://maayanlab.cloud/Enrichr/) and considering cell type enrichment.
 NB: enrichR also has a R package, and could be done programatically 
 
 ```{r}
 top_marker_genes <- filter(marker_table, cluster == "1") %>% dplyr::filter(avg_log2FC > 1, p_val_adj < 0.01) %>% pull(gene) %>% head(20)
 print(noquote(top_marker_genes))
 ```
-
-::: {.rmdnote}
-
-**ACTIVITY** Choose a cluster, pull out its top genes. Try them in [enrichR](https://maayanlab.cloud/Enrichr/enrich) > Cell Types. What is it?  Is there a similar cluster? Do you trust the results?
-
-TODO: Probably retire this one?
-
-:::
-
 
 
 
@@ -100,27 +104,6 @@ The tabula sapiens project ([paper](https://www.science.org/doi/10.1126/science.
 These are colon tissue samples, and there is a large intestine set listed (which includes colon samples). Conveniently, we can browse the data online to check if it will be suitable: via a [cellXgene interface](https://cellxgene.cziscience.com/e/7357cee7-9f7f-4ab0-8cec-90de8f047e38.cxg/)
 
 
-::: {.rmdnote}
-
-**ACTIVITY** Finding reference data
-
-Open up [the cellXgene interface for the large inestine set](https://cellxgene.cziscience.com/e/7357cee7-9f7f-4ab0-8cec-90de8f047e38.cxg/). Have a dig around and consider the following.
-
-1) Is there a feild with a celltype annotation that we would like to use for this data - which one? 
-2) Can we see any potential issues with it? E.g. batch effect? 
-3) If we know PIGR as a intestinal epithelia marker - do the labels make sense?
-
-:::
-
-<!--
-
-* Discussion re specific vs broad. Some of the specific groups have very few cells!
-* Batch effect
-* One smartseq run. It doesn't really matter for what we are doing though. 
-* PIGR expression  - yep, more or less makes sense. (stem cellsare beneath the epithelia, and we'll see that later.)
-* just because its labelleld one way, doesn't mean you have to agree with their annotations!
-
--->
 
 
 Broad cell class looks pretty good. There's colon included. Some individual level effect in the UMAP (stem cells limited to 1-2 samples). It'll work, and there's an easy link to download the data.
@@ -136,14 +119,22 @@ mv 82e3b450-6704-43de-8036-af1838daa7df.h5ad tabula_sapiens_large_intestine_82e3
 
 Its a .h5ad file, common from pythonic analyses. Luckily we can use the schard package to read it into R directly. But not to a seurat object. 
 
+
+This code will load, subset and convert the raw data. We will not run it here. 
 ```{r message=FALSE, warning=FALSE}
+
+## Do not run ##
+
 library(schard)
+
 ts_largeintestine_h5ad <- file.path("data/tabula_sapiens/tabula_sapiens_large_intestine_82e3b450-6704-43de-8036-af1838daa7df.h5ad")
 sce.ts_intestine = schard::h5ad2sce(ts_largeintestine_h5ad)
 ```
 
+
 Instead it builds a SingleCellExperiment object - a data format central to bioconductor packages (this is fine, SingleR is from bioconductor too!). SCE objects work quite similarly to seurat objects, but have different notation - e.g. _colData_ and _rowData_ access the cell and gene information respectively.
 ```{r}
+## Do not run ##
 DT::datatable(head(as.data.frame(colData(sce.ts_intestine))))
 DT::datatable(head(as.data.frame(rowData(sce.ts_intestine))))
 ```
@@ -151,6 +142,8 @@ DT::datatable(head(as.data.frame(rowData(sce.ts_intestine))))
 
 The gene names in that object are ensemble gene IDs - let change them to gene symbols to match our data.
 ```{r}
+## Do not run ##
+
 # Not needed, but first filter down to matched genes in our panel
 sce.ts_intestine.genename <- sce.ts_intestine[rowData(sce.ts_intestine)$feature_name %in% rownames(so),]
 
@@ -170,6 +163,8 @@ ref_norm_matrix <- assay(sce.ts_intestine.genename, 'X')
 The following code makes celltype predictions using the reference at the broad and specific annotation levels. It takes a few minutes to run - even with 8 cores. 
 
 ```{r}
+## Do not run ##
+
 library(BiocParallel) # allow parallelisation with MulticoreParam(). 
 
 norm_matrix <- GetAssayData(so, assay = 'RNA', layer = 'data')
@@ -187,16 +182,23 @@ predictions_detailed <- SingleR::SingleR(test = norm_matrix,
                                 aggr.ref = TRUE, # builds a pseudobulk reference , speedier processing
                                 BPPARAM = MulticoreParam(workers=8)
 )
+
+# Save results to disk, for reloading during workshop
+predictions_broad_file <- file.path("data","predictions_with_ts_intestine_broad_cell_class.RDS")
+predictions_detailed_file <- file.path("data","predictions_with_ts_intestine_detailed_celltype.RDS")
+saveRDS(predictions_broad, predictions_broad_file)
+saveRDS(predictions_detailed, predictions_detailed_file)
+
 ```
 
+Load the previously saved results. 
 
-
-<!-- ```{r} -->
-<!-- predictions_broad_file    <- file.path("data","predictions_with_ts_intestine_broad_cell_class.RDS") -->
-<!-- predictions_detailed_file <- file.path("data","predictions_with_ts_intestine_detailed_celltype.RDS") -->
-<!-- predictions_broad    <- readRDS(predictions_broad_file) -->
-<!-- predictions_detailed <- readRDS(predictions_detailed_file) -->
-<!-- ``` -->
+```{r}
+predictions_broad_file    <- file.path("data","predictions_with_ts_intestine_broad_cell_class.RDS")
+predictions_detailed_file <- file.path("data","predictions_with_ts_intestine_detailed_celltype.RDS")
+predictions_broad    <- readRDS(predictions_broad_file)
+predictions_detailed <- readRDS(predictions_detailed_file)
+```
 
 The predictions look like this;
 ```{r}
@@ -303,6 +305,9 @@ ImageDimPlot(so_fov,
 ```
 
 ## Using the images data
+
+Image showing colonic mucosa, from https://www.pathologyoutlines.com/topic/colonhistology.html
+![](images/colonic_mucosa.png){width=100%}
 
 A big advantage of these spatial methods is that you will generally also have H&E or immunofluorescence(IF)  (with cell/membrane stains or a full panel) images (and sometimes both),  because now you can see the cell. 
 

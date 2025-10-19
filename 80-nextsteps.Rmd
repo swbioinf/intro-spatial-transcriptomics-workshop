@@ -26,7 +26,7 @@ To summarise the kinds of things that are possible with single-cell spatial data
 * Observed spatially localised expression of a gene (NRG1) within a subset of apically-located fibroblasts (page 4 - _Inflammation-dependent alternative macrophages express neuregulin 1_)
 
 
-## Other techniques.
+## Other techniques{#OtherTechniques}
 
 
 ### Imaging related
