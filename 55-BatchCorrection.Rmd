@@ -1,6 +1,15 @@
 # Batch Correction{#BatchCorrection}
 
 
+**Goals**
+
+* Identify if there are any batch effects in our data, and remove them
+* Build a new UMAP plot that has cells grouped more by celltype and less by sample/batch.
+
+## Overview
+
+
+
 We generally want to compare and analyse matched cell types (or cell states) across different experimental groups. But transcriptional differences between individuals or batch effects from preparation or slide can introduce other unwanted variation that makes it hard to see cell type differences. We can address this will batch correction or integration methods. 
 
 Here is a good description of integration methods and how to choose them, [Single cell best practicies, integration](https://www.sc-best-practices.org/cellular_structure/integration.html), and a review on batch correction methods in single cell data is here [Antonsson and Melsted (2025)](https://genome.cshlp.org/content/35/8/1832.full).

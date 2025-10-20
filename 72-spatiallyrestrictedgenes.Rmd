@@ -1,5 +1,16 @@
 # Spatially Restricted Genes {#SpatiallyRestrictedGenes}
 
+
+## Goals
+
+* Find genes that have a particularly non-random distribution (high autocorrelation) across the tissue
+* Investigate what might be the reason behind the high autocorrlation of one of those genes.
+
+
+
+## Overview
+
+
 ![](images/workflows/07_analysis.png){width=100%}
 
 <!--
@@ -15,13 +26,12 @@ library(DT)
 ```
 
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
-#so <- readRDS("data/GSE234713_CosMx_IBD_seurat_01_preprocessed_subsampled.RDS" )
+#so <- readRDS("data/GSE234713_CosMx_IBD_seurat_04_celltypes.RDS" )
 ```
 
 What genes have a spatially restricted expression across the tissue? These might be localised to a particular region and indicate some spatial activity.
 
 We can calculate 'spatial autocorrelation' with the MoransI test to find them. 
-
 
 
 ## Run MoransI once
@@ -112,11 +122,13 @@ ImageDimPlot(so_sample,
 
 Could it be that the expression pattern of a gene is disrupted? Is there a difference between samples or between groups?
 
-Lets run the test on every sample. This is slow, For 15 genes on our 6 small subsetted samples it takes 2-3minutes. 
+Lets run the test on every sample. This is slow - do not run on the workshop machines, instead load the precomputed results.
 
 For real life, it could be parallelised and/or run overnight.
 
 ```{r message=FALSE, warning=FALSE}
+
+## Do Not Run ##
 
 # Record moransI results for each sample, one by one.
 samples <- unique(so@meta.data$tissue_sample)
@@ -166,6 +178,14 @@ results_all <- bind_rows(results_list)
 # Add group by deleting pulling out the sample name with everything after _ deleted.
 results_all$group <- gsub("_.*","", results_all$sample)
 
+morans_results_file <- file.path("data", "morans_results.RDS")
+saveRDS(results_all, morans_results_file)
+```
+
+Load preprepared results file
+```{r}
+morans_results_file <- file.path("data", "morans_results.RDS")
+results_all <- readRDS(morans_results_file)
 ```
 
 
@@ -261,11 +281,12 @@ ImageDimPlot(so.HC_a.4,
 
 That seems to be because of a group of T cells expressing CCL21's. We can highlight those alongside our transcripts.
 ```{r message=FALSE, warning=FALSE}
-so.HC_a.4$isT <- ifelse(so.HC_a.4$cluster_labels == "c5: T cell", "T cell", "Other")
+# Show only B and T cells
+so.HC_a.4$isBT <- ifelse(so.HC_a.4$cluster_labels %in% c("c5: T cell", "c8: B cell"), so.HC_a.4$cluster_labels, "Other")
 ImageDimPlot(so.HC_a.4, 
              molecules  = 'CCL21', 
-             group.by   = 'isT', alpha=0.3,# Show clusters, but faded 
-             cols = c("T cell"="blue", 'Other'='grey80'),
+             group.by   = 'isBT', alpha=0.3,# Show clusters, but faded 
+             cols = c("c5: T cell"='royalblue', "c8: B cell"='aquamarine', 'Other'='grey80'),
              boundaries = "segmentation",  border.color = NA, axes = T, crop=TRUE) 
 ```
 
