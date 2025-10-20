@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Chapter 10 Batch Correction | Intro to Spatial Transcriptomics</title>
 <meta name="author" content="">
-<meta name="description" content="We generally want to compare and analyse matched cell types (or cell states) across different experimental groups. But transcriptional differences between individuals or batch effects from...">
+<meta name="description" content="Goals Identify if there are any batch effects in our data, and remove them Build a new UMAP plot that has cells grouped more by celltype and less by sample/batch.  10.1 Overview We generally want...">
 <meta name="generator" content="bookdown 0.42.1 with bs4_book()">
 <meta property="og:title" content="Chapter 10 Batch Correction | Intro to Spatial Transcriptomics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="We generally want to compare and analyse matched cell types (or cell states) across different experimental groups. But transcriptional differences between individuals or batch effects from...">
+<meta property="og:description" content="Goals Identify if there are any batch effects in our data, and remove them Build a new UMAP plot that has cells grouped more by celltype and less by sample/batch.  10.1 Overview We generally want...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Chapter 10 Batch Correction | Intro to Spatial Transcriptomics">
-<meta name="twitter:description" content="We generally want to compare and analyse matched cell types (or cell states) across different experimental groups. But transcriptional differences between individuals or batch effects from...">
+<meta name="twitter:description" content="Goals Identify if there are any batch effects in our data, and remove them Build a new UMAP plot that has cells grouped more by celltype and less by sample/batch.  10.1 Overview We generally want...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.7.0/transition.js"></script><script src="libs/bs3compat-0.7.0/tabs.js"></script><script src="libs/bs3compat-0.7.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
@@ -61,8 +61,9 @@
 <li><a class="" href="clustering.html"><span class="header-section-number">11</span> Clustering</a></li>
 <li><a class="" href="ClusterLabelling.html"><span class="header-section-number">12</span> Clustering Labeling</a></li>
 <li><a class="" href="SpatiallyRestrictedGenes.html"><span class="header-section-number">13</span> Spatially Restricted Genes</a></li>
-<li><a class="" href="NextSteps.html"><span class="header-section-number">14</span> Next steps</a></li>
-<li><a class="" href="resources.html"><span class="header-section-number">15</span> Resources</a></li>
+<li><a class="" href="Summary.html"><span class="header-section-number">14</span> Summary</a></li>
+<li><a class="" href="NextSteps.html"><span class="header-section-number">15</span> Next steps</a></li>
+<li><a class="" href="resources.html"><span class="header-section-number">16</span> Resources</a></li>
 <li><a class="" href="references.html">References</a></li>
 </ul>
 
@@ -75,11 +76,21 @@
 <h1>
 <span class="header-section-number">10</span> Batch Correction<a class="anchor" aria-label="anchor" href="#BatchCorrection"><i class="fas fa-link"></i></a>
 </h1>
+<p><strong>Goals</strong></p>
+<ul>
+<li>Identify if there are any batch effects in our data, and remove them</li>
+<li>Build a new UMAP plot that has cells grouped more by celltype and less by sample/batch.</li>
+</ul>
+<div id="overview-5" class="section level2" number="10.1">
+<h2>
+<span class="header-section-number">10.1</span> Overview<a class="anchor" aria-label="anchor" href="#overview-5"><i class="fas fa-link"></i></a>
+</h2>
 <p>We generally want to compare and analyse matched cell types (or cell states) across different experimental groups. But transcriptional differences between individuals or batch effects from preparation or slide can introduce other unwanted variation that makes it hard to see cell type differences. We can address this will batch correction or integration methods.</p>
 <p>Here is a good description of integration methods and how to choose them, <a href="https://www.sc-best-practices.org/cellular_structure/integration.html">Single cell best practicies, integration</a>, and a review on batch correction methods in single cell data is here <a href="https://genome.cshlp.org/content/35/8/1832.full">Antonsson and Melsted (2025)</a>.</p>
-<div id="do-we-need-batch-correction" class="section level2" number="10.1">
+</div>
+<div id="do-we-need-batch-correction" class="section level2" number="10.2">
 <h2>
-<span class="header-section-number">10.1</span> Do we need batch correction?<a class="anchor" aria-label="anchor" href="#do-we-need-batch-correction"><i class="fas fa-link"></i></a>
+<span class="header-section-number">10.2</span> Do we need batch correction?<a class="anchor" aria-label="anchor" href="#do-we-need-batch-correction"><i class="fas fa-link"></i></a>
 </h2>
 <p>There are regions in the UMAP where we can see some separation by sample. This is common in spatial data, especially when working with human data.</p>
 <p>This example isn’t too bad, but for the purposes of this work, we will go through the process of batch correction.</p>
@@ -95,9 +106,9 @@
 <div class="inline-figure"><img src="IntroSpatialTranscriptomics_files/figure-html/unnamed-chunk-68-1.png" width="672"></div>
 <p>If were were to continue on to cell clustering at analysis at this point, we might find that we build clusters around individual samples.</p>
 </div>
-<div id="running-batch-correction" class="section level2" number="10.2">
+<div id="running-batch-correction" class="section level2" number="10.3">
 <h2>
-<span class="header-section-number">10.2</span> Running batch correction<a class="anchor" aria-label="anchor" href="#running-batch-correction"><i class="fas fa-link"></i></a>
+<span class="header-section-number">10.3</span> Running batch correction<a class="anchor" aria-label="anchor" href="#running-batch-correction"><i class="fas fa-link"></i></a>
 </h2>
 <p>We can apply a <em>batch correction</em> or <em>integration</em> method to adjust our principal components to de-emphasise the between-sample effect. Seurat implements several such methods, and has a full <a href="https://satijalab.org/seurat/articles/integration_introduction">‘Introduction to scRNA-seq integration’ vignette</a>. We will use the ‘harmony’ method, from <a href="https://www.nature.com/articles/s41592-019-0619-0">Korsunsky et al 2019</a>.</p>
 <p>Its worth noting that these same methods can be applied to combine data from multiple experiments (e.g. public data), or even technologies!</p>
@@ -153,8 +164,9 @@
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#BatchCorrection"><span class="header-section-number">10</span> Batch Correction</a></li>
-<li><a class="nav-link" href="#do-we-need-batch-correction"><span class="header-section-number">10.1</span> Do we need batch correction?</a></li>
-<li><a class="nav-link" href="#running-batch-correction"><span class="header-section-number">10.2</span> Running batch correction</a></li>
+<li><a class="nav-link" href="#overview-5"><span class="header-section-number">10.1</span> Overview</a></li>
+<li><a class="nav-link" href="#do-we-need-batch-correction"><span class="header-section-number">10.2</span> Do we need batch correction?</a></li>
+<li><a class="nav-link" href="#running-batch-correction"><span class="header-section-number">10.3</span> Running batch correction</a></li>
 </ul>
 
       <div class="book-extra">
@@ -171,7 +183,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-10-16.</p>
+    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-10-19.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
