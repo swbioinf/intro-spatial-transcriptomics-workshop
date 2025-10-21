@@ -1,30 +1,44 @@
-# Introduction {#intro}
+# Getting started with spatial transcriptomics{#intro}
 
+## Trainers
 
-Intro/Welcome 10-15 mins
+* Fred Jaya, Sydney Informatics Hub, University of Sydney
+* Sarah Williams, Queensland Cyber Infrastructure Foundation Ltd (QCIF)
 
-Check everyone can login to servers (10m)
+## Prerequisites
 
-
-Link to intro slides.
-
-* Workshop style - interactive
-
-
-**Schedule**
+## Schedule
 
 | Day   | Topic                    |
 |-------|--------------------------|
 | Day 1 | Introduction             |
-|       | Data Loading             |
-|       | QC & Filtering           |
+|       | Understanding the data   |
+|       | QC & filtering           |
 |       | Normalisation            |
 | Day 2 | Dimensional reduction    |
 |       | Batch correction         |
 |       | Clustering and celltypes |
 |       | Differential expression  |
 
+## Setup
 
-## Workflow
+- Check everyone can login to servers
+- Explanation on using .Rmd files
+- Getting the content using `git fetch && git pull`
 
-![](images/workflows/00_full.png){width=100%}
+## Code of conduct
+
+In order to foster a positive and professional learning environment we encourage the following kinds of behaviours at all our events and on our platforms:
+
+- Use welcoming and inclusive language
+- Be respectful of different viewpoints and experiences
+- Gracefully accept constructive criticism
+- Focus on what is best for the community
+- Show courtesy and respect towards other community members
+- Our full code of conduct, with incident reporting guidelines, is available [here](https://zenodo.org/records/4276854).
+
+## Course survey
+
+## Credits and acknowledgements
+
+TODO: logos
