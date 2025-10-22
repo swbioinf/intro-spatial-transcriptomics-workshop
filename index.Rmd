@@ -12,14 +12,66 @@ github-repo: swbioinf/intro-spatial-transcriptomics-workshop
 description: "Intro to spatial transcriptomics analysis workshop material"
 ---
 
-
-Work in progress - nothing to see yet.
-  
-
 # Overview
 
-Overview of spatial transcriptomics workshop.
+## Trainers
 
+* Fred Jaya, Sydney Informatics Hub, University of Sydney
+* Sarah Williams, Queensland Cyber Infrastructure Foundation Ltd (QCIF)
+
+## Prerequisites
+
+## Schedule
+
+### Day 1
+
+| Time (AEST) | Time (AEDT) | Activity               |
+| ----------- | ----------- | ---------------------- |
+| 13:00       | 14:00       | Welcome                |
+|             |             | Introduction           |
+|             |             | Study overview         |
+|             |             | Understanding the data |
+|             |             | BREAK                  |
+|             |             | QC & filtering         |
+|             |             | Normalisation          |
+
+### Day 2
+
+| Time (AEST) | Time (AEDT) | Activity                 |
+| ----------- | ----------- | ------------------------ |
+| 13:00       | 14:00       | Welcome                  |
+|             |             | Dimensional reduction    |
+|             |             | Batch correction         |
+|             |             | BREAK                    |
+|             |             | Clustering and celltypes |
+|             |             | Differential expression  |
+
+### Day 2
+
+## Setup
+
+- Check everyone can login to servers
+- Explanation on using .Rmd files
+- Getting the content using `git fetch && git pull`
+
+## Code of conduct
+
+In order to foster a positive and professional learning environment we encourage the following kinds of behaviours at all our events and on our platforms:
+
+- Use welcoming and inclusive language
+- Be respectful of different viewpoints and experiences
+- Gracefully accept constructive criticism
+- Focus on what is best for the community
+- Show courtesy and respect towards other community members
+- Our full code of conduct, with incident reporting guidelines, is available [here](https://zenodo.org/records/4276854).
+
+## Course survey
+
+## Credits and acknowledgements
+
+TODO: logos
+
+Work in progress - nothing to see yet.
 
 ```{r include=FALSE}
 # automatically create a bib database for R packages
@@ -27,11 +79,3 @@ knitr::write_bib(c(
   .packages(), 'bookdown', 'knitr', 'rmarkdown'
 ), 'packages.bib')
 ```
-
-
-
-
-
-
-
-
