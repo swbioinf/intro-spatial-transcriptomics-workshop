@@ -103,7 +103,6 @@ Normalise:
 - For dimensionality reduction and clustering  
 - Integration and batch correction  
 - Cell annotation, label transfer
-- Don't: Some analyses that 
 
 Unnormalised, or **minimally normalised** counts:
 
