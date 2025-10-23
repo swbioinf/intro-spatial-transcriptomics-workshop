@@ -25,7 +25,7 @@ description: "Intro to spatial transcriptomics analysis workshop material"
 
 ### Day 1
 
-| Time (AEST) | Time (AEDT) | Activity               |
+| Time (AEDT) | Time (AEST) | Activity               |
 | ----------- | ----------- | ---------------------- |
 | 13:00       | 14:00       | Welcome                |
 |             |             | Introduction           |
@@ -37,7 +37,7 @@ description: "Intro to spatial transcriptomics analysis workshop material"
 
 ### Day 2
 
-| Time (AEST) | Time (AEDT) | Activity                 |
+| Time (AEDT) | Time (AEST) | Activity                 |
 | ----------- | ----------- | ------------------------ |
 | 13:00       | 14:00       | Welcome                  |
 |             |             | Dimensional reduction    |
@@ -46,13 +46,10 @@ description: "Intro to spatial transcriptomics analysis workshop material"
 |             |             | Clustering and celltypes |
 |             |             | Differential expression  |
 
-### Day 2
-
 ## Setup
 
 - Check everyone can login to servers
 - Explanation on using .Rmd files
-- Getting the content using `git fetch && git pull`
 
 ## Code of conduct
 
@@ -70,8 +67,6 @@ In order to foster a positive and professional learning environment we encourage
 ## Credits and acknowledgements
 
 TODO: logos
-
-Work in progress - nothing to see yet.
 
 ```{r include=FALSE}
 # automatically create a bib database for R packages

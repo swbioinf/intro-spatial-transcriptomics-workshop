@@ -2,7 +2,10 @@
 
 ![](images/workflows/01_counts.png){width=100%}
 
-## Learning objectives
+## Goals  
+
+- Load the spatial data into R as a SeuratObject  
+- Access and view our gene expression counts and metadata 
 
 ## Overview
 
@@ -116,6 +119,11 @@ but again, software tools take the directory as a whole.
 
 ## Importing the flat files into R
 
+This section was conducted prior to the workshop. The directory of flat files
+were loaded into R using a modified version of `Seurat::LoadNanostring()`
+function (see below). For the complete code to load the data, see the [following
+page](https://swbioinf.github.io/spatialsnippets/d_cosmxIBD.html#Data_load).
+
 :::{.rmdwarning}
 
 **A note on `Seurat::LoadNanostring()`**
@@ -128,13 +136,13 @@ We provide an alternate function. In time, this should be fixed within Seurat.
 See comments [here](https://github.com/satijalab/seurat/discussions/9261). This
 is an example code snippet using the replacement function:
 
-```{r eval=F}
+```
 # Import the custom LoadNanostring() function
 source(here("scripts/LoadNanostring_edited_function.R"))
 
 # Define the path to the flat files. Note that the input is the whole directory.
 # The function deals with reading and assigning the metadata correctly to the
-# cells and gene counts
+# cells and gene counts for a single sample.
 example_path <- here("raw_data", "GSM7473682_HC_a/")
 example_so <- LoadNanostring(example_path, assay='RNA', fov="GSM7473682.HC.a")
 ```
@@ -143,18 +151,11 @@ example_so <- LoadNanostring(example_path, assay='RNA', fov="GSM7473682.HC.a")
 
 ## Loading the subsampled workshop data
 
-We use a subsampled data for this workshop, for three healthy control samples (HC)
-and three Crohn's disease samples (CD).
+We use the subsampled data for this workshop, for three healthy control 
+samples (HC) and three samples with Crohn's disease (CD). The first four field
+of views for each sample are used.
 
-The first four field of views for each sample are used.
-
-```{r eval=F}
-# Code to subset the data
-seurat_file_00_raw <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw.RDS")
-so_raw_full <- readRDS(seurat_file_00_raw)
-so_raw_subset <- so_raw_full[, so_raw_full$group %in% c("CD", "HC") & so_raw_full@meta.data$fov <= 4]
-saveRDS(so_raw_subset, here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS"))
-```
+![](images/30_data/fov_subsample.png){width=80%}
 
 ```{r}
 # Load the prepared data
@@ -191,11 +192,7 @@ GeoSketch method description[^2] for a Python alternative.
 
 ## Visualising our spatial data
 
-TODO: add note on plotting H&E image - unavailable with this data.
-
-- Need to import into stutility, which is not compatible with v5 Seurat
-- https://satijalab.org/seurat/articles/spatial_vignette
-
+Now that our data is loaded, we can display the spatial location of each cell.
 
 ```{r}
 hc_idents <- unique(so$orig.ident)[1:3]
@@ -293,7 +290,7 @@ six integrated samples.
 
 Note that the field of view names are delimited by `.`. At the time of writing,
 underscores will cause some functions to fail silently. For more information,
-see [this issue](https://github.com/satijalab/seurat/issues/10103)
+see [this issue](https://github.com/satijalab/seurat/issues/10103).
 
 :::
 
@@ -312,42 +309,43 @@ but there are typically more. Examples of metadata include:
 head(so@meta.data)
 ```
 
-TODO: Define terms like centroids, segments, fov
-
-- See: https://satijalab.org/seurat/articles/seurat5_spatial_vignette_2#mouse-brain-vizgen-merscope
-- TODO: Excalidraw of these
-
 Display the metadata columns:
 
 ```{r}
 names(so@meta.data)
 ```
 
-There is a lot of information. Use something like skimr for EDA and to
-understand each field at a glance
+There is a lot of information. Use something like `skimr` for EDA and to
+understand each field at a glance.
 
 ```{r}
 skimr::skim(so@meta.data)
 ```
 
-Explain: number of rows (68624) represents a cell
+The number of rows (68624) represents a cell, and the information about that
+cell.
 
-Identify important metadata columns and discuss what they mean
+:::{.rmdimportant}
 
-This dataset is a subset of the experimental data - only the first 4 fovs of
-each, and only the CD and HC sample groups. 
+**CosMx FOV =/= SeuratObject FOV**
 
-seurat fov = slide
-bruker cosmx fov = region on slide
+Note that the FOV in `SeuratObject` represents a single tissue sample, in this
+case, from one donor. Recall in the data generation step that users must select
+FOVs from the imaging preview. These FOVs are represented in the `SeuratObject`
+as the `fov` and `fov_name` metadata.
 
-View the `tissue_sample` metadata to prepare for the next step. This represents
+:::
 
+View the `tissue_sample` metadata to prepare for the next step. The following
+shows the table counts the number of cells for each sample.
 
 ```{r}
 table(so$tissue_sample)
 ```
 
 ## Count data (`assays`)
+
+The count data 
 
 ![](images/30_data/count_assays.png)
 
@@ -384,12 +382,5 @@ rownames(so@assays$negprobes)
 so@assays$negprobes[1:5, 1:5]
 ```
 
-## Loading in multiple samples
-
-TODO: Example of loading in multiple samples
-
-TODO: Explanation on splitting and merging layers 
-
 ## Summary
 
-TODO

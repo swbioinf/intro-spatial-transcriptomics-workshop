@@ -1,5 +1,10 @@
 # Study background
 
+## Goals
+
+- Understand the experimental setup and samples used for the workshop
+- Note the differences between CosMx and Xenium data during imaging
+
 ## Background  
 
 This workshop will use CosMx Spatial Molecular Imager (SMI) data from the paper
@@ -73,7 +78,7 @@ slide. This study utilises both for the colonic tissue.
 
 ![](images/30_data/slides.png){width=100%}
 
-## Sequencing  
+### Sequencing  
 
 In CosMx workflows, fields of views (FOVs) must be selected from the prepared
 slides. These are the spatial areas where sequencing will be conducted.
@@ -108,7 +113,7 @@ correctly assigned to each one. These utilise the stained images to identify
 cell border shapes that are necessary for cell-level analyses downstream.
 
 The following images are of **Xenium** using two different staining approaches,
-H&E and DAPI respectively,
+H&E and immunofluorescent respectively,
 with the detected cell boundaries overlayed on both.
 
 ![](images/30_data/xenium_explorer_he.png){width=100%}
