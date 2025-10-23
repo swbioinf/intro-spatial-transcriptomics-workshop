@@ -26,7 +26,7 @@ library(DT)
 ```
 
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
-#so <- readRDS("data/GSE234713_CosMx_IBD_seurat_04_celltypes.RDS" )
+so <- readRDS("data/GSE234713_CosMx_IBD_seurat_04_celltypes.RDS" )
 ```
 
 What genes have a spatially restricted expression across the tissue? These might be localised to a particular region and indicate some spatial activity.
