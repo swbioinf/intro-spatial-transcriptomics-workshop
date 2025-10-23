@@ -220,15 +220,15 @@ so.HC_a <- subset( so, subset= tissue_sample == 'HC_a')
 
 ```
 
-IGKC has high autocorrelation all over
+IGHM has high autocorrelation all over
 
 ```{r message=FALSE, warning=FALSE}
 p1 <- ImageDimPlot(so.CD_a, 
-             molecules = 'IGKC', 
+             molecules = 'IGHM', 
              group.by = 'tissue_sample', cols = c("grey30"), # Make all cells grey.
              boundaries = "segmentation", border.color = NA, axes = T, crop=TRUE)
 p2 <- ImageDimPlot(so.HC_a, 
-             molecules = 'IGKC', 
+             molecules = 'IGHM', 
              group.by = 'tissue_sample', cols = c("grey30"), # Make all cells grey.
              boundaries = "segmentation", border.color = NA, axes = T, crop=TRUE)
 p1 + p2 
@@ -282,7 +282,7 @@ ImageDimPlot(so.HC_a.4,
 That seems to be because of a group of T cells expressing CCL21's. We can highlight those alongside our transcripts.
 ```{r message=FALSE, warning=FALSE}
 # Show only B and T cells
-so.HC_a.4$isBT <- ifelse(so.HC_a.4$cluster_labels %in% c("c5: T cell", "c8: B cell"), so.HC_a.4$cluster_labels, "Other")
+so.HC_a.4$isBT <- ifelse(so.HC_a.4$cluster_labels %in% c("c5: T cell", "c8: B cell"), as.character(so.HC_a.4$cluster_labels), "Other")
 ImageDimPlot(so.HC_a.4, 
              molecules  = 'CCL21', 
              group.by   = 'isBT', alpha=0.3,# Show clusters, but faded 
