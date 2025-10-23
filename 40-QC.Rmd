@@ -2,20 +2,23 @@
 
 ![](images/workflows/02_qc.png){width=100%}
 
-## Learning objectives
+## Goals
 
-- Recall common quality control (QC) metrics used in spatial transcriptomics, such as total transcript counts, detected genes, cell area, and negative probe percentage  
--	Recall sources of technical artefacts (e.g. segmentation errors, low RNA capture, or border effects) to consider during QC  
-- Describe the role of negative control probes in quantifying background noise in imaging-based technologies like CosMx  
-- Generate and interpret QC visualisations (e.g. density plots, bivariate scatterplots, and FOV summaries) to identify low-quality cells  
--	Evaluate how filtering thresholds affect biological interpretation, distinguishing between true low-quality cells and biologically small or lowly expressed cell types   
-- Justify appropriate sample-specific filtering thresholds for metrics such as minimum transcript counts and maximum negative probe percentage  
+- Explore common quality control (QC) metrics used in spatial transcriptomics, 
+such as total transcript counts, detected genes, cell area, and negative probe 
+percentages  
+-	Understand potential sources of technical artefacts (e.g. segmentation errors,
+low RNA capture, or border effects)
+- Use negative control probes to quantify background noise in im-SRT data
+- Select and justify appropriate sample-specific filtering thresholds for QC
+metrics
 
 ## Overview
 
-* Basic QC plots + filtering (20min)
-* (Negative probes if using cosmx)
-* Identify low quality cells
+Quality control is a key step at the beginning of any bioinformatics processing
+pipeline. Understanding the potential sources of bias introduced during the data
+generation steps is key in helping interpret the results of downstream data
+processing steps.
 
 ```{r}
 knitr::opts_chunk$set(
@@ -116,7 +119,6 @@ filtering thresholds uniformly across all cells may remove valid cells.
 
 _Fig 3. from Hatton et al. (2023): Distribution of cell mass (g) across different cell types._
 :::
-
 
 The following plot shows the relationship between the total transcript counts
 (nCount_RNA) and cell area across samples. In all tissue samples (Seurat FOVs),
@@ -369,7 +371,7 @@ context-dependent process. It requires continual exploration of your data rather
 than following a prescriptive set of rules. When examining and filtering your
 data for the first time, we recommend setting permissive threshold so
 meaningful cells are not removed. After a preliminary look at the data, QC steps
-can be revisted.
+can be revisited.
 
 In comparison to older transcriptomics technologies, spatial technologies introduce
 new sources of technical variation that can make interpretation of your results
