@@ -253,14 +253,14 @@ Requires packages:
 <div class="sourceCode" id="cb156"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">so.CD_a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span> <span class="va">so</span>, subset<span class="op">=</span> <span class="va">tissue_sample</span> <span class="op">==</span> <span class="st">'CD_a'</span><span class="op">)</span></span>
 <span><span class="va">so.HC_a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span> <span class="va">so</span>, subset<span class="op">=</span> <span class="va">tissue_sample</span> <span class="op">==</span> <span class="st">'HC_a'</span><span class="op">)</span></span></code></pre></div>
-<p>IGKC has high autocorrelation all over</p>
+<p>IGHM has high autocorrelation all over</p>
 <div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/ImageDimPlot.html">ImageDimPlot</a></span><span class="op">(</span><span class="va">so.CD_a</span>, </span>
-<span>             molecules <span class="op">=</span> <span class="st">'IGKC'</span>, </span>
+<span>             molecules <span class="op">=</span> <span class="st">'IGHM'</span>, </span>
 <span>             group.by <span class="op">=</span> <span class="st">'tissue_sample'</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"grey30"</span><span class="op">)</span>, <span class="co"># Make all cells grey.</span></span>
 <span>             boundaries <span class="op">=</span> <span class="st">"segmentation"</span>, border.color <span class="op">=</span> <span class="cn">NA</span>, axes <span class="op">=</span> <span class="cn">T</span>, crop<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/ImageDimPlot.html">ImageDimPlot</a></span><span class="op">(</span><span class="va">so.HC_a</span>, </span>
-<span>             molecules <span class="op">=</span> <span class="st">'IGKC'</span>, </span>
+<span>             molecules <span class="op">=</span> <span class="st">'IGHM'</span>, </span>
 <span>             group.by <span class="op">=</span> <span class="st">'tissue_sample'</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"grey30"</span><span class="op">)</span>, <span class="co"># Make all cells grey.</span></span>
 <span>             boundaries <span class="op">=</span> <span class="st">"segmentation"</span>, border.color <span class="op">=</span> <span class="cn">NA</span>, axes <span class="op">=</span> <span class="cn">T</span>, crop<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span> </span></code></pre></div>
@@ -305,7 +305,7 @@ Requires packages:
 <p>That seems to be because of a group of T cells expressing CCL21’s. We can highlight those alongside our transcripts.</p>
 <div class="sourceCode" id="cb162"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Show only B and T cells</span></span>
-<span><span class="va">so.HC_a.4</span><span class="op">$</span><span class="va">isBT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">so.HC_a.4</span><span class="op">$</span><span class="va">cluster_labels</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"c5: T cell"</span>, <span class="st">"c8: B cell"</span><span class="op">)</span>, <span class="va">so.HC_a.4</span><span class="op">$</span><span class="va">cluster_labels</span>, <span class="st">"Other"</span><span class="op">)</span></span>
+<span><span class="va">so.HC_a.4</span><span class="op">$</span><span class="va">isBT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">so.HC_a.4</span><span class="op">$</span><span class="va">cluster_labels</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"c5: T cell"</span>, <span class="st">"c8: B cell"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">so.HC_a.4</span><span class="op">$</span><span class="va">cluster_labels</span><span class="op">)</span>, <span class="st">"Other"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://satijalab.org/seurat/reference/ImageDimPlot.html">ImageDimPlot</a></span><span class="op">(</span><span class="va">so.HC_a.4</span>, </span>
 <span>             molecules  <span class="op">=</span> <span class="st">'CCL21'</span>, </span>
 <span>             group.by   <span class="op">=</span> <span class="st">'isBT'</span>, alpha<span class="op">=</span><span class="fl">0.3</span>,<span class="co"># Show clusters, but faded </span></span>
@@ -349,7 +349,7 @@ Requires packages:
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-10-19.</p>
+    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-10-23.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
