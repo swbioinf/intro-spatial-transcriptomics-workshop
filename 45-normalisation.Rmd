@@ -2,7 +2,11 @@
 
 ![](images/workflows/03_normalisation.png){width=100%}
 
-## Learning objectives
+## Goals
+
+- Correct for biases across cells and gene expression values
+- Understand the trade-offs between normalisation methods
+- Identify the most variable genes in preparation for dimensionality reduction  
 
 ## Overview
 
@@ -43,7 +47,7 @@ Trade-off between simplicity and performance of methods.
 | ------------------------------ | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | Spatially-aware (SpaNorm)      | Recommended - accounts for spatial dependent patterns         | Computationally demanding and requires several parameter tuning steps                    |
 | Cell volume/area normalisation | Alternative for spatially-aware methods                       | Requires accurate area or volume data, bad cell segmentation = bad normalisation, manual |
-| Log-normalisation              | Easy to run, incorporated in many intermediate processing pipeline, used for analyses that require "minimal" normalisation | Does not account for spatial patterns                                                    |
+| Log-normalisation              | Easy to run, incorporated in many intermediate processing pipelines, used for analyses that require "minimal" normalisation | Does not account for spatial patterns                                                    |
 | scTransform                    | Powerful for scRNA-seq                                        | Avoid for ST - over-corrects spatial patterns                                            |
 | Library size normalisation     | Simple                                                        | Avoid, problematic overall                                                                                    |
 
@@ -78,34 +82,17 @@ Inspect current RNA assay. Layers are `counts.*` for each sample/FOV.
 so@assays$RNA
 ```
 
-By default, we will use the 'LogNormalize' method in seurat - as described in the NormaliseData function help:
-
-> "LogNormalize: Feature counts for each cell are divided by the total counts for that cell and multiplied by the scale.factor. This is then natural-log transformed using log1'"
-
-
-```{r message=FALSE}
-so <- NormalizeData(so, assay = "RNA", normalization.method = "LogNormalize")
-```
-
-When displaying the RNA counts assay again, note that there are new
-`data` layers. These represent our (log-)normalised data.
-
-```{r}
-so@assays$RNA
-```
-
 :::{.rmdimportant}
 
-**You don't always want to normalise**
+**Choosing a normalisation method is context-dependent**
 
 Normalise: 
 
 - For dimensionality reduction and clustering  
 - Integration and batch correction  
 - Cell annotation, label transfer
-- Don't: Some analyses that 
 
-Unnormalised, or **minimally normalised** counts:
+**Minimally normalised** counts:
 
 Where raw transcript counts are required or apply their own
 normalisation method. Used to preserve spatial trends
@@ -118,7 +105,26 @@ This is why it is important to store both the `counts` and `data`
 layers in your data object.
 :::
 
-## Identifying highly variable genes (HVG)
+As we will be identifying spatially variable genes with Moran's I, we will
+apply a "minimally normalised" approach - the 'LogNormalize' 
+method in Seurat.
+
+As described in the NormalizeData function help:
+
+> "LogNormalize: Feature counts for each cell are divided by the total counts for that cell and multiplied by the scale.factor. This is then natural-log transformed using log1'"
+
+```{r message=FALSE}
+so <- NormalizeData(so, assay = "RNA", normalization.method = "LogNormalize")
+```
+
+When displaying the RNA counts assay again, note that there are new
+`data` layers. These represent our (log-)normalised data.
+
+```{r}
+so@assays$RNA
+```
+
+## Identifying highly variable genes (HVGs)
 
 ![](images/genes2umap.png){width=100%}
 
@@ -126,7 +132,7 @@ Which genes vary between cell types/states in our sample?
 
 We don't yet know anything about celltypes or stats, but we can make the assumption that the genes with high variance and are probably reflecting some biological state. In contrast a 'housekeeper' gene with even expression across all cell types won't be helpful in grouping our cells. 
 
-Because we have our data split by sample, seurat will identify variable genes within each sample and combine that information. From the [seurat5 documentation on layers](https://satijalab.org/seurat/articles/seurat5_integration#layers-in-the-seurat-v5-object): 
+Because we have our data split by sample, Seurat will identify variable genes within each sample and combine that information. From the [Seurat5 documentation on layers](https://satijalab.org/seurat/articles/seurat5_integration#layers-in-the-seurat-v5-object): 
 
 > "Note that since the data is split into layers, normalization and variable feature identification is performed for each batch independently (a consensus set of variable features is automatically identified)."
 
