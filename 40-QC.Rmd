@@ -340,29 +340,9 @@ so@meta.data %>%
   annotation_logticks(sides = "b")
 ```
 
-TODO: As well as border effects. Run per sample.
-
-```{r, eval=F}
-# For each cell, calculate the distance between the centroid to each FOV border
-so_borders <- so@meta.data %>%
-  group_by(tissue_sample, fov) %>%
-  mutate(
-    top = max(CenterY_local_px) - CenterY_local_px,
-    bottom = CenterY_local_px - min(CenterY_local_px),
-    left = CenterX_local_px - min(CenterX_local_px),
-    right = max(CenterX_local_px) - CenterX_local_px
-  ) %>%
-  select(top, bottom, left, right, nCount_RNA, tissue_sample) %>%
-  pivot_longer(cols = -c(nCount_RNA, tissue_sample), names_to = "fov_direction", values_to = "distance") 
-
-so_borders %>%
-  ggplot(aes(x = distance, y = nCount_RNA)) +
-  geom_point(size = 0.1, alpha = 0.4) +
-  facet_wrap(~fov_direction, ncol = 4) +
-  scale_y_log10() +
-  theme_light() +
-  geom_smooth(method = "loess", span = 0.2)
-```
+Additionally, when FOVs are "stitched" together a decline in total RNA counts
+may be observed. For more information, see the recommendations and examples on
+[border effects from OSTA](https://lmweber.org/OSTA/pages/img-quality-control.html#border-effects).
 
 ## Summary
 

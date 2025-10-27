@@ -345,9 +345,11 @@ table(so$tissue_sample)
 
 ## Count data (`assays`)
 
-The count data 
+We need a way to store the results from the probe hybridisation for each sample.
+The count data is represented as `assays` in a `SeuratObject`. These include the
+total RNA counts and the total negative control probe counts per cell.
 
-![](images/30_data/count_assays.png)
+![](images/30_data/count_assays.png){width=100%}
 
 ```{r}
 so@assays
@@ -359,14 +361,13 @@ so@assays
 so@assays$RNA$counts.GSM7473682.HC.a[1:5,1:5]
 ```
 
-Row = gene
-
-Column = cell for the sample
+Each row represents a gene, and the column shows the cell for that sample.
 
 ### Negative probes
 
-Explain that negprobes are negative controls to see how noisy your data is.
-These do not bind to anything etc.
+Negative control probes, or `negprobes` are non-binding probes that indicate how
+much noise there is in your data. In this data, 19 `negprobes` are used. We will
+explore and utilise this more in the following quality control section.
 
 ```{r}
 so@assays$negprobes
@@ -376,11 +377,6 @@ so@assays$negprobes
 rownames(so@assays$negprobes)
 ```
 
-19 different negative probes.
-
 ```{r}
 so@assays$negprobes[1:5, 1:5]
 ```
-
-## Summary
-

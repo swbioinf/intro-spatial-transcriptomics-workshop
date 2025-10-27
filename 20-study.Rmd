@@ -116,7 +116,12 @@ The following images are of **Xenium** using two different staining approaches,
 H&E and immunofluorescent respectively,
 with the detected cell boundaries overlayed on both.
 
+The H&E stain is often conducted as part of im-SRT protocols and is used to determine basic cell lineages from the morphology. In CosMx, this is often used to preview the slide for FOV selection.
+
 ![](images/30_data/xenium_explorer_he.png){width=100%}
+
+The immunoflourescent stain demarcates more specific subcellular components. This stain is often used in the automated on-machine cell segmentation step.
+
 ![](images/30_data/xenium_explorer_dapi.png){width=100%}
 
 Accurate segmentation is essential because it determines how reliably
@@ -127,3 +132,13 @@ segmentation.
 However, you may choose to re-run segmentation using independent tools such as
 Cellpose (image-based) or Baysor (transcript-based or hybrid) to improve
 boundary accuracy and adapt to specific tissue types.
+
+:::{.rmdwarning}
+
+**H&E data is not available for this study**
+
+Spatial data analysis steps utilise H&E images for quality control steps and
+visualisation. For the workshop, the transcriptomics and spatial data will be
+used to inform these steps.
+
+:::

@@ -82,22 +82,6 @@ Inspect current RNA assay. Layers are `counts.*` for each sample/FOV.
 so@assays$RNA
 ```
 
-We will use the 'LogNormalize' method in Seurat - as described in the NormaliseData function help:
-
-> "LogNormalize: Feature counts for each cell are divided by the total counts for that cell and multiplied by the scale.factor. This is then natural-log transformed using log1'"
-
-
-```{r message=FALSE}
-so <- NormalizeData(so, assay = "RNA", normalization.method = "LogNormalize")
-```
-
-When displaying the RNA counts assay again, note that there are new
-`data` layers. These represent our (log-)normalised data.
-
-```{r}
-so@assays$RNA
-```
-
 :::{.rmdimportant}
 
 **Choosing a normalisation method is context-dependent**
@@ -120,6 +104,25 @@ that normalisation can remove e.g.
 This is why it is important to store both the `counts` and `data`
 layers in your data object.
 :::
+
+As we will be identifying spatially variable genes with Moran's I, we will
+apply a "minimally normalised" approach - the 'LogNormalize' 
+method in Seurat.
+
+As described in the NormalizeData function help:
+
+> "LogNormalize: Feature counts for each cell are divided by the total counts for that cell and multiplied by the scale.factor. This is then natural-log transformed using log1'"
+
+```{r message=FALSE}
+so <- NormalizeData(so, assay = "RNA", normalization.method = "LogNormalize")
+```
+
+When displaying the RNA counts assay again, note that there are new
+`data` layers. These represent our (log-)normalised data.
+
+```{r}
+so@assays$RNA
+```
 
 ## Identifying highly variable genes (HVGs)
 
