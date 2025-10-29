@@ -1,7 +1,10 @@
 tab:unnamed-chunk-11
 overview
 trainers
+facilitators-and-coordinators
 code-of-conduct
+course-survey
+credits-and-acknowledgements
 intro
 study-background
 goals
