@@ -17,7 +17,7 @@ description: "Intro to spatial transcriptomics analysis workshop material"
 ## Trainers
 
 * Fred Jaya, Sydney Informatics Hub, University of Sydney
-* Sarah Williams, Queensland Cyber Infrastructure Foundation Ltd (QCIF)
+* Sarah Williams, QCIF Ltd 
 
 ## Facilitators and coordinators
 
@@ -25,7 +25,7 @@ description: "Intro to spatial transcriptomics analysis workshop material"
 - Mitchell O'Brien, Sydney Informatics Hub, University of Sydney
 - Amarinder Thind, Sydney Informatics Hub, University of Sydney
 - Ciccy Wang, Garvan Institute of Medical Research
-- Nicholas Matigan, Queensland Cyber Infrastructure Foundation Ltd (QCIF)
+- Nicholas Matigan, QCIF Ltd 
 
 ## Code of conduct
 
