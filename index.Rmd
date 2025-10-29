@@ -19,40 +19,13 @@ description: "Intro to spatial transcriptomics analysis workshop material"
 * Fred Jaya, Sydney Informatics Hub, University of Sydney
 * Sarah Williams, Queensland Cyber Infrastructure Foundation Ltd (QCIF)
 
-<!--
-## Prerequisites
+## Facilitators and coordinators
 
-## Schedule
-
-### Day 1
-
-| Time (AEDT) | Time (AEST) | Activity               |
-| ----------- | ----------- | ---------------------- |
-| 13:00       | 14:00       | Welcome                |
-|             |             | Introduction           |
-|             |             | Study overview         |
-|             |             | Understanding the data |
-|             |             | BREAK                  |
-|             |             | QC & filtering         |
-|             |             | Normalisation          |
-
-### Day 2
-
-| Time (AEDT) | Time (AEST) | Activity                 |
-| ----------- | ----------- | ------------------------ |
-| 13:00       | 14:00       | Welcome                  |
-|             |             | Dimensional reduction    |
-|             |             | Batch correction         |
-|             |             | BREAK                    |
-|             |             | Clustering and celltypes |
-|             |             | Differential expression  |
-
-## Setup
-
-- Check everyone can login to servers
-- Explanation on using .Rmd files
-
--->
+- Melissa Burke, Australian BioCommons
+- Mitchell O'Brien, Sydney Informatics Hub, University of Sydney
+- Amarinder Thind, Sydney Informatics Hub, University of Sydney
+- Ciccy Wang, Garvan Institute of Medical Research
+- Nicholas Matigan, Queensland Cyber Infrastructure Foundation Ltd (QCIF)
 
 ## Code of conduct
 
@@ -63,16 +36,29 @@ In order to foster a positive and professional learning environment we encourage
 - Gracefully accept constructive criticism
 - Focus on what is best for the community
 - Show courtesy and respect towards other community members
-- Our full code of conduct, with incident reporting guidelines, is available [here](https://zenodo.org/records/4276854).
+- Our full code of conduct, with incident reporting guidelines, is available
+[here](https://zenodo.org/records/4276854).
 
-<!--
 ## Course survey
+
+Please fill out our
+[course survey](https://q.surveys.unimelb.edu.au/jfe/form/SV_5vwVW5vv6PH4xMO)
+at the end of the workshop. Help us help you!
 
 ## Credits and acknowledgements
 
-TODO: logos
+This workshop event and accompanying materials were developed by the
+[Queensland Cyber Infrastructure Foundation Ltd](https://www.qcif.edu.au/) and
+the
+[Sydney Informatics Hub](https://www.sydney.edu.au/research/facilities/sydney-informatics-hub.html),
+University of Sydney. The workshop was enabled by Australian BioCommons'
+[Workflow Commons Platforms Project](https://www.biocommons.org.au/workflow-commons)
+(NCRIS via Bioplatforms Australia). Compute resources were provided by the 
+[ARDC Nectar Research Cloud](https://ardc.edu.au/services/ardc-nectar-research-cloud/).
 
--->
+_We gratefully acknowledge the contributions of Giorgia Mori, Michael Geaghan, and Georgie Samaha._
+
+![](images/logos.png){width=100%}
 
 ```{r include=FALSE}
 # automatically create a bib database for R packages
