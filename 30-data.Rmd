@@ -161,6 +161,7 @@ of views for each sample are used.
 # Load the prepared data
 so_path <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
 so <- readRDS(so_path)
+so <- UpdateSeuratObject(so) # Data generated with older version of Seurat, this function updates it. 
 ```
 
 :::{.rmdimportant}

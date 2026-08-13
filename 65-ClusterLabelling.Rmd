@@ -20,6 +20,22 @@ Classifying cells into meaningful celltypes (or cell states) is a time consuming
 It may involve pulling together multiple lines of evidence to assign celltype labels to cluster labels. Some approaches outlined below:
 
 
+## Data loaing, and reproducability
+
+Clustering (and UMAP) is a non-deterministic method - though packages can use a non-random 'seed' to make sure you get the same clusters.
+But any slightly difference (e.g. removing a single cell) can result in a different result. Likewise, different underlying packages can also generate different clusters on the same data. 
+
+These workshop materials were developed on a server with an older version of R and Seurat - and produce slightly different clusters than the workshop environment. So all our results match, we will reload from preprepared dataset.
+
+```{r}
+clustered_seurat_object_file <- here("data", "GSE234713_CosMx_IBD_seurat_60_clustered_preprepared.RDS")
+so    <- readRDS(normalised_seurat_object_file) 
+so    <- UpdateSeuratObject(so) # Data generated with older version of Seurat, this function updates it.
+
+```
+
+
+
 
 ## Cluster Markers
 

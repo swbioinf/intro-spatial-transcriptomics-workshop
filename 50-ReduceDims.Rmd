@@ -36,6 +36,7 @@ library(here)
 
 normalised_seurat_object_file <- here("data", "GSE234713_CosMx_IBD_seurat_03_normalised.RDS")
 so    <- readRDS(normalised_seurat_object_file) 
+so    <- UpdateSeuratObject(so) # Data generated with older version of Seurat, this function updates it.
 ```
 
 
