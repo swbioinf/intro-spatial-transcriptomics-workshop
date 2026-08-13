@@ -14,18 +14,12 @@ description: "Intro to spatial transcriptomics analysis workshop material"
 
 # Overview
 
-## Trainers
+## Trainers and Facilitators 
 
-* Fred Jaya, Sydney Informatics Hub, University of Sydney
-* Sarah Williams, QCIF Ltd 
+For workshop delivered August/September 2026
 
-## Facilitators and coordinators
-
-- Melissa Burke, Australian BioCommons
-- Mitchell O'Brien, Sydney Informatics Hub, University of Sydney
-- Amarinder Thind, Sydney Informatics Hub, University of Sydney
-- Ciccy Wang, Garvan Institute of Medical Research
-- Nicholas Matigan, QCIF Ltd 
+* Nicholas Matigan, QCIF
+* Sarah Williams, QCIF 
 
 ## Code of conduct
 
@@ -41,9 +35,8 @@ In order to foster a positive and professional learning environment we encourage
 
 ## Course survey
 
-Please fill out our
-[course survey](https://q.surveys.unimelb.edu.au/jfe/form/SV_5vwVW5vv6PH4xMO)
-at the end of the workshop. Help us help you!
+Please fill out our course survey at the end of the workshop. Help us help you!
+
 
 ## Credits and acknowledgements
 
@@ -53,10 +46,23 @@ the
 [Sydney Informatics Hub](https://www.sydney.edu.au/research/facilities/sydney-informatics-hub.html),
 University of Sydney. The workshop was enabled by Australian BioCommons'
 [Workflow Commons Platforms Project](https://www.biocommons.org.au/workflow-commons)
-(NCRIS via Bioplatforms Australia). Compute resources were provided by the 
-[ARDC Nectar Research Cloud](https://ardc.edu.au/services/ardc-nectar-research-cloud/).
+(NCRIS via Bioplatforms Australia). 
 
-_We gratefully acknowledge the contributions of Giorgia Mori, Michael Geaghan, and Georgie Samaha._
+
+Compute resources were provided by the 
+[ARDC Nectar Research Cloud](https://ardc.edu.au/services/ardc-nectar-research-cloud/), using the [Bioshell Bioinformatics enviorment](https://sydney-informatics-hub.github.io/BioShell-User-Guide/), supported by  Mitchell O'Brien, Sydney Informatics Hub, University of Sydney.
+
+
+_We greatfully acknowledge previous workshop developers, trainers, facilitators and coordinators;_
+
+- Fred Jaya, Sydney Informatics Hub, University of Sydney
+- Melissa Burke, Australian BioCommons
+- Mitchell O'Brien, Sydney Informatics Hub, University of Sydney
+- Amarinder Thind, Sydney Informatics Hub, University of Sydney
+- Ciccy Wang, Garvan Institute of Medical Research
+
+_We also gratefully acknowledge the contributions of Giorgia Mori, Michael Geaghan, and Georgie Samaha._
+
 
 ![](images/logos.png){width=100%}
 

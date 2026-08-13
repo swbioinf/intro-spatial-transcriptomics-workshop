@@ -1,7 +1,6 @@
 tab:unnamed-chunk-11
 overview
-trainers
-facilitators-and-coordinators
+trainers-and-facilitators
 code-of-conduct
 course-survey
 credits-and-acknowledgements
@@ -65,6 +64,7 @@ generate-clusters
 ClusterLabelling
 goals-5
 overview-7
+data-loaing-and-reproducability
 cluster-markers
 cell-typing-by-reference
 spatial-examination-of-plots

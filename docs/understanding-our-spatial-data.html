@@ -133,40 +133,40 @@ coordinates.</p>
 <col width="35%">
 <col width="64%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Folder / File Name</th>
 <th>Description</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>Flowcell_Folder/</code></td>
 <td>Root directory containing logs and slide/run data</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>Logs/</code></td>
 <td>FOV coordinate files</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>GSM7473682_HC_a_S1/</code></td>
 <td>Main data directory for slide <code>GSM7473682_HC_a</code>, slot 1</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>plex_001.csv</code></td>
 <td>Target probes metadata</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>CellStatsDir/</code></td>
 <td>Segmentation outputs (labels, overlays, morphology images)</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>CellStatsDir/</code></td>
 <td>Location of high-resolution images</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>RunSummary/</code></td>
 <td>Instrument configuration files (e.g. pixel–nm ratio)</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>AnalysisResults/</code></td>
 <td>Processed analysis outputs (FOV summaries, detection limits, coordinates)</td>
 </tr>
@@ -200,28 +200,28 @@ transcripts (<code>SLIDE_tx_file.csv.gz</code>), and segmented cell boundaries
 <col width="44%">
 <col width="55%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>File name</th>
 <th>Description</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>SLIDE-polygons.csv.gz</code></td>
 <td>Cell borders</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>SLIDE_exprMat_file.csv.gz</code></td>
 <td>Counts of genes per cell (counts matrix)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>SLIDE_fov_positions_file.csv.gz</code></td>
 <td>Location of FOVs on slide</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>SLIDE_metadata_file.csv.gz</code></td>
 <td>Cell-level QC metadata</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>SLIDE_tx_file.csv.gz</code></td>
 <td>Location of individual transcripts</td>
 </tr>
@@ -273,7 +273,8 @@ of views for each sample are used.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load the prepared data</span></span>
 <span><span class="va">so_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS"</span><span class="op">)</span></span>
-<span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="va">so_path</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="va">so_path</span><span class="op">)</span></span>
+<span><span class="va">so</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.github.io/seurat-object/reference/UpdateSeuratObject.html">UpdateSeuratObject</a></span><span class="op">(</span><span class="va">so</span><span class="op">)</span> <span class="co"># Data generated with older version of Seurat, this function updates it. </span></span></code></pre></div>
 <div class="rmdimportant">
 <p><strong>Analysing large data sets with Sketch-based integration</strong></p>
 <p>When analysing your own data, it is often necessary to work with the entire
@@ -459,39 +460,39 @@ understand each field at a glance.</p>
 <caption>
 <span id="tab:unnamed-chunk-11">Table 4.1: </span>Data summary</caption>
 <tbody>
-<tr class="odd">
+<tr>
 <td align="left">Name</td>
 <td align="left"><a href="mailto:so@meta.data" class="email">so@meta.data</a></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">Number of rows</td>
 <td align="left">68624</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">Number of columns</td>
 <td align="left">31</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">_______________________</td>
 <td align="left"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">Column type frequency:</td>
 <td align="left"></td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">character</td>
 <td align="left">7</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">numeric</td>
 <td align="left">24</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">________________________</td>
 <td align="left"></td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">Group variables</td>
 <td align="left">None</td>
 </tr>
@@ -509,7 +510,7 @@ understand each field at a glance.</p>
 <col width="12%">
 <col width="14%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th align="left">skim_variable</th>
 <th align="right">n_missing</th>
 <th align="right">complete_rate</th>
@@ -520,7 +521,7 @@ understand each field at a glance.</p>
 <th align="right">whitespace</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td align="left">orig.ident</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -530,7 +531,7 @@ understand each field at a glance.</p>
 <td align="right">6</td>
 <td align="right">0</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">cell</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -540,7 +541,7 @@ understand each field at a glance.</p>
 <td align="right">18518</td>
 <td align="right">0</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">individual_code</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -550,7 +551,7 @@ understand each field at a glance.</p>
 <td align="right">6</td>
 <td align="right">0</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">tissue_sample</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -560,7 +561,7 @@ understand each field at a glance.</p>
 <td align="right">6</td>
 <td align="right">0</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">group</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -570,7 +571,7 @@ understand each field at a glance.</p>
 <td align="right">2</td>
 <td align="right">0</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">condition</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -580,7 +581,7 @@ understand each field at a glance.</p>
 <td align="right">2</td>
 <td align="right">0</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">fov_name</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -607,7 +608,7 @@ understand each field at a glance.</p>
 <col width="8%">
 <col width="5%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th align="left">skim_variable</th>
 <th align="right">n_missing</th>
 <th align="right">complete_rate</th>
@@ -621,7 +622,7 @@ understand each field at a glance.</p>
 <th align="left">hist</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td align="left">nCount_RNA</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -634,7 +635,7 @@ understand each field at a glance.</p>
 <td align="right">1659.00</td>
 <td align="left">▇▂▁▁▁</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">nFeature_RNA</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -647,7 +648,7 @@ understand each field at a glance.</p>
 <td align="right">487.00</td>
 <td align="left">▇▇▂▁▁</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">fov</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -660,7 +661,7 @@ understand each field at a glance.</p>
 <td align="right">4.00</td>
 <td align="left">▆▇▁▇▇</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">cell_ID</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -673,7 +674,7 @@ understand each field at a glance.</p>
 <td align="right">4984.00</td>
 <td align="left">▇▇▆▃▁</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">Area</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -686,7 +687,7 @@ understand each field at a glance.</p>
 <td align="right">19223.00</td>
 <td align="left">▇▃▁▁▁</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">AspectRatio</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -699,7 +700,7 @@ understand each field at a glance.</p>
 <td align="right">4.43</td>
 <td align="left">▇▅▁▁▁</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">CenterX_local_px</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -712,7 +713,7 @@ understand each field at a glance.</p>
 <td align="right">5459.00</td>
 <td align="left">▇▇▇▇▇</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">CenterY_local_px</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -725,7 +726,7 @@ understand each field at a glance.</p>
 <td align="right">3633.00</td>
 <td align="left">▅▇▇▇▆</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">CenterX_global_px</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -738,7 +739,7 @@ understand each field at a glance.</p>
 <td align="right">24783.89</td>
 <td align="left">▇▂▁▂▃</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">CenterY_global_px</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -751,7 +752,7 @@ understand each field at a glance.</p>
 <td align="right">173213.56</td>
 <td align="left">▇▁▁▁▇</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">Width</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -764,7 +765,7 @@ understand each field at a glance.</p>
 <td align="right">226.00</td>
 <td align="left">▃▇▁▁▁</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">Height</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -777,7 +778,7 @@ understand each field at a glance.</p>
 <td align="right">219.00</td>
 <td align="left">▂▇▁▁▁</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">Mean.MembraneStain</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -790,7 +791,7 @@ understand each field at a glance.</p>
 <td align="right">38748.00</td>
 <td align="left">▇▁▁▁▁</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">Max.MembraneStain</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -803,7 +804,7 @@ understand each field at a glance.</p>
 <td align="right">64719.00</td>
 <td align="left">▇▁▁▁▁</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">Mean.PanCK</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -816,7 +817,7 @@ understand each field at a glance.</p>
 <td align="right">58521.00</td>
 <td align="left">▇▁▁▁▁</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">Max.PanCK</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -829,7 +830,7 @@ understand each field at a glance.</p>
 <td align="right">65271.00</td>
 <td align="left">▇▃▁▁▁</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">Mean.CD45</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -842,7 +843,7 @@ understand each field at a glance.</p>
 <td align="right">15772.00</td>
 <td align="left">▇▁▁▁▁</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">Max.CD45</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -855,7 +856,7 @@ understand each field at a glance.</p>
 <td align="right">57199.00</td>
 <td align="left">▇▁▁▁▁</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">Mean.CD3</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -868,7 +869,7 @@ understand each field at a glance.</p>
 <td align="right">48588.00</td>
 <td align="left">▇▁▁▁▁</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">Max.CD3</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -881,7 +882,7 @@ understand each field at a glance.</p>
 <td align="right">64719.00</td>
 <td align="left">▇▁▁▁▁</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">Mean.DAPI</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -894,7 +895,7 @@ understand each field at a glance.</p>
 <td align="right">258.00</td>
 <td align="left">▇▃▁▁▁</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">Max.DAPI</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -907,7 +908,7 @@ understand each field at a glance.</p>
 <td align="right">6617.00</td>
 <td align="left">▇▁▁▁▁</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">nCount_negprobes</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -920,7 +921,7 @@ understand each field at a glance.</p>
 <td align="right">15.00</td>
 <td align="left">▇▁▁▁▁</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">nFeature_negprobes</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -1112,7 +1113,7 @@ explore and utilise this more in the following quality control section.</p>
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2025-10-29.</p>
+    <p>"<strong>Intro to Spatial Transcriptomics</strong>" was written by . It was last built on 2026-08-13.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
