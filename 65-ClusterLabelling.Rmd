@@ -29,7 +29,7 @@ These workshop materials were developed on a server with an older version of R a
 
 ```{r}
 clustered_seurat_object_file <- here("data", "GSE234713_CosMx_IBD_seurat_60_clustered_preprepared.RDS")
-so    <- readRDS(normalised_seurat_object_file) 
+so    <- readRDS(clustered_seurat_object_file) 
 so    <- UpdateSeuratObject(so) # Data generated with older version of Seurat, this function updates it.
 
 ```
