@@ -38,6 +38,7 @@ Read in subsampled seurat object.
 # Read in the subsampled data for this lesson
 so_path <- here("data", "GSE234713_CosMx_IBD_seurat_00_raw_subsampled.RDS")
 so <- readRDS(so_path)
+so <- UpdateSeuratObject(so) # Data generated with older version of Seurat, this function updates it.
 ```
 
 ## Identifying potential technical artefacts
@@ -230,12 +231,8 @@ ggplot(so@meta.data, aes(y=percent_neg, x=nCount_RNA)) +
 ### Identifying filtering thresholds
 
 ```{r}
-# Apply a filter
-so@meta.data <- 
-  so@meta.data %>%
-  mutate(
-    qc = if_else(nCount_RNA >= min_ncount_rna & percent_neg <= max_percent_neg, "Keep", "Remove")
-  )
+# Define a filter
+so$qc<- if_else(so$nCount_RNA >= min_ncount_rna & so$percent_neg <= max_percent_neg, "Keep", "Remove")
 
 table(so$qc, so$orig.ident)
 ```
@@ -287,23 +284,15 @@ ggplot(so@meta.data, aes(y=percent_neg, x=nCount_RNA)) +
 ```
 
 ```{r}
-so@meta.data <- 
-  so@meta.data %>%
-  mutate(
-    qc = if_else(nCount_RNA >= min_ncount_rna & percent_neg <= max_percent_neg, "Keep", "Remove")
-  )
-
+so$qc<- if_else(so$nCount_RNA >= min_ncount_rna & so$percent_neg <= max_percent_neg, "Keep", "Remove")
 table(so$qc, so$orig.ident)
 ```
 
 ```{r}
-# Epithelial compartment less patchy, but still hard to retain the stromal cells
-# These are the trade-offs to consider
 ImageDimPlot(so, fov = "GSM7473684.HC.c", group.by = "qc")
 ```
 
 ```{r}
-# A lot of cells marked for removal and a bit patchy
 ImageDimPlot(so, fov = "GSM7473688.CD.a", group.by = "qc")
 ```
 :::
@@ -315,9 +304,9 @@ For the purposes of the workshop, we will all use the same threshold.
 ```{r}
 min_ncount_rna <- 70
 max_percent_neg <- 4
-```
+so$qc<- if_else(so$nCount_RNA >= min_ncount_rna & so$percent_neg <= max_percent_neg, "Keep", "Remove")
 
-```{r}
+# Apply the filter
 so_filtered <- subset(so, qc == "Keep")
 table(so_filtered$orig.ident)
 ```

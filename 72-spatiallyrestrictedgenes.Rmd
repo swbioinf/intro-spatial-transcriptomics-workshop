@@ -27,6 +27,7 @@ library(DT)
 
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
 so <- readRDS("data/GSE234713_CosMx_IBD_seurat_04_celltypes.RDS" )
+so <- UpdateSeuratObject(so) # Data generated with older version of Seurat, this function updates it.
 ```
 
 What genes have a spatially restricted expression across the tissue? These might be localised to a particular region and indicate some spatial activity.

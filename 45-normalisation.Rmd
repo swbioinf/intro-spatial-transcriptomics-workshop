@@ -65,6 +65,7 @@ library(tidyverse)
 library(here)
 
 so <- readRDS(here("data", "GSE234713_CosMx_IBD_seurat_02_rna70_neg4.RDS"))
+so <- UpdateSeuratObject(so) # Data generated with older version of Seurat, this function updates it.
 ```
 
 <!-- CHCEK IF FINAL OBJEWCT IS SPLIT BY NOW -- Start by 'splitting' the object so that each sample has its own assay again.  -->

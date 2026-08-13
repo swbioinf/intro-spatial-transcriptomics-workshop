@@ -123,6 +123,11 @@ ggplot(celltype_summary_table, aes(x=tissue_sample, y=n_cells, fill=seurat_clust
 ```
 
 
+Save the data
+
+```{r eval=F}
+saveRDS(so, file = here("data", "GSE234713_CosMx_IBD_seurat_60_clustered_inworkshop.RDS"))
+```
 
 
 
